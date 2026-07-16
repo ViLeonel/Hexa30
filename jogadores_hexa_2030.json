@@ -8,9 +8,9 @@
         "clube": "Liverpool",
         "idade": 33,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Experiência de Copa, posicionamento excelente, condução de carreira séria.",
-        "pontos_fracos": "Idade avançada para 2030 (estará com 37 anos).",
-        "historico": "Considerado o melhor atualmente, mas Roberto o descartaria para o ciclo todo de 2030. Vini acha que dá para ser campeão com ele experiente."
+        "pontos_fortes": "Excelente posicionamento e carreira internacional sólida.",
+        "pontos_fracos": "Idade avançada para o planejamento de longo prazo de 2030.",
+        "historico": "Vini prefere sua liderança experiente, enquanto Roberto defende transição rápida."
     },
     "Brazão": {
         "nome": "Brazão",
@@ -21,9 +21,9 @@
         "clube": "Santos",
         "idade": 25,
         "tipo": "Promessa 2030",
-        "pontos_fortes": "Excelente físico, boa envergadura e grande margem de evolução.",
-        "pontos_fracos": "Falta de regularidade em momentos de extrema pressão.",
-        "historico": "Ambos concordam que ele ainda pode ser o goleiro da Copa de 2030 se mantiver o físico em dia."
+        "pontos_fortes": "Físico privilegiado e excelente potencial sob as traves.",
+        "pontos_fracos": "Necessita de mais testes sob extrema pressão tática.",
+        "historico": "Ambos concordam que ele reúne totais condições de disputar a titularidade."
     },
     "Lucas Perri": {
         "nome": "Lucas Perri",
@@ -34,9 +34,9 @@
         "clube": "Lyon",
         "idade": 28,
         "tipo": "Observação",
-        "pontos_fortes": "Boa estatura, joga na Europa, boa idade para a posição.",
-        "pontos_fracos": "Costuma ceder à pressão em momentos decisivos.",
-        "historico": "Vini o vê como um bom segundo ou terceiro goleiro reserva, mas sem depositar grandes esperanças de titularidade."
+        "pontos_fortes": "Físico imponente e experiência recente em solo europeu.",
+        "pontos_fracos": "Oscilações em momentos de alta carga decisiva.",
+        "historico": "Visto como opção viável de elenco, mas sem garantias de liderar a meta."
     },
     "Wesley": {
         "nome": "Wesley",
@@ -47,9 +47,9 @@
         "clube": "Flamengo",
         "idade": 22,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Extremamente físico e ofensivo. Potencial de evolução elevado (nota 8+).",
-        "pontos_fracos": "Precisa melhorar substancialmente seu posicionamento defensivo.",
-        "historico": "Roberto acredita que ele tem potencial de evolução para se tornar um jogador nota 8+. Ambos concordam que ele precisa melhorar seu posicionamento defensivo."
+        "pontos_fortes": "Velocidade impressionante e excelente transição ofensiva.",
+        "pontos_fracos": "Precisa calibrar o posicionamento defensivo nas coberturas.",
+        "historico": "Roberto aposta em sua evolução máxima. Unanimidade no corredor direito."
     },
     "Kaiki Bruno": {
         "nome": "Kaiki Bruno",
@@ -60,9 +60,9 @@
         "clube": "Cruzeiro",
         "idade": 23,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Jovem, boa capacidade de apoio e margem de crescimento.",
-        "pontos_fracos": "Considerado muito jovem ('um bebê') e ainda inexperiente em competições internacionais.",
-        "historico": "Vini o acha muito jovem, mas devido à escassez técnica da lateral esquerda, Roberto começaria o ciclo com ele."
+        "pontos_fortes": "Apoio tático consistente e boa margem para evolução física.",
+        "pontos_fracos": "Ainda inexperiente em confrontos internacionais de alto calibre.",
+        "historico": "Aprovado por Roberto para iniciar a rodagem de testes devido ao gargalo do setor."
     },
     "Yan Couto": {
         "nome": "Yan Couto",
@@ -73,9 +73,9 @@
         "clube": "Borussia Dortmund",
         "idade": 24,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Garante um bom apoio no ataque e oferece excelente concorrência no setor direito.",
-        "pontos_fracos": "Pode deixar espaços na defesa quando sobe ao ataque.",
-        "historico": "Garante concorrência direta no setor direito com bom suporte ofensivo."
+        "pontos_fortes": "Fácil associação no terço final e boa técnica de cruzamento.",
+        "pontos_fracos": "Pode deixar o setor defensivo exposto ao subir constantemente.",
+        "historico": "Grande opção de rotação para manter a intensidade do ataque lateral."
     },
     "Denner": {
         "nome": "Denner",
@@ -86,9 +86,9 @@
         "clube": "Corinthians",
         "idade": 18,
         "tipo": "Promessa 2030",
-        "pontos_fortes": "Diferenciado física e tecnicamente. Potencial para alcançar nível de Alphonso Davies.",
-        "pontos_fracos": "Extremamente jovem, precisa de rodagem e experiência em time profissional principal.",
-        "historico": "Roberto o vê como um jogador diferenciado, com capacidade futura comparável à de Alphonso Davies."
+        "pontos_fortes": "Capacidade técnica invejável e ótima leitura tática.",
+        "pontos_fracos": "Muito jovem, precisa ser lapidado no time principal profissional.",
+        "historico": "Roberto projeta teto competitivo muito elevado, similar a estrelas globais."
     },
     "Luciano Juba": {
         "nome": "Luciano Juba",
@@ -99,9 +99,9 @@
         "clube": "Bahia",
         "idade": 26,
         "tipo": "Observação",
-        "pontos_fortes": "Cruzamento de elite, carisma e boa consistência ofensiva.",
-        "pontos_fracos": "Dúvidas se conseguiria competir contra pontas mundiais em uma Copa.",
-        "historico": "Roberto gosta de sua capacidade de cruzamento e carisma, mas Vini questiona sua competitividade em nível de Copa."
+        "pontos_fortes": "Excelente batida na bola e grande carisma com a torcida.",
+        "pontos_fracos": "Dúvidas se suportaria o ritmo físico de pontas de elite na Copa.",
+        "historico": "Roberto valoriza sua bola parada, enquanto Vini demonstra ressalvas táticas."
     },
     "Gabriel Magalhães": {
         "nome": "Gabriel Magalhães",
@@ -112,9 +112,9 @@
         "clube": "Arsenal",
         "idade": 28,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Zagueiro dominante fisicamente, excelente no jogo aéreo, nível de elite mundial.",
-        "pontos_fracos": "Poucos pontos fracos identificados; estabilizado no mais alto nível.",
-        "historico": "Unanimidade absoluta entre Vini e Roberto. Consolidado como defensor de classe mundial."
+        "pontos_fortes": "Combate aéreo imbatível, liderança nata e estabilidade de elite.",
+        "pontos_fracos": "Nenhum ponto fraco relevante apontado no ciclo tático.",
+        "historico": "Dono absoluto da posição e grande líder da defesa brasileira."
     },
     "Lucas Beraldo": {
         "nome": "Lucas Beraldo",
@@ -125,9 +125,9 @@
         "clube": "Paris Saint-Germain",
         "idade": 22,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Excelente saída de bola com a perna esquerda, inteligência tática, versatilidade.",
-        "pontos_fracos": "Pode sofrer contra atacantes extremamente físicos em confrontos diretos.",
-        "historico": "Destaca-se pela saída de bola refinada. Apontado também como alternativa para jogar improvisado de primeiro volante."
+        "pontos_fortes": "Saída de bola primorosa e excelente senso de antecipação.",
+        "pontos_fracos": "Pode sofrer contra atacantes de extrema imposição física direta.",
+        "historico": "Cotado como curinga, podendo atuar também como primeiro homem de meio-campo."
     },
     "Murillo": {
         "nome": "Murillo",
@@ -138,9 +138,9 @@
         "clube": "Nottingham Forest",
         "idade": 23,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Forte em combates terrestres, excelente passe longo e consistência defensiva.",
-        "pontos_fracos": "Precisa de mais experiência em competições continentais de seleções.",
-        "historico": "Traz muita segurança técnica para a rotação defensiva."
+        "pontos_fortes": "Força física impressionante nos duelos terrestres e ótimo passe longo.",
+        "pontos_fracos": "Precisa ganhar mais minutos em jogos oficiais da seleção principal.",
+        "historico": "Garante segurança total para qualquer alteração na dupla de zaga."
     },
     "Andrey Santos": {
         "nome": "Andrey Santos",
@@ -151,9 +151,9 @@
         "clube": "Chelsea",
         "idade": 22,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Volante box-to-box moderno, boa infiltração e excelente capacidade de marcação.",
-        "pontos_fracos": "Precisa de consolidação em um grande clube europeu como titular absoluto.",
-        "historico": "Visto como o pilar ideal para sustentar o meio-campo no lugar de Casemiro."
+        "pontos_fortes": "Volante moderno de grande infiltração na área e pegada defensiva.",
+        "pontos_fracos": "Precisa de estabilidade técnica como titular absoluto na Europa.",
+        "historico": "Escolhido para ser a grande engrenagem de sustentação do meio-campo brasileiro."
     },
     "Bruno Guimarães": {
         "nome": "Bruno Guimarães",
@@ -164,9 +164,9 @@
         "clube": "Newcastle",
         "idade": 28,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "O cérebro do meio-campo, dita o ritmo de jogo, passes refinados que rompem linhas.",
-        "pontos_fracos": "Pode se desgastar fisicamente em esquemas muito expostos.",
-        "historico": "Considerado essencial pela comissão para ditar o ritmo e criar a partir do meio."
+        "pontos_fortes": "Visão de jogo privilegiada e passes precisos que quebram linhas defensivas.",
+        "pontos_fracos": "Desgaste em partidas que exijam excessiva cobertura de campo.",
+        "historico": "Considerado indispensável para ditar o ritmo de posse de bola do time."
     },
     "Rodrygo": {
         "nome": "Rodrygo",
@@ -177,9 +177,9 @@
         "clube": "Real Madrid",
         "idade": 25,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Verticalidade, excelente qualidade técnica, busca constante pelo gol.",
-        "pontos_fracos": "Não é um organizador clássico ou jogador de cadência (não dita o ritmo do jogo).",
-        "historico": "Escalado para fazer a função do clássico camisa 10 criativo adaptado. Funciona bem na dinâmica de ataque rápido."
+        "pontos_fortes": "Técnica apurada, facilidade no drible e ótimo poder de decisão.",
+        "pontos_fracos": "Não possui características naturais de cadência de jogo.",
+        "historico": "Atua como o elo criativo dinâmico para dar verticalidade às jogadas táticas."
     },
     "Breno Bidon": {
         "nome": "Breno Bidon",
@@ -190,9 +190,9 @@
         "clube": "Corinthians",
         "idade": 21,
         "tipo": "Promessa 2030",
-        "pontos_fortes": "Talentoso com a bola no pé, ginga brasileira clássica.",
-        "pontos_fracos": "Falta experiência física e bagagem tática em ligas europeias.",
-        "historico": "Roberto enfatiza que ele precisa jogar na Europa para adquirir robustez tática e física."
+        "pontos_fortes": "Controle refinado da bola e estilo tático clássico brasileiro.",
+        "pontos_fracos": "Necessita adquirir maior massa física e experiência tática europeia.",
+        "historico": "Identificado como potencial herdeiro técnico para as próximas competições."
     },
     "Gabriel Mec": {
         "nome": "Gabriel Mec",
@@ -203,9 +203,9 @@
         "clube": "Grêmio",
         "idade": 18,
         "tipo": "Promessa 2030",
-        "pontos_fortes": "Pifador nato, assistências cirúrgicas, excelente visão de jogo.",
-        "pontos_fracos": "Muito jovem e precisa de amadurecimento físico para suportar o ritmo profissional.",
-        "historico": "Vini está extremamente entusiasmado com seu futebol, vendo-o como um grande criador para o veloz ataque brasileiro."
+        "pontos_fortes": "Passe cirúrgico, criatividade acima da média e inteligência.",
+        "pontos_fracos": "Ainda em processo inicial de maturação física no esporte profissional.",
+        "historico": "Vini acompanha de perto o garoto, vislumbrando um armador ideal para o futuro."
     },
     "Vini Jr.": {
         "nome": "Vini Jr.",
@@ -216,9 +216,9 @@
         "clube": "Real Madrid",
         "idade": 26,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Grande desequilíbrio individual na ponta esquerda, drible de elite, velocidade imparável.",
-        "pontos_fracos": "Pode ser sobrecarregado taticamente se a recomposição falhar.",
-        "historico": "Considerado a estrela absoluta e o jogador mais perigoso do ataque brasileiro."
+        "pontos_fortes": "Melhor drible do planeta, aceleração letal e faro de gols em decisões.",
+        "pontos_fracos": "Pode sofrer desgaste físico excessivo se isolado na ponta.",
+        "historico": "A principal referência ofensiva e grande estrela do planejamento nacional."
     },
     "Estevão": {
         "nome": "Estevão",
@@ -229,9 +229,9 @@
         "clube": "Palmeiras",
         "idade": 19,
         "tipo": "Promessa 2030",
-        "pontos_fortes": "Genialidade pura, capacidade de drible espetacular, potencial nota 10.",
-        "pontos_fracos": "Cautela necessária em relação a possíveis lesões físicas (como joelho).",
-        "historico": "Avaliado com nota máxima (10) por Roberto devido à sua genialidade precoce. Vini pede cautela contra lesões."
+        "pontos_fortes": "Capacidade de drible genial, mentalidade vencedora e criatividade extrema.",
+        "pontos_fracos": "Cuidados necessários com a carga física nesta transição inicial.",
+        "historico": "Classificado com nota 10 por Roberto devido à sua genialidade sem precedentes."
     },
     "Endrick": {
         "nome": "Endrick",
@@ -242,9 +242,9 @@
         "clube": "Real Madrid",
         "idade": 19,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Homem gol com arrancada brutal, força física incomparável, finalização de elite.",
-        "pontos_fracos": "Precisa de minutos constantes de jogo em nível europeu de elite.",
-        "historico": "O homem de referência física e velocidade para liderar o ataque na Copa de 2030."
+        "pontos_fortes": "Explosão muscular fantástica, poder de chute e faro artilheiro.",
+        "pontos_fracos": "Necessita de minutagem constante em competições de elite.",
+        "historico": "O centroavante titular absoluto projetado para liderar o ataque em 2030."
     },
     "Gabriel Martinelli": {
         "nome": "Gabriel Martinelli",
@@ -255,8 +255,8 @@
         "clube": "Arsenal",
         "idade": 25,
         "tipo": "Certeza Atual",
-        "pontos_fortes": "Estilo dinâmico e direto, excelente recomposição e intensidade tática.",
-        "pontos_fracos": "Pode oscilar em momentos de menor espaço na ponta esquerda.",
-        "historico": "Roberto é um grande fã de seu estilo vertical, considerando-o o reserva de luxo perfeito para as pontas."
+        "pontos_fortes": "Intensidade sem a bola, recomposição exemplar e poder de explosão.",
+        "pontos_fracos": "Menor refino técnico se comparado aos titulares da ponta.",
+        "historico": "Roberto destaca sua competitividade tática incomparável no elenco."
     }
 }
