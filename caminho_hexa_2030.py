@@ -234,7 +234,7 @@ def normalizar_banco_dados(data):
         "Breno Bidon": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante", "Meia-armador"], "clube": "Corinthians"},
         "Gabriel Mec": {"posicao": "Meia-armador", "posicoes_multiplas": ["Meia-armador", "Ponta-esquerda", "Segundo atacante"], "clube": "Grêmio"},
         "Vinicius Junior": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Segundo atacante", "Centroavante"], "clube": "Real Madrid"},
-        "Estevão": {"posicao": "Ponta-direito", "posicoes_multiplas": ["Ponta-day", "Ponta-direito", "Meia-armador"], "clube": "Palmeiras"},
+        "Estevão": {"posicao": "Ponta-direito", "posicoes_multiplas": ["Ponta-direito", "Meia-armador"], "clube": "Palmeiras"},
         "Gabriel Martinelli": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Meia-armador", "Mezzala esquerdo"], "clube": "Arsenal"}
     }
 
@@ -243,7 +243,6 @@ def normalizar_banco_dados(data):
             for campo, valor in campos.items():
                 data[jogador][campo] = valor
 
-    # Injeção segura das novas estrelas monitoradas via Transfermarkt
     novos_atletas = {
         "Raphinha": {
             "nome": "Raphinha",
@@ -283,7 +282,7 @@ def normalizar_banco_dados(data):
             "tipo": "Certeza Atual",
             "nota_vini": 7.0,
             "nota_roberto": 7.0,
-            "pontos_fortes": "Excelente mobility fora da área, capacidade associativa de pivô e facilidade para quebrar linhas.",
+            "pontos_fortes": "Excelente mobilidade fora da área, capacidade associativa de pivô e facilidade para quebrar linhas.",
             "pontos_fracos": "Falta de maior regularidade artilheira dentro da pequena área.",
             "historico": "Visto como opção versátil para o ataque, integrando perfeitamente os papéis de SA ou CA."
         },
@@ -297,9 +296,9 @@ def normalizar_banco_dados(data):
             "tipo": "Certeza Atual",
             "nota_vini": 8.0,
             "nota_roberto": 8.0,
-            "pontos_fortes": "Capacidade física absurda, motor box-to-box infatigável e ótimos desarmes de transição.",
+            "pontos_fortes": "Capacidade física absurda, motor box-to-box infatigável and ótimos desarmes de transição.",
             "pontos_fracos": "Refino técnico de passe em blocos defensivos extremamente baixos.",
-            "historico": "Aprovado unanimemente como peça de alto vigor físico para rodar o meio-campismo nos jogos intensos."
+            "historico": "Aprovado unanimemente como peça de alto vigor físico para rodar o meio-campo nos jogos intensos."
         },
         "João Gomes": {
             "nome": "João Gomes",
@@ -334,10 +333,11 @@ def normalizar_banco_dados(data):
         "Volante": "Volante",
         "Meio-Campo (Apoio)": "Mezzala esquerdo",
         "Meio-Campo (Criativo)": "Meia-armador",
-        "Ponta Esquerda": "Ponta-esquerda",
-        "Ponta-esquerda": "Ponta-esquerda",
-        "Ponta Direita": "Ponta-base",
-        "Ponta-direita": "Ponta-direita",
+        "Ponta Esquerda": "Ponta-esquerdo",
+        "Ponta-esquerda": "Ponta-Core",
+        "Ponta-esquerda": "Ponta-esquerdo",
+        "Ponta Direita": "Ponta-direito",
+        "Ponta-direito": "Ponta-direito",
         "Centroavante": "Centroavante"
     }
 
@@ -415,7 +415,7 @@ def buscar_classificacao_cbf():
                 tabela = soup.find("table") or soup.find(class_="table") or soup.find(class_="tabela-completa")
                 if tabela:
                     linhas = tabela.find_all("tr")
-                    for linha in lines = linhas[1:]:
+                    for linha in linhas[1:]:
                         colunas = linha.find_all("td")
                         if len(colunas) >= 5:
                             pos_crua = colunas[0].text.strip()
@@ -473,7 +473,7 @@ TATICAS = {
         "Volante (VOL)": (["Volante"], "Andrey Santos", "38%", "46%", "VOL"),
         "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "46%", "VOL"),
         "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "58%", "MEI"),
-        "Ponta-esquerdo (PE)": (["Ponta-Refined", "Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
+        "Ponta-esquerdo (PE)": (["Ponta-esquerdo"], "Vinicius Junior", "20%", "80%", "PE"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "84%", "CA"),
         "Ponta-direito (PD)": (["Ponta-direito"], "Estevão", "80%", "80%", "PD")
     },
@@ -486,7 +486,7 @@ TATICAS = {
         "Volante (VOL)": (["Volante"], "Andrey Santos", "50%", "43%", "VOL"),
         "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "32%", "53%", "MCE"),
         "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "Breno Bidon", "68%", "53%", "MCD"),
-        "Ponta-esquerdo (PE)": (["Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
+        "Ponta-esquerdo (PE)": (["Ponta-Tail", "Ponta-esquerdo"], "Vinicius Junior", "20%", "80%", "PE"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "84%", "CA"),
         "Ponta-direito (PD)": (["Ponta-direito"], "Estevão", "80%", "80%", "PD")
     },
@@ -496,11 +496,11 @@ TATICAS = {
         "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
         "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
-        "Meia-Esquerda (ME)": (["Ponta-Core", "Ponta-esquerda", "Mezzala esquerdo", "Lateral-esquerdo"], "Vinicius Junior", "15%", "55%", "ME"),
+        "Meia-Esquerda (ME)": (["Ponta-esquerdo", "Mezzala esquerdo", "Lateral-esquerdo"], "Vinicius Junior", "15%", "55%", "ME"),
         "Volante (VOL)": (["Volante"], "Andrey Santos", "38%", "45%", "VOL"),
         "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "45%", "VOL"),
         "Meia-Direita (MD)": (["Ponta-direito", "Lateral-direito"], "Estevão", "85%", "55%", "MD"),
-        "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-esquerda", "Ponta-direito", "Meia-armador"], "Rodrygo", "35%", "82%", "SA"),
+        "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-esquerdo", "Ponta-direito", "Meia-armador"], "Rodrygo", "35%", "82%", "SA"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "82%", "CA")
     },
     "4-4-2 Diamante": {
@@ -513,7 +513,7 @@ TATICAS = {
         "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "32%", "53%", "MCE"),
         "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "Breno Bidon", "68%", "53%", "MCD"),
         "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "65%", "MEI"),
-        "Segundo Atacante (SA)": (["Ponta-esquerda", "Ponta-direito", "Segundo atacante", "Centroavante"], "Vinicius Junior", "35%", "83%", "SA"),
+        "Segundo Atacante (SA)": (["Ponta-esquerdo", "Ponta-direito", "Segundo atacante", "Centroavante"], "Vinicius Junior", "35%", "83%", "SA"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "83%", "CA")
     }
 }
@@ -561,7 +561,7 @@ if "escalados" not in st.session_state:
         "Volante (VOL)": "Andrey Santos",
         "Volante Apoio (VOL)": "Bruno Guimarães",
         "Meia-Armador (MEI)": "Rodrygo",
-        "Ponta-esquerda (PE)": "Vinicius Junior",
+        "Ponta-esquerdo (PE)": "Vinicius Junior",
         "Centroavante (CA)": "Endrick",
         "Ponta-direito (PD)": "Estevão"
     }
@@ -572,12 +572,12 @@ if "escalados" not in st.session_state:
 if menu == "🏟️ Campo de Jogo (Escalação)":
     st.markdown("<h1 class='app-title'>🏆 O Caminho para o Hexa</h1>", unsafe_allow_html=True)
     st.markdown(
-        """
+        \"\"\"
         <p class="project-subtitle" style="text-align: center;">
         Painel tático interativo desenvolvido para organizar escalações, avaliar pontuações de scout 
         e planejar o percurso de renovação da nossa seleção canarinho rumo ao mundial de 2030.
         </p>
-        """, 
+        \"\"\", 
         unsafe_allow_html=True
     )
     
@@ -711,7 +711,7 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         st.markdown(pitch_html, unsafe_allow_html=True)
         
         # Legenda de Adaptabilidade Tática
-        st.markdown("""
+        st.markdown(\"\"\"
         <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-top: -10px; margin-bottom: 25px; background-color: #0b0f19; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
             <div style="display: flex; align-items: center; gap: 8px; font-size: 9.5pt; color: #f8fafc;">
                 <span style="display: inline-block; width: 12px; height: 12px; background-color: #22c55e; border-radius: 50%;"></span>
@@ -726,7 +726,7 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
                 <b>Linha Laranja:</b> Função Terciária (Opção emergencial de elenco)
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        \"\"\", unsafe_allow_html=True)
 
         st.markdown("---")
         st.markdown("### 📣 Compartilhe sua Convocação!")
@@ -744,22 +744,22 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         
         col_share1, col_share2 = st.columns(2)
         with col_share1:
-            st.markdown(f"""
+            st.markdown(f\"\"\"
                 <a href="{whatsapp_url}" target="_blank" style="text-decoration:none;">
                     <div style="background-color:#166534; color:#f8fafc; text-align:center; padding:10px; border-radius:8px; font-weight:bold; border: 1px solid #eab308; cursor:pointer;">
                         🟢 Compartilhar no WhatsApp
                     </div>
                 </a>
-            """, unsafe_allow_html=True)
+            \"\"\", unsafe_allow_html=True)
             
         with col_share2:
-            st.markdown(f"""
+            st.markdown(f\"\"\"
                 <a href="{twitter_url}" target="_blank" style="text-decoration:none;">
                     <div style="background-color:#1e293b; color:#f8fafc; text-align:center; padding:10px; border-radius:8px; font-weight:bold; border: 1px solid #eab308; cursor:pointer;">
                         🔵 Compartilhar no X / Threads
                     </div>
                 </a>
-            """, unsafe_allow_html=True)
+            \"\"\", unsafe_allow_html=True)
 
 # ==========================================
 # TELA 2: PERFIS DOS JOGADORES & SCOUT
@@ -784,7 +784,7 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
                 abrevs_clean.append(a)
         abrev_str = "/".join(abrevs_clean)
 
-        st.markdown(f"""
+        st.markdown(f\"\"\"
         <div style="background-color: #111827; padding: 25px; border-radius: 15px; border: 3px solid #eab308; text-align: center;">
             <h2 style="color: #f8fafc; margin-bottom: 5px; font-size: 2.2rem;">{p.get('nome', selected_name)}</h2>
             <span style="background-color: #3b82f6; color: #f8fafc; font-weight: bold; padding: 5px 15px; border-radius: 20px; font-size: 10pt;">
@@ -797,7 +797,7 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
                 <b>🏆 Idade em 2030:</b> <span style="color:#eab308; font-weight:bold;">{p.get('idade', 22) + 4} anos</span>
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        \"\"\", unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         st.subheader("Avaliação Tática")
@@ -958,7 +958,7 @@ elif menu == "📊 Análise de Opiniões":
         st.dataframe(divergencias[["Nome", "Posição", "Vini", "Roberto", "Diferença Absoluta"]], use_container_width=True, hide_index=True)
 
 # ==========================================
-# 9. RADAR DO TORCEDOR (FORMULÁRIO TOTALMENTE PRIVADO)
+# 9. RADAR DO TORCEDOR (FORMULÁROLE TOTALMENTE PRIVADO)
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.subheader("💡 Radar do Torcedor")
@@ -996,12 +996,13 @@ with st.sidebar.form("form_sugestao", clear_on_submit=True):
             mailto_url = f"mailto:viniciusbl87@gmail.com?subject={assunto}&body={corpo}"
             
             st.sidebar.success("Sugestão salva!")
-            st.sidebar.markdown(f"""
-                <div style="text-align: center; margin-top: 5px; margin-bottom: 5px;">
-                    <a href="{mailto_url}" target="_blank" style="background-color: #eab308; color: #090d16; font-weight: 800; padding: 10px 15px; border-radius: 8px; text-decoration: none; display: inline-block; width: 100%;">
+            st.sidebar.markdown(f\"\"\"
+                <div style=\"text-align: center; margin-top: 5px; margin-bottom: 5px;\">
+                    <a href=\"{mailto_url}\" target=\"_blank\" style=\"background-color: #eab308; color: #090d16; font-weight: 800; padding: 10px 15px; border-radius: 8px; text-decoration: none; display: inline-block; width: 100%;\">
                         🚀 Enviar por E-mail
                     </a>
                 </div>
-            """, unsafe_allow_html=True)
+            \"\"\", unsafe_allow_html=True)
         else:
             st.sidebar.warning("Insira o texto antes de enviar!")
+"""
