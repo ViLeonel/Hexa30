@@ -107,7 +107,7 @@ st.markdown("""
         width: 135px;
         text-align: center;
         z-index: 10;
-        transition: all 0.5s ease-in-out; /* Suavidade na transição de posições */
+        transition: all 0.5s ease-in-out;
     }
     .player-card-pitch {
         background: rgba(9, 13, 22, 0.95);
@@ -198,8 +198,6 @@ ABREVIACOES = {
     "Goleiro": "GOL",
     "Lateral-esquerdo": "LE",
     "Zagueiro": "ZAG",
-    "Zagueiro Esquerdo": "ZAG",
-    "Zagueiro Direito": "ZAG",
     "Lateral-direito": "LD",
     "Volante": "VOL",
     "Mezzala esquerdo": "MCE",
@@ -226,7 +224,7 @@ def normalizar_banco_dados(data):
         data["Wesley França"] = data.pop("Wesley")
         data["Wesley França"]["nome"] = "Wesley França"
 
-    # 2. Configuração precisa de clubes e posicionamentos multi-funções
+    # 2. Configuração precisa de clubes e posicionamentos multi-funções solicitados
     atualizacoes_obrigatorias = {
         "Wesley França": {
             "posicao": "Lateral-direito",
@@ -259,7 +257,7 @@ def normalizar_banco_dados(data):
             "clube": "Newcastle"
         },
         "Rodrygo": {
-            "posicao": "Ponta-direita",
+            "posicao": "Ponta-alta",
             "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante"],
             "clube": "Real Madrid"
         },
@@ -279,24 +277,24 @@ def normalizar_banco_dados(data):
             "clube": "Real Madrid"
         },
         "Estevão": {
-            "posicao": "Ponta-direita",
+            "posicao": "Ponta-alta",
             "posicoes_multiplas": ["Ponta-direita", "Meia-armador"],
             "clube": "Palmeiras"
         },
         "Gabriel Martinelli": {
-            "posicao": "Ponta-esquerda",
+            "posicao": "Ponta-base",
             "posicoes_multiplas": ["Ponta-esquerda", "Meia-armador", "Mezzala esquerdo"],
             "clube": "Arsenal"
         }
     }
 
-    # Aplicar atualizações preservando o resto dos metadados (como notas e discussões)
+    # Mesclar correções sem deletar as avaliações originais de scout do JSON
     for jogador, campos in atualizacoes_obrigatorias.items():
         if jogador in data:
             for campo, valor in campos.items():
                 data[jogador][campo] = valor
 
-    # Limpeza geral de nomenclatura e preenchimento de posições alternativas para os demais
+    # Unificação de hifens e novos padrões de strings
     pos_map_limpeza = {
         "Goleiro": "Goleiro",
         "Lateral Esquerdo": "Lateral-esquerdo",
@@ -305,15 +303,15 @@ def normalizar_banco_dados(data):
         "Lateral-direito": "Lateral-direito",
         "Zagueiro Esquerdo": "Zagueiro",
         "Zagueiro Direito": "Zagueiro",
-        "Zagueiro": "ZAG",
+        "Zagueiro": "Zagueiro",
         "Meio-Campo (Defensivo)": "Volante",
         "Volante": "Volante",
         "Meio-Campo (Apoio)": "Mezzala esquerdo",
         "Meio-Campo (Criativo)": "Meia-armador",
         "Ponta Esquerda": "Ponta-esquerda",
         "Ponta-esquerda": "Ponta-esquerda",
-        "Ponta Direita": "Ponta-direita",
-        "Ponta-direita": "Ponta-direita",
+        "Ponta Direita": "Ponta-alta",
+        "Ponta-direita": "Ponta-alta",
         "Centroavante": "Centroavante"
     }
 
@@ -356,7 +354,6 @@ def carregar_jogadores():
         
         data = normalizar_banco_dados(data)
         
-        # Sincronização automática do nome do criador
         modified = False
         for k, v in data.items():
             if "historico" in v and "Vini Leoneo" in v["historico"]:
@@ -449,53 +446,53 @@ TATICAS = {
     "4-3-3 Clássico": {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
         "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro Esquerdo", "Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro Direito", "Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
         "Volante (VOL)": (["Volante"], "Andrey Santos", "38%", "46%", "VOL"),
         "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "46%", "VOL"),
         "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "58%", "MEI"),
         "Ponta-esquerda (PE)": (["Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "84%", "CA"),
-        "Ponta-direito (PD)": (["Ponta-direito"], "Estevão", "80%", "80%", "PD")
+        "Ponta-direita (PD)": (["Ponta-direita"], "Estevão", "80%", "80%", "PD")
     },
     "4-3-3 Diamante": {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
         "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro Esquerdo", "Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro Direito", "Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
         "Volante (VOL)": (["Volante"], "Andrey Santos", "50%", "43%", "VOL"),
         "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "32%", "53%", "MCE"),
         "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "Breno Bidon", "68%", "53%", "MCD"),
         "Ponta-esquerda (PE)": (["Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "84%", "CA"),
-        "Ponta-direito (PD)": (["Ponta-direito"], "Estevão", "80%", "80%", "PD")
+        "Ponta-direita (PD)": (["Ponta-direita"], "Estevão", "80%", "80%", "PD")
     },
     "4-4-2 Clássico": {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
         "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro Esquerdo", "Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro Direito", "Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
         "Meia-Esquerda (ME)": (["Ponta-esquerda", "Mezzala esquerdo", "Lateral-esquerdo"], "Vinicius Junior", "15%", "55%", "ME"),
         "Volante (VOL)": (["Volante"], "Andrey Santos", "38%", "45%", "VOL"),
         "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "45%", "VOL"),
-        "Meia-Direita (MD)": (["Ponta-direito", "Lateral-direito"], "Estevão", "85%", "55%", "MD"),
-        "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-esquerda", "Ponta-direito", "Meia-armador"], "Rodrygo", "35%", "82%", "SA"),
+        "Meia-Direita (MD)": (["Ponta-direita", "Lateral-direito"], "Estevão", "85%", "55%", "MD"),
+        "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-esquerda", "Ponta-direita", "Meia-armador"], "Rodrygo", "35%", "82%", "SA"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "82%", "CA")
     },
     "4-4-2 Diamante": {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
         "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro Esquerdo", "Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro Direito", "Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
         "Volante (VOL)": (["Volante"], "Andrey Santos", "50%", "42%", "VOL"),
         "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "32%", "53%", "MCE"),
         "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "Breno Bidon", "68%", "53%", "MCD"),
         "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "65%", "MEI"),
-        "Segundo Atacante (SA)": (["Ponta-esquerda", "Ponta-direito", "Segundo atacante", "Centroavante"], "Vinicius Junior", "35%", "83%", "SA"),
+        "Segundo Atacante (SA)": (["Ponta-esquerda", "Ponta-direita", "Segundo atacante", "Centroavante"], "Vinicius Junior", "35%", "83%", "SA"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "83%", "CA")
     }
 }
@@ -504,7 +501,6 @@ def obter_atletas_compativeis(pos_permitidas):
     filtrados = []
     for nome, dados in jogadores.items():
         pos_do_atleta = dados.get("posicoes_multiplas", [dados.get("posicao")])
-        # Retorna o jogador caso tenha intersecção com as posições permitidas do slot tático
         if any(pos in pos_permitidas for pos in pos_do_atleta):
             filtrados.append(nome)
     return sorted(filtrados)
@@ -515,36 +511,26 @@ def formatar_jogador_com_posicao(nome):
         return nome
     pos_list = p.get("posicoes_multiplas", [p.get("posicao", "OBS")])
     abrevs = [ABREVIACOES.get(pos, "OBS") for pos in pos_list]
-    
-    # Eliminar duplicatas de abreviação preservando a ordem (ex: ZAG/ZAG vira ZAG)
     abrevs_clean = []
     for a in abrevs:
         if a not in abrevs_clean:
             abrevs_clean.append(a)
-            
     abrev_str = "/".join(abrevs_clean)
     return f"{nome} ({abrev_str})"
 
 # ==========================================
-# 7. INICIALIZAÇÃO DO ESTADO DA CONVOCATA
+# 7. MENU LATERAL & NAVEGAÇÃO UNIVERSAL
 # ==========================================
-if "escalados" not in st.session_state:
-    st.session_state.escalados = {
-        "Goleiro (GOL)": "Alisson",
-        "Lateral-esquerdo (LE)": "Kaiki Bruno",
-        "Zagueiro Esquerdo (ZAG)": "Gabriel Magalhães",
-        "Zagueiro Direito (ZAG)": "Lucas Beraldo",
-        "Lateral-direito (LD)": "Wesley França",
-        "Volante (VOL)": "Andrey Santos",
-        "Volante Apoio (VOL)": "Bruno Guimarães",
-        "Meia-Armador (MEI)": "Rodrygo",
-        "Ponta-esquerda (PE)": "Vinicius Junior",
-        "Centroavante (CA)": "Endrick",
-        "Ponta-direito (PD)": "Estevão"
-    }
+st.sidebar.markdown("<h2 style='text-align: center; color: #eab308; margin-top:15px;'>CONSELHO TÁTICO</h2>", unsafe_allow_html=True)
+st.sidebar.markdown("---")
+
+menu = st.sidebar.radio(
+    "Navegação do Painel:",
+    ["🏟️ Campo de Jogo (Escalação)", "👤 Perfis dos Jogadores & Scout", "📋 Gestão do Roster", "📊 Análise de Opiniões"]
+)
 
 # ==========================================
-# TELA 1: CAMPO DE JOGO (ESCALAÇÃO)
+# 8. TELA 1: CAMPO DE JOGO (ESCALAÇÃO)
 # ==========================================
 if menu == "🏟️ Campo de Jogo (Escalação)":
     st.markdown("<h1 class='app-title'>🏆 O Caminho para o Hexa</h1>", unsafe_allow_html=True)
@@ -563,7 +549,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
     with col_config:
         st.markdown("### 📋 Calibrar Escalação")
         
-        # Seletor de Esquemas Táticos
         tática_ativa = st.selectbox(
             "Esquema Tático (Carlo Ancelotti):",
             ["4-3-3 Clássico", "4-3-3 Diamante", "4-4-2 Clássico", "4-4-2 Diamante"],
@@ -572,7 +557,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         
         layout_ativo = TATICAS[tática_ativa]
         
-        # Sincronização inteligente ao mudar de tática (evitando resetar escalações compatíveis)
         if "ultima_formacao" not in st.session_state or st.session_state.ultima_formacao != tática_ativa:
             nova_escalacao = {}
             for slot, info in layout_ativo.items():
@@ -596,13 +580,11 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
 
         st.write("Substitua os titulares respeitando a posição de origem do atleta.")
         
-        # Renderização dos Selectboxes aplicando regras de exclusão mútua de duplicados
         novos_titulares = {}
         for slot, info in layout_ativo.items():
             pos_validas = info[0]
             valid_names = obter_atletas_compativeis(pos_validas)
             
-            # Filtro reverso: remove jogadores já alocados em dropdowns superiores
             selecionados_outros = list(novos_titulares.values())
             available_choices = [name for name in valid_names if name not in selecionados_outros]
             
@@ -611,7 +593,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
             
             default_val = st.session_state.escalados.get(slot, info[1])
             
-            # Se o jogador pretendido já estiver escalado em outra posição, realoca dinamicamente para o próximo compatível
             if default_val in selecionados_outros:
                 if available_choices:
                     default_val = available_choices[0]
@@ -646,14 +627,12 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         c2.metric("Média Geral (Roberto)", f"{avg_r:.2f}")
         c3.metric("Rating Coletivo", f"{coletivo:.2f}", delta="Candidato ao Título", delta_color="normal")
         
-        # Renderização do campo de futebol responsivo
         players_html = ""
         for slot, info in layout_ativo.items():
             left, bottom, pos_tag = info[2], info[3], info[4]
             player_name = st.session_state.escalados.get(slot, info[1])
             p_data = jogadores.get(player_name, {"nome": player_name, "nota_vini": 0, "nota_roberto": 0})
             
-            # Geração da tag abreviada de posições para renderizar no campinho
             pos_list = p_data.get("posicoes_multiplas", [p_data.get("posicao", "OBS")])
             abrevs = [ABREVIACOES.get(pos, "OBS") for pos in pos_list]
             abrevs_clean = []
@@ -684,7 +663,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         
         st.markdown(pitch_html, unsafe_allow_html=True)
 
-        # Compartilhar Escalação
         st.markdown("---")
         st.markdown("### 📣 Compartilhe sua Convocação!")
         
@@ -748,7 +726,7 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
                 {p.get('tipo', 'Monitorado')}
             </span>
             <p style="margin-top: 20px; font-size: 11pt; color: #cbd5e1; text-align: left; line-height: 1.8;">
-                <b>📍 Posição:</b> {abrev_str}<br>
+                <b>📍 Posições:</b> {abrev_str}<br>
                 <b>🏢 Clube Atual:</b> {p.get('clube', 'N/A')}<br>
                 <b>📅 Idade em 2026:</b> {p.get('idade', 22)} anos<br>
                 <b>🏆 Idade em 2030:</b> <span style="color:#eab308; font-weight:bold;">{p.get('idade', 22) + 4} anos</span>
@@ -915,7 +893,7 @@ elif menu == "📊 Análise de Opiniões":
         st.dataframe(divergencias[["Nome", "Posição", "Vini", "Roberto", "Diferença Absoluta"]], use_container_width=True, hide_index=True)
 
 # ==========================================
-# 8. RADAR DO TORCEDOR (FORMULÁRIO TOTALMENTE PRIVADO)
+# 9. RADAR DO TORCEDOR (FORMULÁRIO TOTALMENTE PRIVADO)
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.subheader("💡 Radar do Torcedor")
