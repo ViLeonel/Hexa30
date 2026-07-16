@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. DESIGN VISUAL E CSS (VERDE FLORESTA NO CAMPO, AZUL E AMARELO NO APP)
+# 2. DESIGN VISUAL E CSS (VERDE FLORESTA NO CAMPO, NAVY E OURO NO APP)
 # ==========================================
 st.markdown("""
 <style>
@@ -100,11 +100,11 @@ st.markdown("""
         border-right: 2px solid rgba(248, 250, 252, 0.4);
     }
     
-    /* Nós (Posições) dos Jogadores Absolutos no Campo */
+    /* Nós dos Jogadores Absolutos no Campo */
     .player-node {
         position: absolute;
         transform: translate(-50%, -50%);
-        width: 135px; /* Tamanho perfeito para telas grandes e celulares */
+        width: 135px;
         text-align: center;
         z-index: 10;
     }
@@ -175,7 +175,7 @@ def carregar_jogadores():
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
-        # Correção Automática de Dados Legados (Typos)
+        # Correção Automática de Dados Legados (Vini Leoneo -> Vini Leonel)
         modified = False
         for k, v in data.items():
             if "historico" in v and "Vini Leoneo" in v["historico"]:
@@ -361,7 +361,7 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         c2.metric("Média Geral (Roberto)", f"{avg_r:.2f}")
         c3.metric("Rating Coletivo", f"{coletivo:.2f}", delta="Candidato ao Título", delta_color="normal")
         
-        # Mapeamento de coordenadas dos cards no campo de futebol (X, Y)
+        # Mapeamento de coordenadas (X, Y) no campo
         positions_coords = {
             "Goleiro (GOL)": ("50%", "8%", "GOL"),
             "Lateral Esquerdo (LE)": ("15%", "28%", "LE"),
@@ -376,38 +376,39 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
             "Ponta Direita (PD)": ("80%", "80%", "PD")
         }
         
-        # Geração dinâmica dos Cards dos Jogadores dentro do Campo
+        # GERAÇÃO DINÂMICA LIVRE DE TABULAÇÃO (Para contornar o bug de exibição)
         players_html = ""
         for slot, (left, bottom, pos_tag) in positions_coords.items():
             player_name = st.session_state.escalados[slot]
             p_data = jogadores.get(player_name, {"nome": player_name, "nota_vini": 0, "nota_roberto": 0})
-            players_html += f"""
-            <div class="player-node" style="left: {left}; bottom: {bottom};">
-                <div class="player-card-pitch">
-                    <div class="player-pos-tag">{pos_tag}</div>
-                    <div class="player-name-tag">{p_data['nome']}</div>
-                    <div class="player-rating-tag">★ {p_data['nota_vini']:.1f} / {p_data['nota_roberto']:.1f}</div>
-                </div>
-            </div>
-            """
+            players_html += (
+                f'<div class="player-node" style="left:{left};bottom:{bottom};">'
+                f'<div class="player-card-pitch">'
+                f'<div class="player-pos-tag">{pos_tag}</div>'
+                f'<div class="player-name-tag">{p_data["nome"]}</div>'
+                f'<div class="player-rating-tag">★ {p_data["nota_vini"]:.1f} / {p_data["nota_roberto"]:.1f}</div>'
+                f'</div>'
+                f'</div>'
+            )
         
-        # Renderização do Campo Verde com os Jogadores inseridos
-        st.markdown(f"""
-        <div class="pitch-container">
-            <div class="pitch-line-center"></div>
-            <div class="pitch-circle"></div>
-            <div class="pitch-penalty-top"></div>
-            <div class="pitch-penalty-bottom"></div>
-            {players_html}
-        </div>
-        """, unsafe_allow_html=True)
+        pitch_html = (
+            f'<div class="pitch-container">'
+            f'<div class="pitch-line-center"></div>'
+            f'<div class="pitch-circle"></div>'
+            f'<div class="pitch-penalty-top"></div>'
+            f'<div class="pitch-penalty-bottom"></div>'
+            f'{players_html}'
+            f'</div>'
+        )
+        
+        st.markdown(pitch_html, unsafe_allow_html=True)
 
 # ==========================================
 # TELA 2: PERFIS DOS JOGADORES & SCOUT
 # ==========================================
 elif menu == "👤 Perfis dos Jogadores & Scout":
     st.title("👤 Ficha Individual do Atleta")
-    st.markdown("<p style='font-size:1.1rem; color:#94a3b8;'>Abra o dossiê detalhado de jogadores de futebol brasileiros*</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:1.15rem; color:#94a3b8;'>Abra o dossiê detalhado de jogadores de futebol brasileiros*</p>", unsafe_allow_html=True)
     
     selected_name = st.selectbox("Escolha o Atleta:", sorted(list(jogadores.keys())))
     p = jogadores[selected_name]
@@ -476,7 +477,7 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
         st.write(p.get("historico", "Nenhuma anotação disponível."))
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Nota de Rodapé elegante solicitada (Acessibilidade e Transparência de Dados)
+    # Rodapé elegante solicitado (Acessibilidade e Transparência de Dados)
     st.markdown("<p class='fine-print'>*dados coletados de sites como FIFA, CBF e outras confederações, federações e ligas oficiais de futebol.</p>", unsafe_allow_html=True)
 
 # ==========================================
@@ -603,7 +604,6 @@ with st.sidebar.form("form_sugestao", clear_on_submit=True):
         ["Atleta Faltante", "Sugestão de Melhoria"]
     )
     
-    # Campo genérico para mensagem/justificativa
     detalhes_sugestao = st.text_area(
         "Escreva sua mensagem:*",
         placeholder="Se escolheu Atleta: Nome, posição, clube e motivo.\nSe escolheu Melhoria: Ideia de nova tela ou recurso..."
