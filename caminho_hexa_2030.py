@@ -344,8 +344,8 @@ TATICAS = {
         "Volante (VOL)": (["Meio-Campo (Defensivo)"], "Andrey Santos", "38%", "45%", "VOL"),
         "Volante Apoio (VOL)": (["Meio-Campo (Apoio)", "Meio-Campo (Defensivo)"], "Bruno Guimarães", "62%", "45%", "VOL"),
         "Meia-Direita (MD)": (["Ponta Direita", "Meio-Campo (Apoio)"], "Estevão", "85%", "55%", "MD"),
-        "Atacante (ATA)": (["Meio-Campo (Criativo)", "Ponta Esquerda", "Ponta Direita", "Centroavante"], "Rodrygo", "35%", "82%", "ATA"),
-        "Atacante Recuado (ATA)": (["Centroavante"], "Endrick", "65%", "82%", "ATA")
+        "Segundo Atacante (SA)": (["Meio-Campo (Criativo)", "Ponta Esquerda", "Ponta Direita", "Centroavante"], "Rodrygo", "35%", "82%", "SA"),
+        "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "82%", "CA")
     },
     "4-4-2 Diamante": {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
@@ -357,8 +357,8 @@ TATICAS = {
         "Mezzala Esquerdo (MCE)": (["Meio-Campo (Apoio)"], "Bruno Guimarães", "32%", "53%", "MCE"),
         "Mezzala Direito (MCD)": (["Meio-Campo (Apoio)", "Meio-Campo (Criativo)"], "Breno Bidon", "68%", "53%", "MCD"),
         "Meia-Armador (MEI)": (["Meio-Campo (Criativo)"], "Rodrygo", "50%", "65%", "MEI"),
-        "Atacante (ATA)": (["Ponta Esquerda", "Ponta Direita", "Centroavante"], "Vini Jr.", "35%", "83%", "ATA"),
-        "Atacante Recuado (ATA)": (["Centroavante"], "Endrick", "65%", "83%", "ATA")
+        "Segundo Atacante (SA)": (["Ponta Esquerda", "Ponta Direita", "Centroavante"], "Vini Jr.", "35%", "83%", "SA"),
+        "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "83%", "CA")
     }
 }
 
@@ -367,7 +367,6 @@ def obter_atletas_compativeis(pos_permitidas):
     for nome, dados in jogadores.items():
         if dados["posicao"] in pos_permitidas:
             filtrados.append(nome)
-        # Regras de versatilidade tática adicionadas de forma robusta
         elif nome == "Lucas Beraldo" and "Meio-Campo (Defensivo)" in pos_permitidas:
             filtrados.append(nome)
         elif nome == "Gabriel Martinelli" and "Meio-Campo (Criativo)" in pos_permitidas:
@@ -385,7 +384,7 @@ menu = st.sidebar.radio(
     ["🏟️ Campo de Jogo (Escalação)", "👤 Perfis dos Jogadores & Scout", "📋 Gestão do Roster", "📊 Análise de Opiniões"]
 )
 
-# Inicialização padrão para evitar bugs de carregamento do app
+# Inicialização padrão para 4-3-3 Clássico
 if "escalados" not in st.session_state:
     st.session_state.escalados = {
         "Goleiro (GOL)": "Alisson",
@@ -422,7 +421,7 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
     with col_config:
         st.markdown("### 📋 Calibrar Escalação")
         
-        # 1. Seletor de Esquemas Táticos de Carlo Ancelotti
+        # Seletor de Esquemas Táticos
         tática_ativa = st.selectbox(
             "Esquema Tático (Carlo Ancelotti):",
             ["4-3-3 Clássico", "4-3-3 Diamante", "4-4-2 Clássico", "4-4-2 Diamante"],
@@ -431,8 +430,7 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         
         layout_ativo = TATICAS[tática_ativa]
         
-        # 2. Sistema Inteligente de Preservação de Escalação
-        # Se mudarmos a tática, tentamos realocar os atletas compatíveis já escolhidos antes de resetar para o padrão!
+        # Realinhador inteligente de escalação na mudança de esquema
         if "ultima_formacao" not in st.session_state or st.session_state.ultima_formacao != tática_ativa:
             nova_escalacao = {}
             for slot, info in layout_ativo.items():
@@ -442,8 +440,10 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
                 if "escalados" in st.session_state:
                     for old_slot, old_player in st.session_state.escalados.items():
                         if old_player in jogadores and jogadores[old_player]["posicao"] in pos_validas:
-                            atleta_reutilizado = old_player
-                            break
+                            # Garante que não vamos duplicar o jogador na reestruturação inicial
+                            if old_player not in nova_escalacao.values():
+                                atleta_reutilizado = old_player
+                                break
                             
                 nova_escalacao[slot] = atleta_reutilizado if atleta_reutilizado else atleta_padrao
                 
@@ -453,23 +453,48 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
 
         st.write("Substitua os titulares respeitando a posição de origem do atleta.")
         
-        # 3. Renderizar os Dropdowns dinamicamente com base na tática ativa
+        # RENDERIZADOR DOS DROPDOWNS COM ALGORITMO DE PREVENÇÃO DE DUPLICATAS
         novos_titulares = {}
         for slot, info in layout_ativo.items():
             pos_validas = info[0]
             valid_names = obter_atletas_compativeis(pos_validas)
-            if not valid_names:
-                valid_names = [st.session_state.escalados.get(slot, info[1])]
-                
-            default_val = st.session_state.escalados.get(slot, info[1])
-            idx = valid_names.index(default_val) if default_val in valid_names else 0
             
-            novos_titulares[slot] = st.selectbox(
+            # 1. Filtramos quem já foi escalado nos dropdowns anteriores deste mesmo loop
+            selecionados_outros = list(novos_titulares.values())
+            available_choices = [name for name in valid_names if name not in selecionados_outros]
+            
+            # Se todas as opções posições válidas acabarem (gargalo de elenco no JSON), voltamos para a base de compatíveis
+            if not available_choices:
+                available_choices = valid_names
+            
+            # 2. Resgatamos o valor padrão ou atualmente selecionado
+            default_val = st.session_state.escalados.get(slot, info[1])
+            
+            # 3. Se o jogador pretendido já estiver escalado em outro setor, o sistema re-aloca automaticamente
+            # escolhendo o primeiro reserva disponível não duplicado
+            if default_val in selecionados_outros:
+                if available_choices:
+                    default_val = available_choices[0]
+                else:
+                    default_val = info[1]
+            
+            # 4. Forçamos a inclusão do selecionado final no array de opções para evitar quebra no index do widget
+            if default_val not in available_choices:
+                available_choices.append(default_val)
+            
+            available_choices = sorted(list(set(available_choices)))
+            idx = available_choices.index(default_val) if default_val in available_choices else 0
+            
+            escolha_selecionada = st.selectbox(
                 f"{slot}:",
-                valid_names,
+                available_choices,
                 index=idx,
                 key=f"field_{tática_ativa}_{slot}"
             )
+            
+            # Registramos o atleta neste slot para blindar os próximos dropdowns da lista
+            novos_titulares[slot] = escolha_selecionada
+            
         st.session_state.escalados = novos_titulares
 
     with col_campo:
@@ -483,7 +508,7 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         c2.metric("Média Geral (Roberto)", f"{avg_r:.2f}")
         c3.metric("Rating Coletivo", f"{coletivo:.2f}", delta="Candidato ao Título", delta_color="normal")
         
-        # 4. Renderizador do Campo com Coordenadas Dinâmicas
+        # Renderizador do Campo com Coordenadas Dinâmicas
         players_html = ""
         for slot, info in layout_ativo.items():
             left, bottom, pos_tag = info[2], info[3], info[4]
