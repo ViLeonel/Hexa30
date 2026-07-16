@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 # 1. CONFIGURAÇÕES DE TELA & METADADOS
 # ==========================================
 st.set_page_config(
-    page_title="O Caminho para o Hexa | 2030",
+    page_title="O Caminho para o Hexa 2030",
     page_icon="🏆",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -160,9 +160,7 @@ st.markdown("""
         margin-bottom: 10px;
     }
 
-    /* ========================================================== */
-    /* 🚨 CORREÇÃO DE BUG: FORÇADOR DE CORES NA SIDEBAR           */
-    /* ========================================================== */
+    /* Forçador de cores na Sidebar */
     section[data-testid="stSidebar"] {
         background-color: #0c1220 !important;
     }
@@ -176,9 +174,7 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* ========================================================== */
-    /* 🔒 PROTEÇÃO DO CÓDIGO FONTE (OCULTA PORTAS DE ACESSO)      */
-    /* ========================================================== */
+    /* Ocultação de elementos nativos para look premium */
     header[data-testid="stHeader"] {
         display: none !important;
     }
@@ -200,7 +196,6 @@ st.markdown("""
 DATA_FILE = "jogadores_hexa_2030.json"
 
 def carregar_jogadores():
-    # Estrutura de contingência local para o app carregar mesmo se o arquivo JSON estiver vazio/ausente!
     contingencia = {
         "Alisson": {"nome": "Alisson", "posicao": "Goleiro", "clube": "Liverpool", "idade": 33, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 7.0, "nota_roberto": 7.5},
         "Kaiki Bruno": {"nome": "Kaiki Bruno", "posicao": "Lateral Esquerdo", "clube": "Cruzeiro", "idade": 23, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 6.0, "nota_roberto": 6.0},
@@ -221,7 +216,6 @@ def carregar_jogadores():
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
-        # Sincronização automática do nome do criador
         modified = False
         for k, v in data.items():
             if "historico" in v and "Vini Leoneo" in v["historico"]:
@@ -531,14 +525,14 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
         st.markdown("### 📈 Estatísticas & Classificação do Clube na Temporada")
         
         if dados_live:
-            st.write(f"Desempenho atual do clube no campeonato nacional:")
+            st.write("Desempenho atual do clube no campeonato nacional:")
             cbf_df = pd.DataFrame([{
                 "Clube": p.get('clube', 'N/A'),
-                "Divisão": dados_live['serie'],
-                "Posição": dados_live['posicao'],
-                "Pontos": dados_live['pts'],
-                "Jogos": dados_live['jogos'],
-                "Vitórias": dados_live['vitorias']
+                "Divisão": dados_live.get('serie', 'N/A'),
+                "Posição": dados_live.get('posicao', 'N/A'),
+                "Pontos": dados_live.get('pts', 'N/A'),
+                "Jogos": dados_live.get('jogos', 'N/A'),
+                "Vitórias": dados_live.get('vitorias', 'N/A')
             }])
             st.dataframe(cbf_df, use_container_width=True, hide_index=True)
         else:
@@ -726,4 +720,3 @@ with st.sidebar.form("form_sugestao", clear_on_submit=True):
             """, unsafe_allow_html=True)
         else:
             st.sidebar.warning("Insira o texto antes de enviar!")
-}
