@@ -111,7 +111,7 @@ st.markdown("""
     }
     .player-card-pitch {
         background: rgba(9, 13, 22, 0.95);
-        border: 2px solid #eab308; /* Fallback */
+        border: 2px solid #eab308;
         border-radius: 8px;
         padding: 6px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.5);
@@ -203,9 +203,8 @@ ABREVIACOES = {
     "Mezzala esquerdo": "MCE",
     "Mezzala direito": "MCD",
     "Meia-armador": "MEI",
-    "Ponta- अंका": "PE",
-    "Ponta-esquerda": "PE",
-    "Ponta-direita": "PD",
+    "Ponta-esquerdo": "PE",
+    "Ponta-direito": "PD",
     "Segundo atacante": "SA",
     "Centroavante": "CA"
 }
@@ -216,7 +215,6 @@ ABREVIACOES = {
 DATA_FILE = "jogadores_hexa_2030.json"
 
 def normalizar_banco_dados(data):
-    # 1. Ajuste de chaves antigas e unificação de nomes
     if "Vini Jr." in data:
         data["Vinicius Junior"] = data.pop("Vini Jr.")
         data["Vinicius Junior"]["nome"] = "Vinicius Junior"
@@ -225,7 +223,6 @@ def normalizar_banco_dados(data):
         data["Wesley França"] = data.pop("Wesley")
         data["Wesley França"]["nome"] = "Wesley França"
 
-    # 2. Configurações táticas estruturais obrigatórias (Múltiplas Posições & Clubes Reais)
     atualizacoes_obrigatorias = {
         "Wesley França": {"posicao": "Lateral-direito", "posicoes_multiplas": ["Lateral-direito", "Lateral-esquerdo"], "clube": "Roma"},
         "Denner": {"posicao": "Lateral-esquerdo", "posicoes_multiplas": ["Lateral-esquerdo"], "clube": "Chelsea"},
@@ -233,11 +230,11 @@ def normalizar_banco_dados(data):
         "Lucas Beraldo": {"posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro", "Lateral-esquerdo"], "clube": "Paris Saint-Germain"},
         "Andrey Santos": {"posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Lateral-esquerdo"], "clube": "Chelsea"},
         "Bruno Guimarães": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"], "clube": "Newcastle"},
-        "Rodrygo": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante"], "clube": "Real Madrid"},
+        "Rodrygo": {"posicao": "Ponta-direito", "posicoes_multiplas": ["Ponta-direito", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante"], "clube": "Real Madrid"},
         "Breno Bidon": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante", "Meia-armador"], "clube": "Corinthians"},
         "Gabriel Mec": {"posicao": "Meia-armador", "posicoes_multiplas": ["Meia-armador", "Ponta-esquerda", "Segundo atacante"], "clube": "Grêmio"},
         "Vinicius Junior": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Segundo atacante", "Centroavante"], "clube": "Real Madrid"},
-        "Estevão": {"posicao": "Ponta-专业", "posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Meia-armador"], "clube": "Palmeiras"},
+        "Estevão": {"posicao": "Ponta-direito", "posicoes_multiplas": ["Ponta-day", "Ponta-direito", "Meia-armador"], "clube": "Palmeiras"},
         "Gabriel Martinelli": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Meia-armador", "Mezzala esquerdo"], "clube": "Arsenal"}
     }
 
@@ -246,12 +243,12 @@ def normalizar_banco_dados(data):
             for campo, valor in campos.items():
                 data[jogador][campo] = valor
 
-    # 3. INJEÇÃO DOS 5 NOVOS POTENCIAIS JOGADORES (DADOS INSPIRADOS NO TRANSFERMARKT)
+    # Injeção segura das novas estrelas monitoradas via Transfermarkt
     novos_atletas = {
         "Raphinha": {
             "nome": "Raphinha",
             "posicao": "Ponta-esquerda",
-            "posicoes_multiplas": ["Ponta-esquerda", "Ponta-direita", "Meia-armador"],
+            "posicoes_multiplas": ["Ponta-esquerda", "Ponta-direito", "Meia-armador"],
             "clube": "FC Barcelona",
             "idade": 29,
             "grupo": "Reservas",
@@ -264,8 +261,8 @@ def normalizar_banco_dados(data):
         },
         "Luiz Henrique": {
             "nome": "Luiz Henrique",
-            "posicao": "Ponta-慢", "posicao": "Ponta-direita",
-            "posicoes_multiplas": ["Ponta-digital", "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Segundo atacante"],
+            "posicao": "Ponta-direito",
+            "posicoes_multiplas": ["Ponta-direito", "Ponta-esquerda", "Segundo atacante"],
             "clube": "Zenit São Petersburgo",
             "idade": 25,
             "grupo": "Observação",
@@ -286,7 +283,7 @@ def normalizar_banco_dados(data):
             "tipo": "Certeza Atual",
             "nota_vini": 7.0,
             "nota_roberto": 7.0,
-            "pontos_fortes": "Excelente mobilidade fora da área, capacidade associativa de pivô e facilidade para quebrar linhas.",
+            "pontos_fortes": "Excelente mobility fora da área, capacidade associativa de pivô e facilidade para quebrar linhas.",
             "pontos_fracos": "Falta de maior regularidade artilheira dentro da pequena área.",
             "historico": "Visto como opção versátil para o ataque, integrando perfeitamente os papéis de SA ou CA."
         },
@@ -301,8 +298,8 @@ def normalizar_banco_dados(data):
             "nota_vini": 8.0,
             "nota_roberto": 8.0,
             "pontos_fortes": "Capacidade física absurda, motor box-to-box infatigável e ótimos desarmes de transição.",
-            "pontos_fracos": "Refino técnico de passe refinado em blocos defensivos extremamente baixos.",
-            "historico": "Aprovado unanimemente como peça de alto vigor físico para rodar o meio-campo nos jogos intensos."
+            "pontos_fracos": "Refino técnico de passe em blocos defensivos extremamente baixos.",
+            "historico": "Aprovado unanimemente como peça de alto vigor físico para rodar o meio-campismo nos jogos intensos."
         },
         "João Gomes": {
             "nome": "João Gomes",
@@ -324,7 +321,6 @@ def normalizar_banco_dados(data):
         if nome not in data:
             data[nome] = dados
 
-    # 4. Limpeza e padronização fonética de posições no JSON
     pos_map_limpeza = {
         "Goleiro": "Goleiro",
         "Lateral Esquerdo": "Lateral-esquerdo",
@@ -338,8 +334,10 @@ def normalizar_banco_dados(data):
         "Volante": "Volante",
         "Meio-Campo (Apoio)": "Mezzala esquerdo",
         "Meio-Campo (Criativo)": "Meia-armador",
-        "Ponta Esquerda": "Ponta-whitespace", "Ponta Esquerda": "Ponta-esquerda", "Ponta-esquerda": "Ponta-esquerda",
-        "Ponta Direita": "Ponta-direita", "Ponta-direita": "Ponta-direita",
+        "Ponta Esquerda": "Ponta-esquerda",
+        "Ponta-esquerda": "Ponta-esquerda",
+        "Ponta Direita": "Ponta-base",
+        "Ponta-direita": "Ponta-direita",
         "Centroavante": "Centroavante"
     }
 
@@ -362,10 +360,10 @@ def carregar_jogadores():
         "Wesley França": {"nome": "Wesley França", "posicao": "Lateral-direito", "clube": "Roma", "idade": 22, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 7.5, "posicoes_multiplas": ["Lateral-direito", "Lateral-esquerdo"]},
         "Andrey Santos": {"nome": "Andrey Santos", "posicao": "Volante", "clube": "Chelsea", "idade": 22, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 8.0, "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Lateral-esquerdo"]},
         "Bruno Guimarães": {"nome": "Bruno Guimarães", "posicao": "Mezzala esquerdo", "clube": "Newcastle", "idade": 28, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 8.5, "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"]},
-        "Rodrygo": {"nome": "Rodrygo", "posicao": "Ponta-alta", "posicao": "Ponta-direita", "clube": "Real Madrid", "idade": 25, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 8.0, "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante"]},
+        "Rodrygo": {"nome": "Rodrygo", "posicao": "Ponta-direito", "clube": "Real Madrid", "idade": 25, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 8.0, "posicoes_multiplas": ["Ponta-direito", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante"]},
         "Vinicius Junior": {"nome": "Vinicius Junior", "posicao": "Ponta-esquerda", "clube": "Real Madrid", "idade": 26, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 9.0, "nota_roberto": 9.0, "posicoes_multiplas": ["Ponta-esquerda", "Segundo atacante", "Centroavante"]},
         "Endrick": {"nome": "Endrick", "posicao": "Centroavante", "clube": "Real Madrid", "idade": 19, "grupo": "Titulares", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 9.0, "posicoes_multiplas": ["Centroavante"]},
-        "Estevão": {"nome": "Estevão", "posicao": "Ponta-direita", "clube": "Palmeiras", "idade": 19, "grupo": "Titulares", "tipo": "Promessa 2030", "nota_vini": 9.0, "nota_roberto": 10.0, "posicoes_multiplas": ["Ponta-direita", "Meia-armador"]}
+        "Estevão": {"nome": "Estevão", "posicao": "Ponta-direito", "clube": "Palmeiras", "idade": 19, "grupo": "Titulares", "tipo": "Promessa 2030", "nota_vini": 9.0, "nota_roberto": 10.0, "posicoes_multiplas": ["Ponta-direito", "Meia-armador"]}
     }
     
     if not os.path.exists(DATA_FILE):
@@ -417,7 +415,7 @@ def buscar_classificacao_cbf():
                 tabela = soup.find("table") or soup.find(class_="table") or soup.find(class_="tabela-completa")
                 if tabela:
                     linhas = tabela.find_all("tr")
-                    for linha in linhas[1:]:
+                    for linha in lines = linhas[1:]:
                         colunas = linha.find_all("td")
                         if len(colunas) >= 5:
                             pos_crua = colunas[0].text.strip()
@@ -432,7 +430,7 @@ def buscar_classificacao_cbf():
                             dados_cbf[nome_chave] = {
                                 "posicao": f"{posicao}º",
                                 "pts": pts,
-                                "jogos": games = jogos,
+                                "jogos": jogos,
                                 "vitorias": vitorias,
                                 "serie": serie
                             }
@@ -475,9 +473,9 @@ TATICAS = {
         "Volante (VOL)": (["Volante"], "Andrey Santos", "38%", "46%", "VOL"),
         "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "46%", "VOL"),
         "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "58%", "MEI"),
-        "Ponta-esquerda (PE)": (["Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
+        "Ponta-esquerdo (PE)": (["Ponta-Refined", "Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "84%", "CA"),
-        "Ponta-direita (PD)": (["Ponta-direita"], "Estevão", "80%", "80%", "PD")
+        "Ponta-direito (PD)": (["Ponta-direito"], "Estevão", "80%", "80%", "PD")
     },
     "4-3-3 Diamante": {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
@@ -488,9 +486,9 @@ TATICAS = {
         "Volante (VOL)": (["Volante"], "Andrey Santos", "50%", "43%", "VOL"),
         "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "32%", "53%", "MCE"),
         "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "Breno Bidon", "68%", "53%", "MCD"),
-        "Ponta-esquerda (PE)": (["Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
+        "Ponta-esquerdo (PE)": (["Ponta-esquerda"], "Vinicius Junior", "20%", "80%", "PE"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "84%", "CA"),
-        "Ponta-direita (PD)": (["Ponta-direita"], "Estevão", "80%", "80%", "PD")
+        "Ponta-direito (PD)": (["Ponta-direito"], "Estevão", "80%", "80%", "PD")
     },
     "4-4-2 Clássico": {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
@@ -498,11 +496,11 @@ TATICAS = {
         "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
         "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
-        "Meia-Esquerda (ME)": (["Ponta-esquerda", "Mezzala esquerdo", "Lateral-esquerdo"], "Vinicius Junior", "15%", "55%", "ME"),
+        "Meia-Esquerda (ME)": (["Ponta-Core", "Ponta-esquerda", "Mezzala esquerdo", "Lateral-esquerdo"], "Vinicius Junior", "15%", "55%", "ME"),
         "Volante (VOL)": (["Volante"], "Andrey Santos", "38%", "45%", "VOL"),
         "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "45%", "VOL"),
-        "Meia-Direita (MD)": (["Ponta-direita", "Lateral-direito"], "Estevão", "85%", "55%", "MD"),
-        "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-mapped", "Ponta-esquerda", "Ponta-direita", "Meia-armador"], "Rodrygo", "35%", "82%", "SA"),
+        "Meia-Direita (MD)": (["Ponta-direito", "Lateral-direito"], "Estevão", "85%", "55%", "MD"),
+        "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-esquerda", "Ponta-direito", "Meia-armador"], "Rodrygo", "35%", "82%", "SA"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "82%", "CA")
     },
     "4-4-2 Diamante": {
@@ -515,7 +513,7 @@ TATICAS = {
         "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "32%", "53%", "MCE"),
         "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "Breno Bidon", "68%", "53%", "MCD"),
         "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "65%", "MEI"),
-        "Segundo Atacante (SA)": (["Ponta-esquerda", "Ponta-Core", "Ponta-esquerda", "Ponta-专业", "Ponta-direita", "Segundo atacante", "Centroavante"], "Vinicius Junior", "35%", "83%", "SA"),
+        "Segundo Atacante (SA)": (["Ponta-esquerda", "Ponta-direito", "Segundo atacante", "Centroavante"], "Vinicius Junior", "35%", "83%", "SA"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "83%", "CA")
     }
 }
@@ -565,7 +563,7 @@ if "escalados" not in st.session_state:
         "Meia-Armador (MEI)": "Rodrygo",
         "Ponta-esquerda (PE)": "Vinicius Junior",
         "Centroavante (CA)": "Endrick",
-        "Ponta-direita (PD)": "Estevão"
+        "Ponta-direito (PD)": "Estevão"
     }
 
 # ==========================================
@@ -681,7 +679,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
                     match_index = idx
                     break
             
-            # Atribuição estrita de cores (Verde Claro, Amarelo Matte ou Laranja)
             if match_index == 0:
                 border_color = "#22c55e"  # Verde Claro (Primária)
             elif match_index == 1:
@@ -724,7 +721,7 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
                 <span style="display: inline-block; width: 12px; height: 12px; background-color: #eab308; border-radius: 50%;"></span>
                 <b>Linha Amarela:</b> Função Secundária (Atleta adaptado no setor)
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 9.5pt; color: #f97316; border-radius: 50%;"></span>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 9.5pt; color: #f8fafc;">
                 <span style="display: inline-block; width: 12px; height: 12px; background-color: #f97316; border-radius: 50%;"></span>
                 <b>Linha Laranja:</b> Função Terciária (Opção emergencial de elenco)
             </div>
@@ -889,7 +886,7 @@ elif menu == "📋 Gestão do Roster":
             new_pos = st.selectbox("Posição Principal*", [
                 "Goleiro", "Lateral-direito", "Lateral-esquerdo", 
                 "Zagueiro", "Volante", "Mezzala esquerdo", "Mezzala direito", "Meia-armador",
-                "Ponta-esquerda", "Ponta-direita", "Centroavante"
+                "Ponta-esquerda", "Ponta-direito", "Centroavante"
             ])
             new_clube = st.text_input("Clube Atual")
             new_idade = st.number_input("Idade em 2026", min_value=15, max_value=45, value=22)
