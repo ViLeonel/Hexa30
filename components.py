@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import html
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import streamlit as st
@@ -15,12 +15,20 @@ from data import (
     valor_mercado_atual,
     valor_mercado_maximo,
 )
-from taticas import ABREVIACOES, indice_adaptabilidade
+from taticas import ABREVIACOES, LIMITE_CONVOCADOS, LIMITE_RESERVAS, LIMITE_TITULARES, SlotTatico, indice_adaptabilidade
 
 
 def _esc(valor: Any, padrao: str = "N/A") -> str:
     texto = padrao if valor in (None, "", []) else str(valor)
     return html.escape(texto)
+
+
+def _nota_texto(valor: Any) -> str:
+    try:
+        numero = float(valor)
+    except (TypeError, ValueError):
+        return "Sem nota"
+    return f"{numero:.1f}".replace(".", ",") if numero > 0 else "Sem nota"
 
 
 def render_cabecalho(titulo: str, subtitulo: str) -> None:
@@ -29,28 +37,39 @@ def render_cabecalho(titulo: str, subtitulo: str) -> None:
 
 
 def render_campo(
-    layout: Mapping[str, tuple[list[str], str, str, str, str]],
+    layout: Mapping[str, SlotTatico],
     escalados: Mapping[str, str],
     jogadores: Mapping[str, Mapping[str, Any]],
 ) -> None:
     cards: list[str] = []
     cores = {0: "#22C55E", 1: "#EAB308"}
 
-    for slot, (permitidas, padrao, left, bottom, tag) in layout.items():
-        nome = escalados.get(slot, padrao)
-        dados = jogadores.get(nome, {"nome": nome, "nota_vini": 0.0, "nota_roberto": 0.0})
-        indice = indice_adaptabilidade(dados, permitidas)
+    for slot, configuracao in layout.items():
+        nome = escalados.get(slot)
+        if not nome or nome not in jogadores:
+            cards.append(
+                f'<div class="player-node" style="left:{configuracao.left};bottom:{configuracao.bottom};">'
+                '<div class="player-card-pitch player-card-empty">'
+                f'<div class="player-pos-tag">{_esc(configuracao.tag)}</div>'
+                '<div class="player-name-tag">Selecionar atleta</div>'
+                '<div class="player-empty-tag">Vaga aberta</div>'
+                '</div></div>'
+            )
+            continue
+
+        dados = jogadores[nome]
+        indice = indice_adaptabilidade(dados, configuracao.posicoes)
         cor = cores.get(indice, "#F97316" if indice >= 2 else "#EF4444")
         nota_vini = float(dados.get("nota_vini") or 0.0)
         nota_roberto = float(dados.get("nota_roberto") or 0.0)
 
         cards.append(
-            f'<div class="player-node" style="left:{left};bottom:{bottom};">'
+            f'<div class="player-node" style="left:{configuracao.left};bottom:{configuracao.bottom};">'
             f'<div class="player-card-pitch" style="border-color:{cor}!important;">'
-            f'<div class="player-pos-tag">{_esc(tag)}</div>'
+            f'<div class="player-pos-tag">{_esc(configuracao.tag)}</div>'
             f'<div class="player-name-tag" title="{_esc(dados.get("nome", nome))}">{_esc(dados.get("nome", nome))}</div>'
             f'<div class="player-rating-tag">★ {nota_vini:.1f} / {nota_roberto:.1f}</div>'
-            "</div></div>"
+            '</div></div>'
         )
 
     campo = (
@@ -60,7 +79,7 @@ def render_campo(
         '<div class="pitch-penalty-top"></div>'
         '<div class="pitch-penalty-bottom"></div>'
         f'{"".join(cards)}'
-        "</div>"
+        '</div>'
     )
     st.markdown(campo, unsafe_allow_html=True)
 
@@ -72,24 +91,53 @@ def render_legenda_adaptabilidade() -> None:
             <div class="legend-item"><span class="legend-dot" style="background:#22C55E"></span><b>Verde:</b> função primária</div>
             <div class="legend-item"><span class="legend-dot" style="background:#EAB308"></span><b>Amarela:</b> função secundária</div>
             <div class="legend-item"><span class="legend-dot" style="background:#F97316"></span><b>Laranja:</b> função terciária</div>
-            <div class="legend-item"><span class="legend-dot" style="background:#EF4444"></span><b>Vermelha:</b> incompatibilidade</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#64748B"></span><b>Cinza:</b> vaga não preenchida</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
 
-def calcular_resumo_elenco(titulares: list[Mapping[str, Any]]) -> dict[str, float | int]:
-    idades = [int(j.get("idade", 0)) for j in titulares if j.get("idade")]
-    alturas = [extrair_altura_metros(j.get("tm_altura"), 0.0) for j in titulares]
-    alturas_validas = [v for v in alturas if v > 0]
-    valores_atuais = [valor_mercado_atual(j) for j in titulares]
-    valores_atuais_validos = [v for v in valores_atuais if v > 0]
-    valores_maximos = [valor_mercado_maximo(j) for j in titulares]
-    valores_maximos_validos = [v for v in valores_maximos if v > 0]
+def render_banco_reservas(
+    reservas: Sequence[str],
+    jogadores: Mapping[str, Mapping[str, Any]],
+) -> None:
+    st.markdown(f"### Banco de reservas ({len(reservas)}/{LIMITE_RESERVAS})")
+    if not reservas:
+        st.info("Nenhum reserva selecionado. É possível convocar até 15 jogadores para o banco.")
+        return
+
+    cards: list[str] = []
+    for nome in reservas:
+        dados = jogadores.get(nome, {})
+        posicao = str(dados.get("posicao") or "N/A")
+        sigla = ABREVIACOES.get(posicao, "OBS")
+        cards.append(
+            '<div class="bench-card">'
+            f'<div class="bench-number">{_esc(sigla)}</div>'
+            f'<div class="bench-name">{_esc(nome)}</div>'
+            f'<div class="bench-club">{_esc(dados.get("clube"))}</div>'
+            '</div>'
+        )
+
+    st.markdown(
+        '<div class="bench-box"><div class="bench-grid">'
+        + ''.join(cards)
+        + '</div></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def calcular_resumo_elenco(elenco: Sequence[Mapping[str, Any]]) -> dict[str, float | int]:
+    idades = [int(j.get("idade", 0)) for j in elenco if j.get("idade")]
+    alturas = [extrair_altura_metros(j.get("tm_altura"), 0.0) for j in elenco]
+    alturas_validas = [valor for valor in alturas if valor > 0]
+    valores_atuais = [valor_mercado_atual(j) for j in elenco]
+    valores_atuais_validos = [valor for valor in valores_atuais if valor > 0]
+    valores_maximos = [valor_mercado_maximo(j) for j in elenco]
+    valores_maximos_validos = [valor for valor in valores_maximos if valor > 0]
 
     return {
-        "idade_2026": sum(idades) / len(idades) if idades else 0.0,
         "idade_2030": (sum(idades) / len(idades) + 4) if idades else 0.0,
         "altura_media": sum(alturas_validas) / len(alturas_validas) if alturas_validas else 0.0,
         "valor_atual": sum(valores_atuais_validos),
@@ -99,8 +147,16 @@ def calcular_resumo_elenco(titulares: list[Mapping[str, Any]]) -> dict[str, floa
     }
 
 
-def render_resumo_elenco(titulares: list[Mapping[str, Any]]) -> None:
-    resumo = calcular_resumo_elenco(titulares)
+def render_resumo_elenco(
+    titulares: Sequence[Mapping[str, Any]],
+    reservas: Sequence[Mapping[str, Any]],
+) -> None:
+    elenco = [*titulares, *reservas]
+    if not elenco:
+        st.info("Preencha os titulares e os reservas para gerar o raio-X da convocação.")
+        return
+
+    resumo = calcular_resumo_elenco(elenco)
     atual = float(resumo["valor_atual"])
     maximo = float(resumo["valor_maximo"])
     percentual = (atual / maximo * 100.0) if maximo > 0 else 0.0
@@ -109,14 +165,15 @@ def render_resumo_elenco(titulares: list[Mapping[str, Any]]) -> None:
         f"""
         <div class="summary-box">
             <div class="summary-grid">
-                <div><div class="summary-label">Idade média 2026</div><div class="summary-value">{resumo['idade_2026']:.1f}</div></div>
-                <div><div class="summary-label">Idade média 2030</div><div class="summary-value" style="color:#EAB308">{resumo['idade_2030']:.1f}</div></div>
-                <div><div class="summary-label">Altura média</div><div class="summary-value">{resumo['altura_media']:.2f} m</div></div>
+                <div><div class="summary-label">Titulares</div><div class="summary-value">{len(titulares)}/{LIMITE_TITULARES}</div></div>
+                <div><div class="summary-label">Reservas</div><div class="summary-value">{len(reservas)}/{LIMITE_RESERVAS}</div></div>
+                <div><div class="summary-label">Convocados</div><div class="summary-value" style="color:#EAB308">{len(elenco)}/{LIMITE_CONVOCADOS}</div></div>
+                <div><div class="summary-label">Idade média em 2030</div><div class="summary-value">{resumo['idade_2030']:.1f}</div></div>
                 <div><div class="summary-label">Valor atual</div><div class="summary-value" style="color:#22C55E">{formatar_valor_milhoes(atual)}</div></div>
                 <div><div class="summary-label">Atual / pico</div><div class="summary-value">{percentual:.0f}%</div></div>
             </div>
-            <div style="color:#94A3B8;font-size:.72rem;text-align:center;margin-top:12px;">
-                Cobertura: mercado de {int(resumo['cobertura_mercado'])}/11 atletas; altura de {int(resumo['cobertura_altura'])}/11.
+            <div class="summary-footnote">
+                Cobertura dos {len(elenco)} selecionados: mercado de {int(resumo['cobertura_mercado'])}; altura de {int(resumo['cobertura_altura'])}.
             </div>
         </div>
         """,
@@ -136,7 +193,6 @@ def render_cartao_perfil(nome: str, dados: Mapping[str, Any]) -> None:
         f"""
         <div class="profile-card">
             <h2>{_esc(dados.get('nome', nome))}</h2>
-            <span class="status-pill">{_esc(dados.get('tipo', 'Observação'))}</span>
             <div class="profile-details">
                 <b>Posições do projeto:</b> {_esc(' / '.join(siglas))}<br>
                 <b>Clube atual:</b> {_esc(dados.get('clube'))}<br>
@@ -144,6 +200,27 @@ def render_cartao_perfil(nome: str, dados: Mapping[str, Any]) -> None:
                 <b>Idade em 2026:</b> {int(dados.get('idade', 22))} anos<br>
                 <b>Idade em 2030:</b> <span style="color:#EAB308;font-weight:800">{int(dados.get('idade', 22)) + 4} anos</span>
             </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_avaliacao_leitura(dados: Mapping[str, Any]) -> None:
+    nota_vini = float(dados.get("nota_vini") or 0.0)
+    nota_roberto = float(dados.get("nota_roberto") or 0.0)
+    notas_validas = [nota for nota in (nota_vini, nota_roberto) if nota > 0]
+    media = sum(notas_validas) / len(notas_validas) if notas_validas else 0.0
+
+    st.markdown(
+        f"""
+        <div class="rating-box">
+            <div class="rating-grid">
+                <div class="rating-card"><div class="rating-label">Vini</div><div class="rating-value">{_nota_texto(nota_vini)}</div></div>
+                <div class="rating-card"><div class="rating-label">Roberto</div><div class="rating-value">{_nota_texto(nota_roberto)}</div></div>
+                <div class="rating-card"><div class="rating-label">Média</div><div class="rating-value rating-gold">{_nota_texto(media)}</div></div>
+            </div>
+            <div class="rating-note">Registro editorial somente para leitura.</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -184,8 +261,8 @@ def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
     st.markdown(
         '<div class="market-card" style="border-left-color:#3B82F6">'
         + '<div style="color:#CBD5E1;line-height:1.85;font-size:.88rem">'
-        + "<br>".join(linhas)
-        + "</div></div>",
+        + '<br>'.join(linhas)
+        + '</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -211,7 +288,7 @@ def render_comparativo_mercado(dados: Mapping[str, Any]) -> None:
             </div>
             <div class="market-label">Valor atual equivale a {percentual_exibido:.0f}% do pico de carreira</div>
             <div class="progress-track"><div class="progress-fill" style="width:{max(0, min(percentual_exibido, 100)):.1f}%"></div></div>
-            <div style="color:#94A3B8;font-size:.72rem;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div class="market-dates">
                 <span>Pico registrado em {_esc(dados.get('tm_data_valor_maximo'))}</span>
                 <span>Última atualização: {_esc(dados.get('tm_ultima_atualizacao'))}</span>
             </div>

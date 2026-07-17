@@ -1,16 +1,17 @@
-# Instruções de substituição no GitHub
+# Deploy no GitHub e Streamlit Cloud
 
-1. Faça um download de segurança dos arquivos atuais do repositório.
-2. Na raiz do repositório `caminhoparaohexa`, substitua:
+1. Descompacte o pacote.
+2. Envie todos os arquivos para a raiz do repositório, substituindo as versões anteriores.
+3. Confirme que estes arquivos estão no mesmo nível:
    - `caminho_hexa_2030.py`
-   - `jogadores_hexa_2030.json`
-   - `requirements.txt`
-3. Adicione, também na raiz:
    - `data.py`
    - `taticas.py`
    - `components.py`
    - `styles.py`
-4. O arquivo principal configurado no Streamlit continua sendo `caminho_hexa_2030.py`.
-5. Faça o commit das alterações. O Streamlit Community Cloud deverá reconstruir o app porque o `requirements.txt` também foi alterado.
+   - `jogadores_hexa_2030.json`
+   - `requirements.txt`
+4. Faça o commit no branch `main`.
+5. No Streamlit Cloud, mantenha `caminho_hexa_2030.py` como entrypoint.
+6. Reinicie o app caso o redeploy não ocorra automaticamente.
 
-Não envie para o GitHub arquivos locais terminados em `.bak`, `.tmp`, pastas `__pycache__` ou o ZIP deste pacote.
+O JSON continua sendo a fonte temporária de dados. Alterações feitas pelo formulário de cadastro no ambiente do Streamlit Cloud não têm garantia de sobreviver a uma reconstrução; para o estágio atual, atualizações permanentes devem ser consolidadas no JSON do GitHub.

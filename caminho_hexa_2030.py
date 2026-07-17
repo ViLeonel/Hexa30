@@ -9,6 +9,8 @@ import pandas as pd
 import streamlit as st
 
 from components import (
+    render_avaliacao_leitura,
+    render_banco_reservas,
     render_cabecalho,
     render_campo,
     render_cartao_perfil,
@@ -21,7 +23,6 @@ from components import (
 from data import (
     DataIntegrityError,
     adicionar_jogador,
-    atualizar_avaliacoes,
     carregar_jogadores,
     formatar_valor_milhoes,
     percentual_do_pico,
@@ -31,6 +32,7 @@ from data import (
 )
 from styles import PAGE_CONFIG, aplicar_estilos
 from taticas import (
+    LIMITE_RESERVAS,
     POSICOES_OFICIAIS,
     TATICAS,
     formatar_jogador_com_posicao,
@@ -70,13 +72,18 @@ menu = st.sidebar.radio(
 )
 
 
-def _escalacao_inicial() -> dict[str, str]:
-    primeira_tatica = next(iter(TATICAS.values()))
-    return {slot: info[1] for slot, info in primeira_tatica.items()}
+def _chave_titular(tatica: str, indice: int) -> str:
+    return f"titular::{tatica}::{indice}"
 
 
-if "escalados" not in st.session_state:
-    st.session_state.escalados = _escalacao_inicial()
+def _chave_reservas(tatica: str) -> str:
+    return f"reservas::{tatica}"
+
+
+def _limpar_convocacao(tatica: str, total_slots: int) -> None:
+    for indice in range(total_slots):
+        st.session_state.pop(_chave_titular(tatica, indice), None)
+    st.session_state.pop(_chave_reservas(tatica), None)
 
 
 # ==========================================
@@ -85,13 +92,13 @@ if "escalados" not in st.session_state:
 if menu == MENU_CAMPO:
     render_cabecalho(
         "🏆 O Caminho para o Hexa",
-        "Painel tático para planejar a renovação geracional da Seleção Brasileira rumo a 2030.",
+        "Monte os 11 titulares e até 15 reservas, sem atletas pré-selecionados.",
     )
 
     col_config, col_campo = st.columns([1, 2], gap="large")
 
     with col_config:
-        st.markdown("### Calibrar escalação")
+        st.markdown("### Montar convocação")
         tatica_ativa = st.selectbox(
             "Esquema tático:",
             list(TATICAS.keys()),
@@ -99,85 +106,89 @@ if menu == MENU_CAMPO:
         )
         layout_ativo = TATICAS[tatica_ativa]
 
-        if st.session_state.get("ultima_formacao") != tatica_ativa:
-            nova_escalacao: dict[str, str] = {}
-            usados: set[str] = set()
-
-            for slot, info in layout_ativo.items():
-                posicoes_validas, atleta_padrao = info[0], info[1]
-                atleta_reutilizado = None
-
-                for atleta_anterior in st.session_state.escalados.values():
-                    if atleta_anterior in usados or atleta_anterior not in jogadores:
-                        continue
-                    compativeis = obter_atletas_compativeis(jogadores, posicoes_validas)
-                    if atleta_anterior in compativeis:
-                        atleta_reutilizado = atleta_anterior
-                        break
-
-                escolhido = atleta_reutilizado or atleta_padrao
-                if escolhido not in jogadores:
-                    compativeis = obter_atletas_compativeis(jogadores, posicoes_validas)
-                    escolhido = compativeis[0] if compativeis else atleta_padrao
-
-                nova_escalacao[slot] = escolhido
-                usados.add(escolhido)
-
-            st.session_state.escalados = nova_escalacao
-            st.session_state.ultima_formacao = tatica_ativa
+        if st.button("Limpar titulares e reservas", width="stretch"):
+            _limpar_convocacao(tatica_ativa, len(layout_ativo))
             st.rerun()
 
-        st.caption("Os filtros respeitam somente as posições oficiais definidas pelo projeto.")
-        novos_titulares: dict[str, str] = {}
+        st.caption("Cada campo começa vazio e aceita somente atletas compatíveis com as posições oficiais do projeto.")
+        escalados: dict[str, str] = {}
+        selecionados: set[str] = set()
 
-        for slot, info in layout_ativo.items():
-            posicoes_validas = info[0]
-            validos = obter_atletas_compativeis(jogadores, posicoes_validas)
-            ja_escalados = set(novos_titulares.values())
-            disponiveis = [nome for nome in validos if nome not in ja_escalados]
+        for indice, (slot, configuracao) in enumerate(layout_ativo.items()):
+            chave = _chave_titular(tatica_ativa, indice)
+            validos = obter_atletas_compativeis(jogadores, configuracao.posicoes)
+            disponiveis = [nome for nome in validos if nome not in selecionados]
 
-            if not disponiveis:
-                disponiveis = validos
-            if not disponiveis:
-                st.error(f"Não há atletas compatíveis com {slot}.")
-                continue
+            valor_atual = st.session_state.get(chave)
+            if valor_atual not in disponiveis:
+                st.session_state[chave] = None
 
-            atual = st.session_state.escalados.get(slot, info[1])
-            if atual in ja_escalados or atual not in disponiveis:
-                atual = disponiveis[0]
-
-            indice = disponiveis.index(atual)
             escolha = st.selectbox(
                 f"{slot}:",
                 disponiveis,
-                index=indice,
+                index=None,
+                placeholder="Digite para buscar um atleta",
                 format_func=lambda nome, base=jogadores: formatar_jogador_com_posicao(nome, base),
-                key=f"escala_{tatica_ativa}_{slot}",
+                key=chave,
             )
-            novos_titulares[slot] = escolha
+            if escolha:
+                escalados[slot] = escolha
+                selecionados.add(escolha)
 
-        st.session_state.escalados = novos_titulares
+        st.markdown("### Reservas")
+        chave_reservas = _chave_reservas(tatica_ativa)
+        opcoes_reservas = [
+            nome for nome in sorted(jogadores.keys(), key=str.casefold)
+            if nome not in selecionados
+        ]
+        reservas_anteriores = [
+            nome for nome in st.session_state.get(chave_reservas, [])
+            if nome in opcoes_reservas
+        ][:LIMITE_RESERVAS]
+        st.session_state[chave_reservas] = reservas_anteriores
+
+        reservas = st.multiselect(
+            f"Escolha até {LIMITE_RESERVAS} jogadores elegíveis para o banco:",
+            opcoes_reservas,
+            max_selections=LIMITE_RESERVAS,
+            placeholder="Digite para buscar e selecionar reservas",
+            format_func=lambda nome, base=jogadores: formatar_jogador_com_posicao(nome, base),
+            key=chave_reservas,
+        )
+        st.caption(f"{len(escalados)}/11 titulares e {len(reservas)}/{LIMITE_RESERVAS} reservas selecionados.")
 
     with col_campo:
-        render_campo(layout_ativo, st.session_state.escalados, jogadores)
+        render_campo(layout_ativo, escalados, jogadores)
         render_legenda_adaptabilidade()
+        render_banco_reservas(reservas, jogadores)
 
-        titulares = [
+        titulares_dados = [
             jogadores[nome]
-            for nome in st.session_state.escalados.values()
-            if nome in jogadores
+            for slot, nome in escalados.items()
+            if slot in layout_ativo and nome in jogadores
         ]
-        render_resumo_elenco(titulares)
+        reservas_dados = [jogadores[nome] for nome in reservas if nome in jogadores]
+        render_resumo_elenco(titulares_dados, reservas_dados)
 
-        notas_vini = [float(j.get("nota_vini") or 0) for j in titulares if float(j.get("nota_vini") or 0) > 0]
-        notas_roberto = [float(j.get("nota_roberto") or 0) for j in titulares if float(j.get("nota_roberto") or 0) > 0]
-        media_vini = sum(notas_vini) / len(notas_vini) if notas_vini else 0.0
-        media_roberto = sum(notas_roberto) / len(notas_roberto) if notas_roberto else 0.0
+        if titulares_dados:
+            notas_vini = [
+                float(j.get("nota_vini") or 0)
+                for j in titulares_dados
+                if float(j.get("nota_vini") or 0) > 0
+            ]
+            notas_roberto = [
+                float(j.get("nota_roberto") or 0)
+                for j in titulares_dados
+                if float(j.get("nota_roberto") or 0) > 0
+            ]
+            media_vini = sum(notas_vini) / len(notas_vini) if notas_vini else 0.0
+            media_roberto = sum(notas_roberto) / len(notas_roberto) if notas_roberto else 0.0
 
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Média Vini", f"{media_vini:.2f}")
-        c2.metric("Média Roberto", f"{media_roberto:.2f}")
-        c3.metric("Média coletiva", f"{((media_vini + media_roberto) / 2):.2f}")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Média Vini", f"{media_vini:.2f}" if notas_vini else "N/A")
+            c2.metric("Média Roberto", f"{media_roberto:.2f}" if notas_roberto else "N/A")
+            coletiva = (media_vini + media_roberto) / 2 if notas_vini and notas_roberto else 0.0
+            c3.metric("Média coletiva", f"{coletiva:.2f}" if coletiva else "N/A")
 
 
 # ==========================================
@@ -186,51 +197,40 @@ if menu == MENU_CAMPO:
 elif menu == MENU_PERFIS:
     render_cabecalho(
         "Ficha Individual do Atleta",
-        "Avaliação editorial, informações contratuais e comparação de valor de mercado.",
+        "Pesquise um atleta para consultar avaliação editorial, contrato e valor de mercado.",
     )
 
     nomes = sorted(jogadores.keys(), key=str.casefold)
-    selected_name = st.selectbox("Escolha o atleta:", nomes)
-    atleta = jogadores[selected_name]
-    st.markdown("---")
+    selected_name = st.selectbox(
+        "Buscar atleta por nome:",
+        nomes,
+        index=None,
+        placeholder="Digite ou selecione o nome do atleta",
+        format_func=lambda nome, base=jogadores: formatar_jogador_com_posicao(nome, base),
+        key="busca_perfil_atleta",
+    )
 
-    col_perfil, col_dados = st.columns([1, 2], gap="large")
+    if selected_name is None:
+        st.info("Digite parte do nome e selecione um atleta para abrir a ficha individual.")
+    else:
+        atleta = jogadores[selected_name]
+        st.markdown("---")
+        col_perfil, col_dados = st.columns([1, 2], gap="large")
 
-    with col_perfil:
-        render_cartao_perfil(selected_name, atleta)
-        st.markdown("### Avaliação tática")
+        with col_perfil:
+            render_cartao_perfil(selected_name, atleta)
+            st.markdown("### Avaliação dos analistas")
+            render_avaliacao_leitura(atleta)
 
-        with st.form(f"avaliacao_{selected_name}"):
-            nota_vini = st.slider(
-                "Nota do Vini",
-                min_value=0.0,
-                max_value=10.0,
-                value=float(atleta.get("nota_vini") or 0.0),
-                step=0.1,
-            )
-            nota_roberto = st.slider(
-                "Nota do Roberto",
-                min_value=0.0,
-                max_value=10.0,
-                value=float(atleta.get("nota_roberto") or 0.0),
-                step=0.1,
-            )
-            salvar_notas = st.form_submit_button("Salvar avaliações", width="stretch")
+        with col_dados:
+            st.markdown("### Valor de mercado")
+            render_comparativo_mercado(atleta)
 
-        if salvar_notas:
-            atualizar_avaliacoes(jogadores, selected_name, nota_vini, nota_roberto)
-            st.success("Avaliações salvas no JSON.")
-            st.rerun()
+            with st.expander("Dados externos e contratuais", expanded=True):
+                render_dados_transfermarkt(atleta)
 
-    with col_dados:
-        st.markdown("### Valor de mercado")
-        render_comparativo_mercado(atleta)
-
-        with st.expander("Dados externos e contratuais", expanded=True):
-            render_dados_transfermarkt(atleta)
-
-        st.markdown("### Dossiê do projeto")
-        render_dossie(atleta)
+            st.markdown("### Dossiê do projeto")
+            render_dossie(atleta)
 
 
 # ==========================================
@@ -239,7 +239,7 @@ elif menu == MENU_PERFIS:
 elif menu == MENU_ROSTER:
     render_cabecalho(
         "Gestão do Roster",
-        "Consulta, filtros e inclusão de atletas. A base não oferece exclusão de jogadores.",
+        "Consulte, filtre e inclua atletas. Nenhum jogador é removido da base.",
     )
 
     tab_base, tab_novo = st.tabs(["Base de jogadores", "Adicionar atleta"])
@@ -284,7 +284,7 @@ elif menu == MENU_ROSTER:
         st.dataframe(df_roster, width="stretch", hide_index=True)
 
     with tab_novo:
-        st.info("O cadastro inclui o atleta no JSON. Nenhum registro existente é removido ou sobrescrito.")
+        st.info("O cadastro inclui um atleta no JSON sem alterar ou excluir registros existentes.")
         with st.form("novo_jogador", clear_on_submit=True):
             col_a, col_b = st.columns(2)
             nome_curto = col_a.text_input("Nome curto*")
@@ -299,10 +299,9 @@ elif menu == MENU_ROSTER:
                 [p for p in POSICOES_OFICIAIS if p != posicao],
             )
 
-            col_e, col_f, col_g = st.columns(3)
+            col_e, col_f = st.columns(2)
             idade = col_e.number_input("Idade em 2026", min_value=15, max_value=45, value=22)
             grupo = col_f.selectbox("Grupo", ["Titulares", "Reservas", "Observação"])
-            tipo = col_g.selectbox("Status", ["Certeza Atual", "Promessa 2030", "Observação"])
 
             pontos_fortes = st.text_area("Pontos fortes")
             pontos_fracos = st.text_area("Pontos fracos")
@@ -322,7 +321,6 @@ elif menu == MENU_ROSTER:
                         "clube": clube or "N/A",
                         "idade": int(idade),
                         "grupo": grupo,
-                        "tipo": tipo,
                         "nota_vini": 0.0,
                         "nota_roberto": 0.0,
                         "pontos_fortes": pontos_fortes,
@@ -441,8 +439,11 @@ elif menu == MENU_ANALISE:
 st.sidebar.markdown("---")
 st.sidebar.subheader("Radar do projeto")
 with st.sidebar.form("form_sugestao", clear_on_submit=True):
-    tipo_sugestao = st.selectbox("Tipo:", ["Sugerir jogador", "Sugestão de melhoria"])
-    detalhes = st.text_area("Mensagem:", placeholder="Escreva sua sugestão...")
+    tipo_sugestao = st.selectbox("Tipo de sugestão:", ["Sugerir jogador", "Sugerir melhoria"])
+    detalhes = st.text_area(
+        "Mensagem:",
+        placeholder="Descreva sua sugestão com o máximo de contexto possível.",
+    )
     enviar = st.form_submit_button("Preparar e-mail")
 
 if enviar:

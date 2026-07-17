@@ -2,42 +2,34 @@
 
 ## Estrutura
 
-- `caminho_hexa_2030.py`: entrada do Streamlit e composição das telas.
-- `data.py`: leitura, validação, migração, enriquecimento e gravação atômica do JSON.
-- `taticas.py`: posições oficiais, abreviações, formações e compatibilidade tática.
-- `components.py`: componentes visuais reutilizáveis.
-- `styles.py`: configuração de página e design system WCAG/mobile-first.
-- `jogadores_hexa_2030.json`: fonte canônica do elenco e dos conteúdos editoriais.
+- `caminho_hexa_2030.py`: entrada do Streamlit e composição das quatro telas.
+- `data.py`: leitura, normalização, self-healing, enriquecimentos externos e gravação atômica do JSON.
+- `taticas.py`: posições oficiais, formações, limite de 11 titulares + 15 reservas e compatibilidade tática.
+- `components.py`: campo, banco de reservas, perfil, avaliações somente para leitura, dossiê e mercado.
+- `styles.py`: design system WCAG e regras responsivas.
+- `jogadores_hexa_2030.json`: fonte canônica e única da base de atletas.
 - `requirements.txt`: dependências do Streamlit Cloud.
 
-## Fonte única de dados
+## Regras de preservação
 
-O JSON é a única base completa de jogadores. O Python contém somente migrações incrementais e dados externos novos usados pelo mecanismo de self-healing. Não há uma segunda cópia integral do elenco dentro do código.
+Os enriquecimentos externos nunca sobrescrevem:
 
-## Preservação de dados
+- notas do Vini e do Roberto;
+- pontos fortes e fracos;
+- histórico das discussões;
+- posições táticas do projeto;
+- grupo e classificação histórica `tipo`.
 
-Os campos abaixo nunca são substituídos por enriquecimentos externos:
+O campo `tipo` permanece no JSON por preservação histórica, mas não é mostrado nem editado no aplicativo.
 
-- `nota_vini`
-- `nota_roberto`
-- `pontos_fortes`
-- `pontos_fracos`
-- `historico`
-- `posicao`
-- `posicoes_multiplas`
-- `grupo`
-- `tipo`
+## Convocação
 
-As gravações são atômicas e mantêm `jogadores_hexa_2030.json.bak` como backup local da versão anterior.
+Cada formação começa vazia. O usuário escolhe:
 
-## Deploy
+- até 11 titulares, respeitando a compatibilidade por posição;
+- até 15 reservas, sem repetir atletas dos titulares;
+- total máximo de 26 convocados.
 
-Mantenha todos os arquivos na raiz do repositório. O entrypoint do Streamlit continua sendo:
+## Dados externos
 
-`caminho_hexa_2030.py`
-
-Após substituir os arquivos no GitHub, o Streamlit Community Cloud deve detectar o novo commit e reiniciar o app.
-
-## Observação de persistência
-
-O sistema de arquivos do Streamlit Community Cloud não deve ser tratado como banco permanente. Alterações feitas pelos sliders e formulários podem se perder em reinícios ou novos deploys. Para persistência real, a próxima evolução recomendada é mover o JSON mutável para Supabase/PostgreSQL ou outro banco externo.
+Campos importados de fontes externas usam o prefixo `tm_`. Valores financeiros são armazenados em texto e também em milhões de euros para cálculos. As posições externas são exibidas como referência e não alteram a Regra do Treinador.

@@ -1,4 +1,4 @@
-"""Configuração visual compartilhada do aplicativo."""
+"""Design system compartilhado do aplicativo."""
 
 from __future__ import annotations
 
@@ -17,8 +17,9 @@ CSS = """
         --navy-950: #020617;
         --navy-900: #0F172A;
         --navy-800: #1E293B;
-        --slate-300: #CBD5E1;
+        --slate-500: #64748B;
         --slate-400: #94A3B8;
+        --slate-300: #CBD5E1;
         --white: #F8FAFC;
         --gold: #EAB308;
         --green: #22C55E;
@@ -55,7 +56,7 @@ CSS = """
         font-size: clamp(.95rem, 2vw, 1.15rem);
         text-align: center;
         margin: 0 auto 1.75rem;
-        max-width: 850px;
+        max-width: 880px;
         line-height: 1.6;
     }
 
@@ -129,6 +130,11 @@ CSS = """
         box-shadow: 0 4px 10px rgba(0, 0, 0, .5);
     }
 
+    .player-card-empty {
+        border-color: var(--slate-500) !important;
+        background: rgba(15, 23, 42, .82);
+    }
+
     .player-pos-tag {
         color: var(--gold);
         font-size: .66rem;
@@ -145,10 +151,9 @@ CSS = """
         text-overflow: ellipsis;
     }
 
-    .player-rating-tag {
+    .player-rating-tag,
+    .player-empty-tag {
         display: inline-block;
-        background-color: var(--gold);
-        color: var(--navy-950);
         font-size: .64rem;
         font-weight: 800;
         border-radius: 4px;
@@ -156,11 +161,23 @@ CSS = """
         margin-top: 3px;
     }
 
+    .player-rating-tag {
+        background-color: var(--gold);
+        color: var(--navy-950);
+    }
+
+    .player-empty-tag {
+        color: var(--slate-300);
+        border: 1px solid var(--slate-500);
+    }
+
     .legend-box,
     .summary-box,
     .profile-card,
     .market-card,
-    .stat-box {
+    .stat-box,
+    .bench-box,
+    .rating-box {
         background-color: var(--navy-950);
         border-radius: 14px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
@@ -191,6 +208,48 @@ CSS = """
         flex: 0 0 auto;
     }
 
+    .bench-box {
+        border: 1px solid var(--navy-800);
+        padding: 14px;
+        margin-bottom: 22px;
+    }
+
+    .bench-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(125px, 1fr));
+        gap: 10px;
+    }
+
+    .bench-card {
+        border: 1px solid var(--navy-800);
+        border-radius: 10px;
+        padding: 10px;
+        min-width: 0;
+    }
+
+    .bench-number {
+        color: var(--gold);
+        font-size: .68rem;
+        font-weight: 800;
+    }
+
+    .bench-name {
+        color: var(--white);
+        font-size: .82rem;
+        font-weight: 800;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bench-club {
+        color: var(--slate-400);
+        font-size: .7rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .summary-box {
         padding: 18px;
         border-top: 4px solid var(--gold);
@@ -199,7 +258,7 @@ CSS = """
 
     .summary-grid {
         display: grid;
-        grid-template-columns: repeat(5, minmax(105px, 1fr));
+        grid-template-columns: repeat(6, minmax(105px, 1fr));
         gap: 12px;
         text-align: center;
     }
@@ -219,6 +278,13 @@ CSS = """
         margin-top: 3px;
     }
 
+    .summary-footnote {
+        color: var(--slate-400);
+        font-size: .72rem;
+        text-align: center;
+        margin-top: 12px;
+    }
+
     .profile-card {
         padding: 24px;
         border: 3px solid var(--gold);
@@ -231,23 +297,54 @@ CSS = """
         font-size: clamp(1.6rem, 4vw, 2.2rem);
     }
 
-    .status-pill {
-        display: inline-block;
-        background-color: var(--navy-800);
-        color: var(--gold);
-        border: 1px solid var(--gold);
-        font-weight: 700;
-        padding: 5px 14px;
-        border-radius: 999px;
-        font-size: .78rem;
-    }
-
     .profile-details {
         margin-top: 18px;
         color: var(--slate-300);
         text-align: left;
         line-height: 1.85;
         font-size: .9rem;
+    }
+
+    .rating-box {
+        padding: 16px;
+        border: 1px solid var(--navy-800);
+    }
+
+    .rating-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .rating-card {
+        background: var(--navy-900);
+        border: 1px solid var(--navy-800);
+        border-radius: 10px;
+        padding: 12px 8px;
+        text-align: center;
+    }
+
+    .rating-label {
+        color: var(--slate-400);
+        font-size: .72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .rating-value {
+        color: var(--white);
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin-top: 3px;
+    }
+
+    .rating-gold { color: var(--gold); }
+
+    .rating-note {
+        color: var(--slate-400);
+        font-size: .72rem;
+        text-align: center;
+        margin-top: 10px;
     }
 
     .market-card {
@@ -295,6 +392,15 @@ CSS = """
         background: linear-gradient(90deg, var(--orange), var(--gold), var(--green));
     }
 
+    .market-dates {
+        color: var(--slate-400);
+        font-size: .72rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
     .stat-box {
         padding: 18px;
         border-left: 6px solid var(--gold);
@@ -323,12 +429,16 @@ CSS = """
         display: none !important;
     }
 
+    @media (max-width: 1100px) {
+        .summary-grid { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
+        .bench-grid { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
+    }
+
     @media (max-width: 900px) {
         .pitch-container { height: 620px; }
         .player-node { width: 112px; }
         .player-name-tag { font-size: .68rem; }
-        .player-rating-tag { font-size: .57rem; }
-        .summary-grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+        .player-rating-tag, .player-empty-tag { font-size: .57rem; }
         .market-grid { grid-template-columns: 1fr; }
     }
 
@@ -341,10 +451,12 @@ CSS = """
         .player-card-pitch { padding: 4px; }
         .player-pos-tag { font-size: .52rem; }
         .player-name-tag { font-size: .58rem; }
-        .player-rating-tag { font-size: .5rem; padding: 1px 3px; }
+        .player-rating-tag, .player-empty-tag { font-size: .5rem; padding: 1px 3px; }
         .legend-box { justify-content: flex-start; gap: 10px; }
         .legend-item { width: 100%; font-size: .75rem; }
         .summary-grid { grid-template-columns: 1fr 1fr; }
+        .bench-grid { grid-template-columns: 1fr 1fr; }
+        .rating-grid { grid-template-columns: 1fr; }
     }
 </style>
 """

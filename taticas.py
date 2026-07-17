@@ -1,12 +1,9 @@
-"""Regras táticas e vocabulário oficial do projeto.
-
-Este módulo não lê nem grava dados. Ele concentra as posições permitidas,
-as formações e as funções de compatibilidade entre atleta e posição.
-"""
+"""Vocabulário oficial, formações e regras de compatibilidade tática."""
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from typing import Any
 
 POSICOES_OFICIAIS: tuple[str, ...] = (
@@ -43,7 +40,8 @@ ABREVIACOES: dict[str, str] = {
     "Centroavante": "CA",
 }
 
-# Migração de grafias antigas ou nomenclaturas externas para o vocabulário do projeto.
+# Migração de grafias antigas e equivalências de fontes externas.
+# Esses aliases servem somente para normalização; a lista oficial acima prevalece.
 ALIASES_POSICAO: dict[str, str] = {
     "Guarda-redes": "Goleiro",
     "Guarda-Redes": "Goleiro",
@@ -73,85 +71,100 @@ ALIASES_POSICAO: dict[str, str] = {
     "Ponta de Lança": "Centroavante",
 }
 
-# Cada slot contém: posições aceitas, atleta padrão, left, bottom e etiqueta curta.
-TATICAS: dict[str, dict[str, tuple[list[str], str, str, str, str]]] = {
+LIMITE_TITULARES = 11
+LIMITE_RESERVAS = 15
+LIMITE_CONVOCADOS = LIMITE_TITULARES + LIMITE_RESERVAS
+
+
+@dataclass(frozen=True, slots=True)
+class SlotTatico:
+    """Configuração visual e posicional de um lugar no campo."""
+
+    posicoes: tuple[str, ...]
+    left: str
+    bottom: str
+    tag: str
+
+
+# Não existem atletas padrão. Cada formação começa vazia e é preenchida pelo usuário.
+TATICAS: dict[str, dict[str, SlotTatico]] = {
     "4-3-3 Diamante": {
-        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
-        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "28%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "22%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "22%", "ZAG"),
-        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "28%", "LD"),
-        "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo", "Meia-esquerda", "Volante"], "Bruno Guimarães", "30%", "52%", "MCE"),
-        "Volante (VOL)": (["Volante"], "André", "50%", "40%", "VOL"),
-        "Mezzala Direito (MCD)": (["Mezzala direito", "Meia-direita", "Volante"], "João Gomes", "70%", "52%", "MCD"),
-        "Ponta-esquerda (PE)": (["Ponta-esquerda", "Segundo atacante"], "Vinicius Junior", "20%", "72%", "PE"),
-        "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "82%", "CA"),
-        "Ponta-direita (PD)": (["Ponta-direita", "Meia-armador"], "Estevão", "80%", "72%", "PD"),
+        "Goleiro (GOL)": SlotTatico(("Goleiro",), "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": SlotTatico(("Lateral-esquerdo",), "15%", "28%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": SlotTatico(("Zagueiro",), "37%", "22%", "ZAG"),
+        "Zagueiro Direito (ZAG)": SlotTatico(("Zagueiro",), "63%", "22%", "ZAG"),
+        "Lateral-direito (LD)": SlotTatico(("Lateral-direito",), "85%", "28%", "LD"),
+        "Mezzala Esquerdo (MCE)": SlotTatico(("Mezzala esquerdo", "Meia-esquerda", "Volante"), "30%", "52%", "MCE"),
+        "Volante (VOL)": SlotTatico(("Volante",), "50%", "40%", "VOL"),
+        "Mezzala Direito (MCD)": SlotTatico(("Mezzala direito", "Meia-direita", "Volante"), "70%", "52%", "MCD"),
+        "Ponta-esquerda (PE)": SlotTatico(("Ponta-esquerda", "Segundo atacante"), "20%", "72%", "PE"),
+        "Centroavante (CA)": SlotTatico(("Centroavante",), "50%", "82%", "CA"),
+        "Ponta-direita (PD)": SlotTatico(("Ponta-direita", "Meia-armador"), "80%", "72%", "PD"),
     },
     "4-3-3 Clássico": {
-        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
-        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "28%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "22%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "22%", "ZAG"),
-        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "28%", "LD"),
-        "Volante (VOL)": (["Volante"], "André", "38%", "45%", "VOL"),
-        "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "45%", "VOL"),
-        "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "60%", "MEI"),
-        "Ponta-esquerda (PE)": (["Ponta-esquerda"], "Vinicius Junior", "20%", "72%", "PE"),
-        "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "82%", "CA"),
-        "Ponta-direita (PD)": (["Ponta-direita"], "Estevão", "80%", "72%", "PD"),
+        "Goleiro (GOL)": SlotTatico(("Goleiro",), "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": SlotTatico(("Lateral-esquerdo",), "15%", "28%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": SlotTatico(("Zagueiro",), "37%", "22%", "ZAG"),
+        "Zagueiro Direito (ZAG)": SlotTatico(("Zagueiro",), "63%", "22%", "ZAG"),
+        "Lateral-direito (LD)": SlotTatico(("Lateral-direito",), "85%", "28%", "LD"),
+        "Volante (VOL)": SlotTatico(("Volante",), "38%", "45%", "VOL"),
+        "Volante Apoio (VOL)": SlotTatico(("Volante", "Mezzala esquerdo", "Mezzala direito"), "62%", "45%", "VOL"),
+        "Meia-Armador (MEI)": SlotTatico(("Meia-armador",), "50%", "60%", "MEI"),
+        "Ponta-esquerda (PE)": SlotTatico(("Ponta-esquerda",), "20%", "72%", "PE"),
+        "Centroavante (CA)": SlotTatico(("Centroavante",), "50%", "82%", "CA"),
+        "Ponta-direita (PD)": SlotTatico(("Ponta-direita",), "80%", "72%", "PD"),
     },
     "4-4-2 Diamante": {
-        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
-        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "28%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "22%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "22%", "ZAG"),
-        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "28%", "LD"),
-        "Volante (VOL)": (["Volante"], "André", "50%", "40%", "VOL"),
-        "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "30%", "52%", "MCE"),
-        "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "João Gomes", "70%", "52%", "MCD"),
-        "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "65%", "MEI"),
-        "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-esquerda", "Ponta-direita", "Centroavante"], "Vinicius Junior", "38%", "78%", "SA"),
-        "Centroavante (CA)": (["Centroavante"], "Endrick", "62%", "78%", "CA"),
+        "Goleiro (GOL)": SlotTatico(("Goleiro",), "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": SlotTatico(("Lateral-esquerdo",), "15%", "28%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": SlotTatico(("Zagueiro",), "37%", "22%", "ZAG"),
+        "Zagueiro Direito (ZAG)": SlotTatico(("Zagueiro",), "63%", "22%", "ZAG"),
+        "Lateral-direito (LD)": SlotTatico(("Lateral-direito",), "85%", "28%", "LD"),
+        "Volante (VOL)": SlotTatico(("Volante",), "50%", "40%", "VOL"),
+        "Mezzala Esquerdo (MCE)": SlotTatico(("Mezzala esquerdo",), "30%", "52%", "MCE"),
+        "Mezzala Direito (MCD)": SlotTatico(("Mezzala direito", "Mezzala esquerdo", "Meia-armador"), "70%", "52%", "MCD"),
+        "Meia-Armador (MEI)": SlotTatico(("Meia-armador",), "50%", "65%", "MEI"),
+        "Segundo Atacante (SA)": SlotTatico(("Segundo atacante", "Ponta-esquerda", "Ponta-direita", "Centroavante"), "38%", "78%", "SA"),
+        "Centroavante (CA)": SlotTatico(("Centroavante",), "62%", "78%", "CA"),
     },
     "4-4-2 Clássico": {
-        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
-        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "28%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "22%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "22%", "ZAG"),
-        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "28%", "LD"),
-        "Meia-esquerda (ME)": (["Meia-esquerda", "Mezzala esquerdo", "Ponta-esquerda"], "Bruno Guimarães", "20%", "55%", "ME"),
-        "Volante Esquerdo (VOL)": (["Volante"], "André", "40%", "45%", "VOL"),
-        "Volante Direito (VOL)": (["Volante"], "João Gomes", "60%", "45%", "VOL"),
-        "Meia-direita (MD)": (["Meia-direita", "Mezzala direito", "Ponta-direita"], "Estevão", "80%", "55%", "MD"),
-        "Segundo Atacante (SA)": (["Segundo atacante", "Meia-armador", "Ponta-esquerda"], "Vinicius Junior", "38%", "78%", "SA"),
-        "Centroavante (CA)": (["Centroavante", "Segundo atacante"], "Endrick", "62%", "78%", "CA"),
+        "Goleiro (GOL)": SlotTatico(("Goleiro",), "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": SlotTatico(("Lateral-esquerdo",), "15%", "28%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": SlotTatico(("Zagueiro",), "37%", "22%", "ZAG"),
+        "Zagueiro Direito (ZAG)": SlotTatico(("Zagueiro",), "63%", "22%", "ZAG"),
+        "Lateral-direito (LD)": SlotTatico(("Lateral-direito",), "85%", "28%", "LD"),
+        "Meia-esquerda (ME)": SlotTatico(("Meia-esquerda", "Mezzala esquerdo", "Ponta-esquerda"), "20%", "55%", "ME"),
+        "Volante Esquerdo (VOL)": SlotTatico(("Volante",), "40%", "45%", "VOL"),
+        "Volante Direito (VOL)": SlotTatico(("Volante",), "60%", "45%", "VOL"),
+        "Meia-direita (MD)": SlotTatico(("Meia-direita", "Mezzala direito", "Ponta-direita"), "80%", "55%", "MD"),
+        "Segundo Atacante (SA)": SlotTatico(("Segundo atacante", "Meia-armador", "Ponta-esquerda"), "38%", "78%", "SA"),
+        "Centroavante (CA)": SlotTatico(("Centroavante", "Segundo atacante"), "62%", "78%", "CA"),
     },
     "4-2-3-1": {
-        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
-        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "28%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "22%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "22%", "ZAG"),
-        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "28%", "LD"),
-        "Volante Esquerdo (VOL)": (["Volante", "Mezzala esquerdo"], "André", "38%", "42%", "VOL"),
-        "Volante Direito (VOL)": (["Volante", "Mezzala direito"], "Bruno Guimarães", "62%", "42%", "VOL"),
-        "Ponta-esquerda (PE)": (["Ponta-esquerda", "Meia-esquerda"], "Vinicius Junior", "20%", "65%", "PE"),
-        "Meia-Armador (MEI)": (["Meia-armador", "Segundo atacante"], "Rodrygo", "50%", "62%", "MEI"),
-        "Ponta-direita (PD)": (["Ponta-direita", "Meia-direita"], "Estevão", "80%", "65%", "PD"),
-        "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "82%", "CA"),
+        "Goleiro (GOL)": SlotTatico(("Goleiro",), "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": SlotTatico(("Lateral-esquerdo",), "15%", "28%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": SlotTatico(("Zagueiro",), "37%", "22%", "ZAG"),
+        "Zagueiro Direito (ZAG)": SlotTatico(("Zagueiro",), "63%", "22%", "ZAG"),
+        "Lateral-direito (LD)": SlotTatico(("Lateral-direito",), "85%", "28%", "LD"),
+        "Volante Esquerdo (VOL)": SlotTatico(("Volante", "Mezzala esquerdo"), "38%", "42%", "VOL"),
+        "Volante Direito (VOL)": SlotTatico(("Volante", "Mezzala direito"), "62%", "42%", "VOL"),
+        "Ponta-esquerda (PE)": SlotTatico(("Ponta-esquerda", "Meia-esquerda"), "20%", "65%", "PE"),
+        "Meia-Armador (MEI)": SlotTatico(("Meia-armador", "Segundo atacante"), "50%", "62%", "MEI"),
+        "Ponta-direita (PD)": SlotTatico(("Ponta-direita", "Meia-direita"), "80%", "65%", "PD"),
+        "Centroavante (CA)": SlotTatico(("Centroavante",), "50%", "82%", "CA"),
     },
     "4-3-2-1 Árvore de Natal": {
-        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
-        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "28%", "LE"),
-        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "22%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "22%", "ZAG"),
-        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "28%", "LD"),
-        "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo", "Volante"], "Bruno Guimarães", "25%", "45%", "MCE"),
-        "Volante (VOL)": (["Volante"], "André", "50%", "42%", "VOL"),
-        "Mezzala Direito (MCD)": (["Mezzala direito", "Volante"], "João Gomes", "75%", "45%", "MCD"),
-        "Meia-Armador Esq (MEI)": (["Meia-armador", "Segundo atacante", "Ponta-esquerda"], "Vinicius Junior", "35%", "65%", "MEI"),
-        "Meia-Armador Dir (MEI)": (["Meia-armador", "Segundo atacante", "Ponta-direita"], "Rodrygo", "65%", "65%", "MEI"),
-        "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "82%", "CA"),
+        "Goleiro (GOL)": SlotTatico(("Goleiro",), "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": SlotTatico(("Lateral-esquerdo",), "15%", "28%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": SlotTatico(("Zagueiro",), "37%", "22%", "ZAG"),
+        "Zagueiro Direito (ZAG)": SlotTatico(("Zagueiro",), "63%", "22%", "ZAG"),
+        "Lateral-direito (LD)": SlotTatico(("Lateral-direito",), "85%", "28%", "LD"),
+        "Mezzala Esquerdo (MCE)": SlotTatico(("Mezzala esquerdo", "Volante"), "25%", "45%", "MCE"),
+        "Volante (VOL)": SlotTatico(("Volante",), "50%", "42%", "VOL"),
+        "Mezzala Direito (MCD)": SlotTatico(("Mezzala direito", "Volante"), "75%", "45%", "MCD"),
+        "Meia-Armador Esq (MEI)": SlotTatico(("Meia-armador", "Segundo atacante", "Ponta-esquerda"), "35%", "65%", "MEI"),
+        "Meia-Armador Dir (MEI)": SlotTatico(("Meia-armador", "Segundo atacante", "Ponta-direita"), "65%", "65%", "MEI"),
+        "Centroavante (CA)": SlotTatico(("Centroavante",), "50%", "82%", "CA"),
     },
 }
 
@@ -196,12 +209,13 @@ def formatar_jogador_com_posicao(nome: str, jogadores: Mapping[str, Mapping[str,
     if not dados:
         return nome
     posicoes = dados.get("posicoes_multiplas") or [dados.get("posicao")]
-    abreviacoes: list[str] = []
+    siglas: list[str] = []
     for posicao in posicoes:
         sigla = ABREVIACOES.get(str(posicao), "OBS")
-        if sigla not in abreviacoes:
-            abreviacoes.append(sigla)
-    return f"{nome} ({'/'.join(abreviacoes)})"
+        if sigla not in siglas:
+            siglas.append(sigla)
+    clube = str(dados.get("clube") or "N/A")
+    return f"{nome} — {clube} — {'/'.join(siglas)}"
 
 
 def indice_adaptabilidade(dados_jogador: Mapping[str, Any], posicoes_permitidas: Iterable[str]) -> int:
@@ -214,19 +228,14 @@ def indice_adaptabilidade(dados_jogador: Mapping[str, Any], posicoes_permitidas:
     return -1
 
 
-def validar_taticas(jogadores: Mapping[str, Mapping[str, Any]]) -> list[str]:
-    """Valida formações e retorna mensagens de inconsistência."""
+def validar_taticas(_jogadores: Mapping[str, Mapping[str, Any]] | None = None) -> list[str]:
+    """Valida quantidade de slots e uso exclusivo das posições oficiais."""
     erros: list[str] = []
     for nome_tatica, slots in TATICAS.items():
-        if len(slots) != 11:
-            erros.append(f"{nome_tatica}: possui {len(slots)} slots, não 11.")
-        for slot, (permitidas, padrao, _left, _bottom, _tag) in slots.items():
-            invalidas = [p for p in permitidas if p not in POSICOES_OFICIAIS]
+        if len(slots) != LIMITE_TITULARES:
+            erros.append(f"{nome_tatica}: possui {len(slots)} slots, não {LIMITE_TITULARES}.")
+        for slot, configuracao in slots.items():
+            invalidas = [p for p in configuracao.posicoes if p not in POSICOES_OFICIAIS]
             if invalidas:
                 erros.append(f"{nome_tatica} / {slot}: posições inválidas {invalidas}.")
-            if padrao not in jogadores:
-                erros.append(f"{nome_tatica} / {slot}: atleta padrão '{padrao}' não existe.")
-                continue
-            if indice_adaptabilidade(jogadores[padrao], permitidas) < 0:
-                erros.append(f"{nome_tatica} / {slot}: atleta padrão '{padrao}' é incompatível.")
     return erros
