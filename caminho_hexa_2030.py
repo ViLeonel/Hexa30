@@ -2,13 +2,21 @@
 
 from __future__ import annotations
 
+import sys
 import urllib.parse
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
 import streamlit as st
 
-from components import (
+# Garante que os módulos locais do projeto tenham prioridade sobre pacotes
+# de terceiros com nomes semelhantes no ambiente do Streamlit Cloud.
+BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from hexa_components import (
     render_avaliacao_leitura,
     render_banco_reservas,
     render_cabecalho,
@@ -20,7 +28,7 @@ from components import (
     render_legenda_adaptabilidade,
     render_resumo_elenco,
 )
-from data import (
+from hexa_data import (
     DataIntegrityError,
     adicionar_jogador,
     carregar_jogadores,
@@ -30,8 +38,8 @@ from data import (
     valor_mercado_atual,
     valor_mercado_maximo,
 )
-from styles import PAGE_CONFIG, aplicar_estilos
-from taticas import (
+from hexa_styles import PAGE_CONFIG, aplicar_estilos
+from hexa_taticas import (
     LIMITE_RESERVAS,
     POSICOES_OFICIAIS,
     TATICAS,
