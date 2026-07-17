@@ -217,19 +217,21 @@ def normalizar_banco_dados(data):
         data["Wesley França"] = data.pop("Wesley")
         data["Wesley França"]["nome"] = "Wesley França"
 
-    # Atualizações de dados estritos de correção e posições do Ancelotti
+    # Atualizações estritas de atributos premium do Transfermarkt
     atualizacoes_obrigatorias = {
+        "Yan Couto": {"posicao": "Lateral-direito", "posicoes_multiplas": ["Lateral-direito", "Mezzala direito"], "clube": "Borussia Dortmund", "tm_nascimento": "03/06/2002", "tm_naturalidade": "Curitiba, Brasil", "tm_altura": "1,68 m", "tm_pe": "direito", "tm_empresario": "CAA Stellar", "tm_contrato": "30/06/2030", "tm_valor_mercado": "17,00 M. €"},
+        "Andrey Santos": {"posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Lateral-esquerdo"], "clube": "Manchester United FC", "tm_nascimento": "03/05/2004", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,80 m", "tm_pe": "direito", "tm_empresario": "Bertolucci Sports", "tm_contrato": "30/06/2031", "tm_equipador": "adidas", "tm_valor_mercado": "40,00 M. €"},
+        "Estevão": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Meia-armador"], "clube": "Chelsea FC", "tm_nascimento": "24/04/2007", "tm_naturalidade": "Franca, Brasil", "tm_altura": "1,78 m", "tm_pe": "esquerdo", "tm_empresario": "LINK SPORTS", "tm_contrato": "30/06/2033", "tm_equipador": "Nike", "tm_valor_mercado": "80,00 M. €"},
+        "Vinicius Junior": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Segundo atacante", "Centroavante"], "clube": "Real Madrid CF", "tm_nascimento": "12/07/2000", "tm_naturalidade": "São Gonçalo, Brasil", "tm_altura": "1,76 m", "tm_pe": "direito", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2027", "tm_equipador": "Nike", "tm_valor_mercado": "140,00 M. €"},
+        "Endrick": {"posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Segundo atacante", "Ponta-direita"], "clube": "Real Madrid CF", "tm_nascimento": "21/07/2006", "tm_naturalidade": "Taguatinga, Brasil", "tm_altura": "1,72 m", "tm_pe": "esquerdo", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2030", "tm_equipador": "New Balance", "tm_valor_mercado": "40,00 M. €"},
         "André": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"]},
         "Matheus Cunha": {"posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Segundo atacante", "Meia-armador"]},
         "Wesley França": {"posicao": "Lateral-direito", "posicoes_multiplas": ["Lateral-direito", "Lateral-esquerdo"], "clube": "Roma"},
         "Lucas Beraldo": {"posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro", "Lateral-esquerdo"], "clube": "Paris Saint-Germain"},
-        "Andrey Santos": {"posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Lateral-esquerdo"], "clube": "Chelsea"},
         "Bruno Guimarães": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"], "clube": "Newcastle"},
         "Rodrygo": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante"], "clube": "Real Madrid"},
         "Breno Bidon": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante", "Meia-armador"], "clube": "Corinthians"},
         "Gabriel Mec": {"posicao": "Meia-armador", "posicoes_multiplas": ["Meia-armador", "Ponta-esquerda", "Segundo atacante"], "clube": "Grêmio"},
-        "Vinicius Junior": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Segundo atacante", "Centroavante"], "clube": "Real Madrid"},
-        "Estevão": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Meia-armador"], "clube": "Palmeiras"},
         "Gabriel Martinelli": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Meia-armador", "Mezzala esquerdo"], "clube": "Arsenal"}
     }
 
@@ -240,188 +242,135 @@ def normalizar_banco_dados(data):
 
     # Dicionário robusto com todos os atletas solicitados e dados do Transfermarkt
     novos_atletas = {
+        "Carlos Miguel": {
+            "nome": "Carlos Miguel", "nome_completo": "Carlos Miguel dos Santos Pereira", "posicao": "Goleiro", "posicoes_multiplas": ["Goleiro"],
+            "clube": "SE Palmeiras", "idade": 27, "grupo": "Observação", "tipo": "Certeza Atual", "nota_vini": 7.0, "nota_roberto": 7.0,
+            "pontos_fortes": "Estatura monumental (2,04m), excelente envergadura e bom reflexo sob as traves.", "pontos_fracos": "Tempo de reação rasteiro devido à sua alta estatura.", "historico": "Ótima opção de segurança no gol com presença física imponente.",
+            "tm_nascimento": "09/10/1998", "tm_naturalidade": "Rio das Ostras, Brasil", "tm_altura": "2,04 m", "tm_pe": "esquerdo", "tm_empresario": "Bertolucci Sports", "tm_contrato": "31/07/2030", "tm_equipador": "Nike", "tm_valor_mercado": "7,00 M. €"
+        },
+        "Leonardo Nannetti": {
+            "nome": "Leonardo Nannetti", "nome_completo": "Leonardo Nannetti Lopes", "posicao": "Goleiro", "posicoes_multiplas": ["Goleiro"],
+            "clube": "CR Flamengo Sub-20", "idade": 18, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 6.5, "nota_roberto": 7.0,
+            "pontos_fortes": "Altíssimo potencial, excelente base formativa rubro-negra e perfil europeu.", "pontos_fracos": "Ainda em processo final de transição para o profissional de elite.", "historico": "Goleiro com dupla nacionalidade, requer monitoramento do nosso scout antes de ser assediado por seleções europeias.",
+            "tm_nascimento": "21/08/2007", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,96 m", "tm_pe": "esquerdo", "tm_empresario": "SportsMaxi", "tm_contrato": "31/12/2029", "tm_equipador": "N/A", "tm_valor_mercado": "N/A"
+        },
+        "Hugo Souza": {
+            "nome": "Hugo Souza", "nome_completo": "Hugo de Souza Nogueira", "posicao": "Goleiro", "posicoes_multiplas": ["Goleiro"],
+            "clube": "SC Corinthians", "idade": 27, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 7.5,
+            "pontos_fortes": "Envergadura formidável (1,99m), agilidade felina sob as traves e recuperação mental após retorno ao Brasil.", "pontos_fracos": "Jogo com os pés em pressão alta exige refino tático.", "historico": "Recuperou a confiança técnica e exibe totais condições de disputar posição no ciclo.",
+            "tm_nascimento": "31/01/1999", "tm_naturalidade": "Duque de Caxias, Brasil", "tm_altura": "1,99 m", "tm_pe": "direito", "tm_empresario": "OTB Sports", "tm_contrato": "31/12/2030", "tm_equipador": "adidas", "tm_valor_mercado": "11,00 M. €"
+        },
+        "Igor Jesus": {
+            "nome": "Igor Jesus", "nome_completo": "Igor Jesus Maciel da Cruz", "posicao": "Centroavante", "posicoes_multiplas": ["Centroavante"],
+            "clube": "Nottingham Forest", "idade": 25, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 8.0,
+            "pontos_fortes": "Força física impressionante, pivô dominante, presença de área invejável e cabeceio de elite.", "pontos_fracos": "Menor mobilidade fora da área em esquemas estritos de transição rápida.", "historico": "Atacante letal perfeito para perfurar defesas em blocos extremamente baixos.",
+            "tm_nascimento": "25/02/2001", "tm_naturalidade": "Cuiabá, Brasil", "tm_altura": "1,79 m", "tm_pe": "direito", "tm_empresario": "JBSports", "tm_contrato": "30/06/2029", "tm_equipador": "N/A", "tm_valor_mercado": "25,00 M. €"
+        },
+        "Kauã Elias": {
+            "nome": "Kauã Elias", "nome_completo": "Kauã Elias Nogueira", "posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Segundo atacante"],
+            "clube": "Shakhtar Donetsk", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.5, "nota_roberto": 8.0,
+            "pontos_fortes": "Faro de gol artilheiro, explosão muscular precoce fantástica e ótima mobilidade no terço final.", "pontos_fracos": "Precisa continuar maturando seu jogo associativo de costas para a baliza.", "historico": "É a principal aposta da base brasileira para ser a sombra direta do Endrick rumo a 2030.",
+            "tm_nascimento": "28/03/2006", "tm_naturalidade": "Uberlândia, Brasil", "tm_altura": "1,81 m", "tm_pe": "direito", "tm_empresario": "LINK SPORTS", "tm_contrato": "31/12/2029", "tm_equipador": "N/A", "tm_valor_mercado": "15,00 M. €"
+        },
         "Vitor Reis": {
-            "nome": "Vitor Reis", "nome_completo": "Vitor de Oliveira Nunes dos Reis",
-            "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro"],
-            "clube": "Manchester City FC", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030",
-            "nota_vini": 7.5, "nota_roberto": 8.0,
-            "pontos_fortes": "Excelente tempo de bola, imposição física na bola aérea e técnica apurada para iniciar transições da defesa.",
-            "pontos_fracos": "Requer maior rodagem nos sistemas táticos complexos de alto nível do futebol europeu.",
-            "historico": "Visto por Vini como o potencial grande zagueiro do futuro. Promessa real de titularidade para a Copa de 2030.",
-            "tm_nascimento": "12/01/2006", "tm_naturalidade": "São José dos Campos, Brasil", "tm_altura": "1,86 m", 
-            "tm_pe": "direito", "tm_empresario": "P&P Sport Management", "tm_contrato": "30/06/2029", "tm_equipador": "N/A", "tm_valor_mercado": "30,00 M. €"
+            "nome": "Vitor Reis", "nome_completo": "Vitor de Oliveira Nunes dos Reis", "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro"],
+            "clube": "Manchester City FC", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.5, "nota_roberto": 8.0,
+            "pontos_fortes": "Excelente tempo de bola, imposição física na bola aérea e técnica apurada para iniciar transições da defesa.", "pontos_fracos": "Requer maior rodagem nos sistemas táticos complexos de alto nível do futebol europeu.", "historico": "Visto por Vini como o potencial grande zagueiro do futuro. Promessa real de titularidade para a Copa de 2030.",
+            "tm_nascimento": "12/01/2006", "tm_naturalidade": "São José dos Campos, Brasil", "tm_altura": "1,86 m", "tm_pe": "direito", "tm_empresario": "P&P Sport Management", "tm_contrato": "30/06/2029", "tm_equipador": "N/A", "tm_valor_mercado": "30,00 M. €"
         },
         "Danilo": {
-            "nome": "Danilo", "nome_completo": "Danilo dos Santos de Oliveira",
-            "posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Meia-armador"],
-            "clube": "Botafogo FR", "idade": 25, "grupo": "Reservas", "tipo": "Certeza Atual",
-            "nota_vini": 7.5, "nota_roberto": 7.5,
-            "pontos_fortes": "Dinamismo impressionante como motor do meio-campo, passes precisos de quebra de linha e boa chegada ao ataque.",
-            "pontos_fracos": "Oscilações ocasionais no ritmo defensivo em transições velozes adversárias.",
-            "historico": "Roberto destaca sua versatilidade para rodar por todas as posições do setor de criação.",
-            "tm_nascimento": "29/04/2001", "tm_naturalidade": "Salvador, Brasil", "tm_altura": "1,77 m", 
-            "tm_pe": "esquerdo", "tm_empresario": "Bertolucci Sports", "tm_contrato": "30/06/2029", "tm_equipador": "Nike", "tm_valor_mercado": "32,00 M. €"
+            "nome": "Danilo", "nome_completo": "Danilo dos Santos de Oliveira", "posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Meia-armador"],
+            "clube": "Botafogo FR", "idade": 25, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 7.5,
+            "pontos_fortes": "Dinamismo impressionante como motor do meio-campo, passes precisos de quebra de linha e boa chegada ao ataque.", "pontos_fracos": "Oscilações ocasionais no ritmo defensivo em transições velozes adversárias.", "historico": "Roberto destaca sua versatilidade para rodar por todas as posições do setor de criação.",
+            "tm_nascimento": "29/04/2001", "tm_naturalidade": "Salvador, Brasil", "tm_altura": "1,77 m", "tm_pe": "esquerdo", "tm_empresario": "Bertolucci Sports", "tm_contrato": "30/06/2029", "tm_equipador": "Nike", "tm_valor_mercado": "32,00 M. €"
         },
         "Gabriel Moscardo": {
-            "nome": "Gabriel Moscardo", "nome_completo": "Gabriel Silva Moscardo de Salles",
-            "posicao": "Volante", "posicoes_multiplas": ["Volante"],
-            "clube": "RCD Espanyol", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030",
-            "nota_vini": 7.0, "nota_roberto": 7.5,
-            "pontos_fortes": "Perfil de camisa 5 clássico, interceptações afiadas e excelente frieza no passe sob pressão.",
-            "pontos_fracos": "Necessita ganhar mais volume físico (massa muscular) para os duelos diretos do futebol europeu.",
-            "historico": "Anotado por Vini como o 'pitbull técnico' que pode assumir a contenção de longo prazo.",
-            "tm_nascimento": "28/09/2005", "tm_naturalidade": "Taubate, Brasil", "tm_altura": "1,85 m", 
-            "tm_pe": "direito", "tm_empresario": "SportsMaxi", "tm_contrato": "30/06/2027", "tm_equipador": "adidas", "tm_valor_mercado": "7,00 M. €"
+            "nome": "Gabriel Moscardo", "nome_completo": "Gabriel Silva Moscardo de Salles", "posicao": "Volante", "posicoes_multiplas": ["Volante"],
+            "clube": "RCD Espanyol", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.0, "nota_roberto": 7.5,
+            "pontos_fortes": "Perfil de camisa 5 clássico, interceptações afiadas e excelente frieza no passe sob pressão.", "pontos_fracos": "Necessita ganhar mais volume físico (massa muscular) para os duelos diretos do futebol europeu.", "historico": "Anotado por Vini como o 'pitbull técnico' que pode assumir a contenção de longo prazo.",
+            "tm_nascimento": "28/09/2005", "tm_naturalidade": "Taubaté, Brasil", "tm_altura": "1,85 m", "tm_pe": "direito", "tm_empresario": "SportsMaxi", "tm_contrato": "30/06/2027", "tm_equipador": "adidas", "tm_valor_mercado": "7,00 M. €"
         },
         "Felipe": {
-            "nome": "Felipe", "nome_completo": "Felipe de Morais Barbosa Penna dos Santos",
-            "posicao": "Meia-armador", "posicoes_multiplas": ["Meia-armador", "Ponta-esquerda", "Ponta-direita"],
-            "clube": "Cruzeiro EC Sub-20", "idade": 17, "grupo": "Observação", "tipo": "Observação",
-            "nota_vini": 6.5, "nota_roberto": 7.0,
-            "pontos_fortes": "Visão de jogo desequilibrante no terço final e condução da bola de altíssima velocidade técnica.",
-            "pontos_fracos": "Processo de maturação física recém iniciado, requer paciência no desenvolvimento.",
-            "historico": "Uma verdadeira joia oculta rastreada por Roberto para o longo prazo. Driblador nato.",
-            "tm_nascimento": "29/08/2008", "tm_naturalidade": "Conselheiro Lafaiete, Brasil", "tm_altura": "1,73 m", 
-            "tm_pe": "direito", "tm_empresario": "Talents Sports", "tm_contrato": "31/03/2029", "tm_equipador": "N/A", "tm_valor_mercado": "N/A"
+            "nome": "Felipe", "nome_completo": "Felipe de Morais Barbosa Penna dos Santos", "posicao": "Meia-armador", "posicoes_multiplas": ["Meia-armador", "Ponta-esquerda", "Ponta-direita"],
+            "clube": "Cruzeiro EC Sub-20", "idade": 17, "grupo": "Observação", "tipo": "Observação", "nota_vini": 6.5, "nota_roberto": 7.0,
+            "pontos_fortes": "Visão de jogo desequilibrante no terço final e condução da bola de altíssima velocidade técnica.", "pontos_fracos": "Processo de maturação física recém iniciado, requer paciência no desenvolvimento.", "historico": "Uma verdadeira joia oculta rastreada por Roberto para o longo prazo. Driblador nato.",
+            "tm_nascimento": "29/08/2008", "tm_naturalidade": "Conselheiro Lafaiete, Brasil", "tm_altura": "1,73 m", "tm_pe": "direito", "tm_empresario": "Talents Sports", "tm_contrato": "31/03/2029", "tm_equipador": "N/A", "tm_valor_mercado": "N/A"
         },
         "Sávio": {
-            "nome": "Sávio", "nome_completo": "Sávio Moreira de Oliveira",
-            "posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Ponta-direita", "Meia-armador"],
-            "clube": "Manchester City FC", "idade": 22, "grupo": "Reservas", "tipo": "Certeza Atual",
-            "nota_vini": 8.0, "nota_roberto": 8.5,
-            "pontos_fortes": "Capacidade insana no 1 contra 1, quebras de linha com dribles diagonais e velocidade letal.",
-            "pontos_fracos": "Pode pecar no penúltimo passe quando muito cercado próximo à grande área.",
-            "historico": "Vini enxerga Sávio como o ponta definitivo para inverter os lados e confundir marcações.",
-            "tm_nascimento": "10/04/2004", "tm_naturalidade": "São Mateus, Brasil", "tm_altura": "1,76 m", 
-            "tm_pe": "esquerdo", "tm_empresario": "Promanager", "tm_contrato": "30/06/2031", "tm_equipador": "Nike", "tm_valor_mercado": "35,00 M. €"
+            "nome": "Sávio", "nome_completo": "Sávio Moreira de Oliveira", "posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Ponta-direita", "Meia-armador"],
+            "clube": "Manchester City FC", "idade": 22, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 8.5,
+            "pontos_fortes": "Capacidade insana no 1 contra 1, quebras de linha com dribles diagonais e velocidade letal.", "pontos_fracos": "Pode pecar no penúltimo passe quando muito cercado próximo à grande área.", "historico": "Vini enxerga Sávio como o ponta definitivo para inverter os lados e confundir marcações.",
+            "tm_nascimento": "10/04/2004", "tm_naturalidade": "São Mateus, Brasil", "tm_altura": "1,76 m", "tm_pe": "esquerdo", "tm_empresario": "Promanager", "tm_contrato": "30/06/2031", "tm_equipador": "Nike", "tm_valor_mercado": "35,00 M. €"
         },
         "João Pedro": {
-            "nome": "João Pedro", "nome_completo": "João Pedro Junqueira de Jesus",
-            "posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Ponta-esquerda", "Segundo atacante"],
-            "clube": "Chelsea FC", "idade": 24, "grupo": "Reservas", "tipo": "Certeza Atual",
-            "nota_vini": 8.0, "nota_roberto": 8.0,
-            "pontos_fortes": "Atacante extremamente móvel, exímio finalizador, frieza em pênaltis e inteligência associativa.",
-            "pontos_fracos": "Sofre contra zagueiros que atuam exclusivamente em bloco baixo apostando no choque físico.",
-            "historico": "Unanimidade na comissão como a sombra imediata para assumir a titularidade como camisa 9.",
-            "tm_nascimento": "26/09/2001", "tm_naturalidade": "Ribeirão Preto, Brasil", "tm_altura": "1,86 m", 
-            "tm_pe": "direito", "tm_empresario": "Promanager", "tm_contrato": "30/06/2033", "tm_equipador": "adidas", "tm_valor_mercado": "80,00 M. €"
+            "nome": "João Pedro", "nome_completo": "João Pedro Junqueira de Jesus", "posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Ponta-esquerda", "Segundo atacante"],
+            "clube": "Chelsea FC", "idade": 24, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 8.0,
+            "pontos_fortes": "Atacante extremamente móvel, exímio finalizador, frieza em pênaltis e inteligência associativa.", "pontos_fracos": "Sofre contra zagueiros que atuam exclusivamente em bloco baixo apostando no choque físico.", "historico": "Unanimidade na comissão como a sombra imediata para assumir a titularidade como camisa 9.",
+            "tm_nascimento": "26/09/2001", "tm_naturalidade": "Ribeirão Preto, Brasil", "tm_altura": "1,86 m", "tm_pe": "direito", "tm_empresario": "Promanager", "tm_contrato": "30/06/2033", "tm_equipador": "adidas", "tm_valor_mercado": "80,00 M. €"
         },
         "Kauã Prates": {
-            "nome": "Kauã Prates", "nome_completo": "Kauã Prates de Almeida",
-            "posicao": "Lateral-esquerdo", "posicoes_multiplas": ["Lateral-esquerdo", "Zagueiro"],
-            "clube": "Borussia Dortmund", "idade": 17, "grupo": "Observação", "tipo": "Observação",
-            "nota_vini": 7.0, "nota_roberto": 7.0,
-            "pontos_fortes": "Excepcional no apoio, estrutura física privilegiada para a lateral e cruzamento venenoso.",
-            "pontos_fracos": "Requer ajustes táticos na cobertura de fundo de campo.",
-            "historico": "Anotado por Roberto com ressalvas positivas; grande contratação recente do Dortmund.",
-            "tm_nascimento": "12/08/2008", "tm_naturalidade": "Montanha, Brasil", "tm_altura": "1,84 m", 
-            "tm_pe": "esquerdo", "tm_empresario": "Trust Football", "tm_contrato": "31/12/2027", "tm_equipador": "adidas", "tm_valor_mercado": "10,00 M. €"
+            "nome": "Kauã Prates", "nome_completo": "Kauã Prates de Almeida", "posicao": "Lateral-esquerdo", "posicoes_multiplas": ["Lateral-esquerdo", "Zagueiro"],
+            "clube": "Borussia Dortmund", "idade": 17, "grupo": "Observação", "tipo": "Observação", "nota_vini": 7.0, "nota_roberto": 7.0,
+            "pontos_fortes": "Excepcional no apoio, estrutura física privilegiada para a lateral e cruzamento venenoso.", "pontos_fracos": "Requer ajustes táticos na cobertura de fundo de campo.", "historico": "Anotado por Roberto com ressalvas positivas; grande contratação recente do Dortmund.",
+            "tm_nascimento": "12/08/2008", "tm_naturalidade": "Montanha, Brasil", "tm_altura": "1,84 m", "tm_pe": "esquerdo", "tm_empresario": "Trust Football", "tm_contrato": "31/12/2027", "tm_equipador": "adidas", "tm_valor_mercado": "10,00 M. €"
         },
         "Viery": {
-            "nome": "Viery", "nome_completo": "Viery Fernandes Santos Lopes",
-            "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro", "Lateral-esquerdo"],
-            "clube": "ACF Fiorentina", "idade": 21, "grupo": "Observação", "tipo": "Promessa 2030",
-            "nota_vini": 7.0, "nota_roberto": 7.0,
-            "pontos_fortes": "Zagueiro canhoto construtor com excelente visão de jogo para viradas de bola.",
-            "pontos_fracos": "Experiência limitante no atual estágio competitivo das principais ligas.",
-            "historico": "Atleta canhoto raro na zaga; monitorado de perto como possível curinga da defesa.",
-            "tm_nascimento": "02/01/2005", "tm_naturalidade": "Ubá, Brasil", "tm_altura": "1,87 m", 
-            "tm_pe": "esquerdo", "tm_empresario": "Prattes Group", "tm_contrato": "30/06/2031", "tm_equipador": "N/A", "tm_valor_mercado": "6,00 M. €"
+            "nome": "Viery", "nome_completo": "Viery Fernandes Santos Lopes", "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro", "Lateral-esquerdo"],
+            "clube": "ACF Fiorentina", "idade": 21, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.0, "nota_roberto": 7.0,
+            "pontos_fortes": "Zagueiro canhoto construtor com excelente visão de jogo para viradas de bola.", "pontos_fracos": "Experiência limitante no atual estágio competitivo das principais ligas.", "historico": "Atleta canhoto raro na zaga; monitorado de perto como possível curinga da defesa.",
+            "tm_nascimento": "02/01/2005", "tm_naturalidade": "Ubá, Brasil", "tm_altura": "1,87 m", "tm_pe": "esquerdo", "tm_empresario": "Prattes Group", "tm_contrato": "30/06/2031", "tm_equipador": "N/A", "tm_valor_mercado": "6,00 M. €"
         },
         "Alexsandro": {
-            "nome": "Alexsandro", "nome_completo": "Alexsandro Victor de Souza Ribeiro",
-            "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro"],
-            "clube": "LOSC Lille", "idade": 26, "grupo": "Observação", "tipo": "Certeza Atual",
-            "nota_vini": 7.5, "nota_roberto": 7.5,
-            "pontos_fortes": "Forte no jogo aéreo defensivo (1,91 m), desarme agressivo e poder de intimidação física.",
-            "pontos_fracos": "Pode sofrer com a falta de agilidade no giro corporal contra atacantes de baixa estatura.",
-            "historico": "Nome sólido consolidado na Ligue 1. Bom xerife para convocações emergenciais e de estabilidade.",
-            "tm_nascimento": "09/08/1999", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,91 m", 
-            "tm_pe": "ambos", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2028", "tm_equipador": "N/A", "tm_valor_mercado": "15,00 M. €"
+            "nome": "Alexsandro", "nome_completo": "Alexsandro Victor de Souza Ribeiro", "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro"],
+            "clube": "LOSC Lille", "idade": 26, "grupo": "Observação", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 7.5,
+            "pontos_fortes": "Forte no jogo aéreo defensivo (1,91 m), desarme agressivo e poder de intimidação física.", "pontos_fracos": "Pode sofrer com a falta de agilidade no giro corporal contra atacantes de baixa estatura.", "historico": "Nome sólido consolidado na Ligue 1. Bom xerife para convocações emergenciais e de estabilidade.",
+            "tm_nascimento": "09/08/1999", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,91 m", "tm_pe": "ambos", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2028", "tm_equipador": "N/A", "tm_valor_mercado": "15,00 M. €"
         },
         "Rayan": {
-            "nome": "Rayan", "nome_completo": "Rayan Vitor Simplício Rocha",
-            "posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Centroavante", "Ponta-esquerda"],
-            "clube": "AFC Bournemouth", "idade": 19, "grupo": "Observação", "tipo": "Promessa 2030",
-            "nota_vini": 7.0, "nota_roberto": 7.5,
-            "pontos_fortes": "Excelente porte físico para ponta (1,87 m), drible agressivo e bom poder de finalização.",
-            "pontos_fracos": "Oscilações naturais na tomada de decisão rápida devido à pouca idade.",
-            "historico": "Excelente promessa para ganhar rodagem na Premier League inglesa.",
-            "tm_nascimento": "03/08/2006", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,87 m", 
-            "tm_pe": "esquerdo", "tm_empresario": "VTN IMAGE", "tm_contrato": "30/06/2031", "tm_equipador": "N/A", "tm_valor_mercado": "60,00 M. €"
+            "nome": "Rayan", "nome_completo": "Rayan Vitor Simplício Rocha", "posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Centroavante", "Ponta-esquerda"],
+            "clube": "AFC Bournemouth", "idade": 19, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.0, "nota_roberto": 7.5,
+            "pontos_fortes": "Excelente porte físico para ponta (1,87 m), drible agressivo e bom poder de finalização.", "pontos_fracos": "Oscilações naturais na tomada de decisão rápida devido à pouca idade.", "historico": "Excelente promessa para ganhar rodagem na Premier League inglesa.",
+            "tm_nascimento": "03/08/2006", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,87 m", "tm_pe": "esquerdo", "tm_empresario": "VTN IMAGE", "tm_contrato": "30/06/2031", "tm_equipador": "N/A", "tm_valor_mercado": "60,00 M. €"
         },
         "Éder Militão": {
-            "nome": "Éder Militão", "nome_completo": "Éder Gabriel Militão",
-            "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro", "Lateral-direito"],
-            "clube": "Real Madrid CF", "idade": 28, "grupo": "Reservas", "tipo": "Certeza Atual",
-            "nota_vini": 8.0, "nota_roberto": 8.0,
-            "pontos_fortes": "Recuperação veloz incomparável e vigor físico impecável.",
-            "pontos_fracos": "O histórico de lesões recentes exige um acompanhamento clínico preventivo mais atento.",
-            "historico": "Atleta consolidado no topo do futebol europeu, sendo reserva de luxo imediato.",
-            "tm_nascimento": "18/01/1998", "tm_naturalidade": "Sertãozinho, Brasil", "tm_altura": "1,86 m", 
-            "tm_pe": "direito", "tm_empresario": "UJ Football Talent", "tm_contrato": "30/06/2028", "tm_equipador": "adidas", "tm_valor_mercado": "20,00 M. €"
+            "nome": "Éder Militão", "nome_completo": "Éder Gabriel Militão", "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro", "Lateral-direito"],
+            "clube": "Real Madrid CF", "idade": 28, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 8.0,
+            "pontos_fortes": "Recuperação veloz incomparável e vigor físico impecável.", "pontos_fracos": "O histórico de lesões recentes exige um acompanhamento clínico preventivo mais atento.", "historico": "Atleta consolidado no topo do futebol europeu, sendo reserva de luxo imediato.",
+            "tm_nascimento": "18/01/1998", "tm_naturalidade": "Sertãozinho, Brasil", "tm_altura": "1,86 m", "tm_pe": "direito", "tm_empresario": "UJ Football Talent", "tm_contrato": "30/06/2028", "tm_equipador": "adidas", "tm_valor_mercado": "20,00 M. €"
         },
         "Pedro Lima": {
-            "nome": "Pedro Lima", "nome_completo": "Pedro Henrique Cardoso de Lima",
-            "posicao": "Lateral-direito", "posicoes_multiplas": ["Lateral-direito", "Mezzala direito"],
-            "clube": "Wolverhampton Wanderers", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030",
-            "nota_vini": 7.5, "nota_roberto": 8.0,
-            "pontos_fortes": "Vigor físico impressionante nas subidas e apoio incansável ao ataque.",
-            "pontos_fracos": "Requer maior refinamento tático de posicionamento na última linha defensiva.",
-            "historico": "Roberto aposta muito na sua evolução na Premier League para herdar o corredor direito.",
-            "tm_nascimento": "01/07/2006", "tm_naturalidade": "Cabedelo, Brasil", "tm_altura": "1,74 m", 
-            "tm_pe": "direito", "tm_empresario": "PHSPORT", "tm_contrato": "30/06/2029", "tm_equipador": "N/A", "tm_valor_mercado": "4,00 M. €"
+            "nome": "Pedro Lima", "nome_completo": "Pedro Henrique Cardoso de Lima", "posicao": "Lateral-direito", "posicoes_multiplas": ["Lateral-direito", "Mezzala direito"],
+            "clube": "Wolverhampton Wanderers", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.5, "nota_roberto": 8.0,
+            "pontos_fortes": "Vigor físico impressionante nas subidas e apoio incansável ao ataque.", "pontos_fracos": "Requer maior refinamento tático de posicionamento na última linha defensiva.", "historico": "Roberto aposta muito na sua evolução na Premier League para herdar o corredor direito.",
+            "tm_nascimento": "01/07/2006", "tm_naturalidade": "Cabedelo, Brasil", "tm_altura": "1,74 m", "tm_pe": "direito", "tm_empresario": "PHSPORT", "tm_contrato": "30/06/2029", "tm_equipador": "N/A", "tm_valor_mercado": "4,00 M. €"
         },
         "Douglas Santos": {
-            "nome": "Douglas Santos", "nome_completo": "Douglas dos Santos Justino de Melo",
-            "posicao": "Lateral-esquerdo", "posicoes_multiplas": ["Lateral-esquerdo", "Mezzala esquerdo", "Volante"],
-            "clube": "Zenit São Petersburgo", "idade": 32, "grupo": "Observação", "tipo": "Certeza Atual",
-            "nota_vini": 7.0, "nota_roberto": 7.0,
-            "pontos_fortes": "Consistência defensiva rígida, liderança e refinamento em cruzamentos.",
-            "pontos_fracos": "Curva de idade avançada para o projeto Copa de 2030 (estará com 36 anos).",
-            "historico": "Ótima peça de segurança e experiência para preencher carências pontuais.",
-            "tm_nascimento": "22/03/1994", "tm_naturalidade": "João Pessoa, Brasil", "tm_altura": "1,73 m", 
-            "tm_pe": "esquerdo", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2027", "tm_equipador": "Nike", "tm_valor_mercado": "7,50 M. €"
+            "nome": "Douglas Santos", "nome_completo": "Douglas dos Santos Justino de Melo", "posicao": "Lateral-esquerdo", "posicoes_multiplas": ["Lateral-esquerdo", "Mezzala esquerdo", "Volante"],
+            "clube": "Zenit São Petersburgo", "idade": 32, "grupo": "Observação", "tipo": "Certeza Atual", "nota_vini": 7.0, "nota_roberto": 7.0,
+            "pontos_fortes": "Consistência defensiva rígida, liderança e refinamento em cruzamentos.", "pontos_fracos": "Curva de idade avançada para o projeto Copa de 2030 (estará com 36 anos).", "historico": "Ótima peça de segurança e experiência para preencher carências pontuais.",
+            "tm_nascimento": "22/03/1994", "tm_naturalidade": "João Pessoa, Brasil", "tm_altura": "1,73 m", "tm_pe": "esquerdo", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2027", "tm_equipador": "Nike", "tm_valor_mercado": "7,50 M. €"
         },
         "Luiz Henrique": {
-            "nome": "Luiz Henrique", "nome_completo": "Luiz Henrique André Rosa da Silva",
-            "posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Centroavante"],
-            "clube": "Zenit São Petersburgo", "idade": 25, "grupo": "Observação", "tipo": "Certeza Atual",
-            "nota_vini": 7.5, "nota_roberto": 7.5,
-            "pontos_fortes": "Imposição física fantástica na ala, condução vertical poderosa e drible desequilibrante.",
-            "pontos_fracos": "Fase de adaptação tática e leitura de jogo defensivo sem a bola precisam melhorar.",
-            "historico": "Adicionado ao radar como uma excelente alternativa de força física e drible puro.",
-            "tm_nascimento": "02/01/2001", "tm_naturalidade": "Petrópolis, Brasil", "tm_altura": "1,82 m", 
-            "tm_pe": "esquerdo", "tm_empresario": "REASON FOOTBALL...", "tm_contrato": "31/12/2028", "tm_equipador": "adidas", "tm_valor_mercado": "24,00 M. €"
+            "nome": "Luiz Henrique", "nome_completo": "Luiz Henrique André Rosa da Silva", "posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Centroavante"],
+            "clube": "Zenit São Petersburgo", "idade": 25, "grupo": "Observação", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 7.5,
+            "pontos_fortes": "Imposição física fantástica na ala, condução vertical poderosa e drible desequilibrante.", "pontos_fracos": "Fase de adaptação tática e leitura de jogo defensivo sem a bola precisam melhorar.", "historico": "Adicionado ao radar como uma excelente alternativa de força física e drible puro.",
+            "tm_nascimento": "02/01/2001", "tm_naturalidade": "Petrópolis, Brasil", "tm_altura": "1,82 m", "tm_pe": "esquerdo", "tm_empresario": "REASON FOOTBALL...", "tm_contrato": "31/12/2028", "tm_equipador": "adidas", "tm_valor_mercado": "24,00 M. €"
         },
         "João Gomes": {
-            "nome": "João Gomes", "nome_completo": "João Victor Gomes da Silva",
-            "posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala direito", "Mezzala esquerdo"],
-            "clube": "Wolverhampton Wanderers", "idade": 25, "grupo": "Reservas", "tipo": "Certeza Atual",
-            "nota_vini": 7.5, "nota_roberto": 8.0,
-            "pontos_fortes": "Combate defensivo agressivo de elite, alto índice de desarmes e fôlego interminável.",
-            "pontos_fracos": "Controle disciplinar (excesso de cartões) e passes longos de quebra de bloco.",
-            "historico": "O verdadeiro cão de guarda do radar. Excelente para fechar a casinha em vantagens.",
-            "tm_nascimento": "12/02/2001", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,76 m", 
-            "tm_pe": "direito", "tm_empresario": "Carlos Leite", "tm_contrato": "30/06/2030", "tm_equipador": "Nike", "tm_valor_mercado": "28,00 M. €"
+            "nome": "João Gomes", "nome_completo": "João Victor Gomes da Silva", "posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala direito", "Mezzala esquerdo"],
+            "clube": "Wolverhampton Wanderers", "idade": 25, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 8.0,
+            "pontos_fortes": "Combate defensivo agressivo de elite, alto índice de desarmes e fôlego interminável.", "pontos_fracos": "Controle disciplinar (excesso de cartões) e passes longos de quebra de bloco.", "historico": "O verdadeiro cão de guarda do radar. Excelente para fechar a casinha em vantagens.",
+            "tm_nascimento": "12/02/2001", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,76 m", "tm_pe": "direito", "tm_empresario": "Carlos Leite", "tm_contrato": "30/06/2030", "tm_equipador": "Nike", "tm_valor_mercado": "28,00 M. €"
         },
         "Éderson": {
-            "nome": "Éderson", "nome_completo": "Éderson",
-            "posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"],
-            "clube": "Atalanta BC", "idade": 27, "grupo": "Reservas", "tipo": "Certeza Atual",
-            "nota_vini": 8.0, "nota_roberto": 8.0,
-            "pontos_fortes": "Capacidade física absurda, motor box-to-box infatigável and ótimos desarmes de transição.",
-            "pontos_fracos": "Refino técnico de passe em blocos defensivos extremamente baixos.",
-            "historico": "Aprovado unanimemente como peça de alto vigor físico para rodar o meio-campo."
+            "nome": "Éderson", "nome_completo": "Éderson", "posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"],
+            "clube": "Atalanta BC", "idade": 27, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 8.0, "nota_roberto": 8.0,
+            "pontos_fortes": "Capacidade física absurda, motor box-to-box infatigável and ótimos desarmes de transição.", "pontos_fracos": "Refino técnico de passe em blocos defensivos extremamente baixos.", "historico": "Aprovado unanimemente como peça de alto vigor físico para rodar o meio-campo."
         },
         "Raphinha": {
-            "nome": "Raphinha", "nome_completo": "Raphinha",
-            "posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Ponta-direita", "Meia-armador"],
-            "clube": "FC Barcelona", "idade": 29, "grupo": "Reservas", "tipo": "Certeza Atual",
-            "nota_vini": 7.5, "nota_roberto": 7.5,
-            "pontos_fortes": "Volume de jogo incansável, excelente drible em velocidade e finalizações perigosas.",
-            "pontos_fracos": "Pode oscilar na tomada de decisão em cenários de alta pressão posicional.",
-            "historico": "Incluído no banco de dados para atuar nas pontas ou flutuar como armador."
+            "nome": "Raphinha", "nome_completo": "Raphinha", "posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Ponta-direita", "Meia-armador"],
+            "clube": "FC Barcelona", "idade": 29, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 7.5,
+            "pontos_fortes": "Volume de jogo incansável, excelente drible em velocidade e finalizações perigosas.", "pontos_fracos": "Pode oscilar na tomada de decisão em cenários de alta pressão posicional.", "historico": "Incluído no banco de dados para atuar nas pontas ou flutuar como armador."
         }
     }
 
@@ -571,7 +520,6 @@ def formatar_jogador_com_posicao(nome):
 st.sidebar.markdown("<h2 style='text-align: center; color: #EAB308; margin-top:15px;'>CONSELHO TÁTICO</h2>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
-# RESTAURADO: Todas as 4 abas originais recuperadas do código base
 menu = st.sidebar.radio(
     "Navegação do Painel:",
     ["🏟️ Campo de Jogo (Escalação)", "👤 Perfis dos Jogadores & Scout", "📋 Gestão do Roster", "📊 Análise de Opiniões"]
@@ -638,7 +586,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         st.session_state.escalados = novos_titulares
 
     with col_campo:
-        # Renderização do Campo e Jogadores com Sistema de Cores Rígido (Anexo 01)
         players_html = ""
         for slot, info in layout_ativo.items():
             pos_validas, left, bottom, pos_tag = info[0], info[2], info[3], info[4]
@@ -647,7 +594,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
             
             player_multi_pos = p_data.get("posicoes_multiplas", [p_data.get("posicao")])
             
-            # Lógica estrita: avalia exatamente o índice da posição na qual ele está escalado
             match_index = -1
             for idx, p_pos in enumerate(player_multi_pos):
                 if p_pos in pos_validas:
@@ -655,13 +601,13 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
                     break
             
             if match_index == 0:
-                border_color = "#22C55E" # Verde: Primária
+                border_color = "#22C55E"
             elif match_index == 1:
-                border_color = "#EAB308" # Amarelo: Secundária
+                border_color = "#EAB308"
             elif match_index >= 2:
-                border_color = "#F97316" # Laranja: Terciária/Emergencial
+                border_color = "#F97316"
             else:
-                border_color = "#EF4444" # Vermelho: Improvisado (Fora da lista)
+                border_color = "#EF4444"
             
             players_html += (
                 f'<div class="player-node" style="left:{left};bottom:{bottom};">'
@@ -683,13 +629,10 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
         </div>
         """, unsafe_allow_html=True)
 
-        # ------------------------------------------------------------------
-        # NOVO: RAIO-X DO ELENCO TITULAR (Estatísticas Coletivas)
-        # ------------------------------------------------------------------
         titulares_dados = [jogadores[n] for n in st.session_state.escalados.values() if n in jogadores]
         idades_26 = [j.get("idade", 22) for j in titulares_dados]
         alturas = [extrair_numero(j.get("tm_altura", "0")) for j in titulares_dados]
-        pesos = [extrair_numero(j.get("tm_peso", "0")) for j in titulares_dados] # Preparado para peso
+        pesos = [extrair_numero(j.get("tm_peso", "0")) for j in titulares_dados] 
         valores = [extrair_numero(j.get("tm_valor_mercado", "0")) for j in titulares_dados]
 
         media_id_26 = sum(idades_26) / len(idades_26) if idades_26 else 0
@@ -739,9 +682,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
 
         st.markdown("---")
         
-        # ------------------------------------------------------------------
-        # NOVO: COMPARTILHAMENTO E EXPORTAÇÃO (Anexo 02)
-        # ------------------------------------------------------------------
         export_data = json.dumps(st.session_state.escalados, indent=4, ensure_ascii=False)
         st.download_button(
             label="📥 Baixar Escalação (JSON)",
@@ -774,8 +714,6 @@ if menu == "🏟️ Campo de Jogo (Escalação)":
 # ==========================================
 elif menu == "👤 Perfis dos Jogadores & Scout":
     st.title("👤 Ficha Individual do Atleta")
-    st.markdown("<p style='font-size:1.15rem; color:#94A3B8;'>Consulte os dados individuais e interaja com o scout dos nossos convocados</p>", unsafe_allow_html=True)
-    
     selected_name = st.selectbox("Escolha o Atleta:", sorted(list(jogadores.keys())))
     p = jogadores[selected_name]
     
@@ -803,10 +741,7 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
         """, unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        
-        # INTERATIVIDADE UX: Sliders Dinâmicos para Calibrar Notas de Scout
         st.subheader("Avaliação Tática Interativa")
-        st.write("Ajuste os valores para atualizar o JSON em tempo real:")
         
         new_vini = st.slider("Nota do Vini", 0.0, 10.0, float(p.get('nota_vini', 0.0)), 0.1, key=f"sl_vini_{selected_name}")
         new_rob = st.slider("Nota do Roberto", 0.0, 10.0, float(p.get('nota_roberto', 0.0)), 0.1, key=f"sl_rob_{selected_name}")
@@ -820,7 +755,6 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
     with col_d:
         dados_live = obter_dados_reais_clube(p.get('clube', ''))
         
-        # RESTAURADO: Painel Transfermarkt (HTML UI Limpa)
         if p.get("tm_altura") or p.get("tm_contrato") or p.get("tm_valor_mercado"):
             st.markdown("### 📊 Dados Biométricos & Contratuais (Transfermarkt)")
             st.markdown(f"""
@@ -836,20 +770,7 @@ elif menu == "👤 Perfis dos Jogadores & Scout":
             </div>
             """, unsafe_allow_html=True)
             
-        st.markdown("### 📈 Estatísticas do Clube")
-        
-        if dados_live:
-            cbf_df = pd.DataFrame([{
-                "Clube": p.get('clube', 'N/A'), "Divisão": dados_live.get('serie', 'N/A'),
-                "Posição": dados_live.get('posicao', 'N/A'), "Pontos": dados_live.get('pts', 'N/A'),
-                "Jogos": dados_live.get('jogos', 'N/A'), "Vitórias": dados_live.get('vitorias', 'N/A')
-            }])
-            st.dataframe(cbf_df, use_container_width=True, hide_index=True)
-        else:
-            st.info(f"ℹ️ Atleta atuando no {p.get('clube', 'N/A')}. Ligas do exterior monitoradas em background.")
-            
         st.markdown("### 📝 Dossiê Histórico de Discussões")
-        
         st.markdown('<div class="stat-box">**🟢 Pontos Fortes:**<br>'+p.get("pontos_fortes", "Nenhuma informação cadastrada.")+'</div>', unsafe_allow_html=True)
         st.markdown('<div class="stat-box" style="border-left-color: #EF4444;">**🔴 Desafios & Pontos Fracos:**<br>'+p.get("pontos_fracos", "Nenhuma informação cadastrada.")+'</div>', unsafe_allow_html=True)
         st.markdown('<div class="stat-box" style="border-left-color: #3B82F6;">**🗣️ Notas das Discussões:**<br>'+p.get("historico", "Nenhuma anotação disponível.")+'</div>', unsafe_allow_html=True)
@@ -898,7 +819,7 @@ elif menu == "📋 Gestão do Roster":
                 st.rerun()
 
 # ==========================================
-# TELA 4: ANÁLISE DE OPINIÕES (RESTAURADA)
+# TELA 4: ANÁLISE DE OPINIÕES
 # ==========================================
 elif menu == "📊 Análise de Opiniões":
     st.title("📊 Análise Coletiva de Scout")
@@ -914,30 +835,27 @@ elif menu == "📊 Análise de Opiniões":
     
     with col_s1:
         st.markdown("### 🤝 Consenso Absoluto")
-        st.write("Nomes em sintonia técnica:")
         st.dataframe(df_stats.sort_values(by="Diferença", ascending=True).head(5)[["Nome", "Posição", "Vini", "Roberto"]], use_container_width=True, hide_index=True)
 
     with col_s2:
         st.markdown("### 🔥 Debates Acalorados")
-        st.write("Maiores divergências de avaliação:")
         st.dataframe(df_stats.sort_values(by="Diferença", ascending=False).head(5)[["Nome", "Vini", "Roberto", "Diferença"]], use_container_width=True, hide_index=True)
 
 # ==========================================
-# 9. RADAR DO TORCEDOR (RESTAURADO)
+# 9. RADAR DO TORCEDOR (SIDEBAR PRIVADA)
 # ==========================================
 st.sidebar.markdown("---")
 st.sidebar.subheader("💡 Radar do Torcedor")
 
 with st.sidebar.form("form_sugestao", clear_on_submit=True):
-    tipo_sugestao = st.selectbox("Contato Rápido:", ["Indicar Atleta", "Sugerir Melhoria"])
-    detalhes_sugestao = st.text_area("Mensagem:", placeholder="Escreva sua sugestão de melhoria...")
+    tipo_sugestao = st.selectbox("Tipo de Envio:", ["Atleta Faltante", "Sugestão de Melhoria"])
+    detalhes_sugestao = st.text_area("Conteúdo da Mensagem:", placeholder="Escreva sua sugestão...")
     
     if st.form_submit_button("Sugerir"):
         if detalhes_sugestao:
             assunto = urllib.parse.quote(f"Caminho para o Hexa: {tipo_sugestao}")
             corpo = urllib.parse.quote(f"Olá, Vini e Roberto!\n\nSugestão:\n\n{detalhes_sugestao}")
             mailto_url = f"mailto:viniciusbl87@gmail.com?subject={assunto}&body={corpo}"
-            
             st.sidebar.success("Sugestão salva!")
             st.sidebar.markdown(f'<a href="{mailto_url}" target="_blank" style="background-color:#EAB308;color:#0F172A;font-weight:bold;padding:10px;border-radius:8px;text-align:center;display:block;text-decoration:none;">🚀 Enviar por E-mail</a>', unsafe_allow_html=True)
         else:
