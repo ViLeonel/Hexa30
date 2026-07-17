@@ -153,15 +153,6 @@ st.markdown("""
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
     
-    /* Estilização do Rodapé */
-    .fine-print {
-        font-size: 8.5pt;
-        color: #94A3B8;
-        text-align: center;
-        margin-top: 40px;
-        margin-bottom: 10px;
-    }
-
     /* Sidebar Forçando Cores WCAG */
     section[data-testid="stSidebar"] {
         background-color: #020617 !important;
@@ -176,7 +167,6 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* Clean UI Customizations */
     header[data-testid="stHeader"], #MainMenu, footer, .stDeployButton {
         display: none !important;
     }
@@ -186,17 +176,16 @@ st.markdown("""
 # ==========================================
 # 3. DICIONÁRIOS E FUNÇÕES DE LIMPEZA MATEMÁTICA
 # ==========================================
+# Adicionadas funções de Meia-esquerda (ME) e Meia-direita (MD)
 ABREVIACOES = {
     "Goleiro": "GOL", "Lateral-esquerdo": "LE", "Zagueiro": "ZAG", "Lateral-direito": "LD",
     "Volante": "VOL", "Mezzala esquerdo": "MCE", "Mezzala direito": "MCD", "Meia-armador": "MEI",
+    "Meia-esquerda": "ME", "Meia-direita": "MD",
     "Ponta-esquerda": "PE", "Ponta-direita": "PD", "Segundo atacante": "SA", "Centroavante": "CA"
 }
 
 def extrair_numero(valor_texto, padrao=0.0):
-    """
-    Extrai o valor numérico. Converte 'mil' para a escala de milhões (M).
-    Ex: '175 mil €' -> 0.175 M | '20,00 M. €' -> 20.0 M
-    """
+    """Extrai valor numérico via RegEx. Ex: '175 mil €' -> 0.175 M | '20,00 M. €' -> 20.0 M"""
     if not valor_texto or valor_texto == "N/A":
         return padrao
     texto_min = str(valor_texto).lower()
@@ -225,23 +214,18 @@ def normalizar_banco_dados(data):
         data["Wesley França"] = data.pop("Wesley")
         data["Wesley França"]["nome"] = "Wesley França"
 
-    # Atualizações estritas (Rodrygo, Martinelli e bases táticas da comissão)
+    # Atualizações estritas priorizando comissão técnica do Brasil
     atualizacoes_obrigatorias = {
         "Yan Couto": {"posicao": "Lateral-direito", "posicoes_multiplas": ["Lateral-direito", "Mezzala direito"], "clube": "Borussia Dortmund", "tm_nascimento": "03/06/2002", "tm_naturalidade": "Curitiba, Brasil", "tm_altura": "1,68 m", "tm_pe": "direito", "tm_empresario": "CAA Stellar", "tm_contrato": "30/06/2030", "tm_valor_mercado": "17,00 M. €"},
-        "Andrey Santos": {"posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Lateral-esquerdo"], "clube": "Manchester United FC", "tm_nascimento": "03/05/2004", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,80 m", "tm_pe": "direito", "tm_empresario": "Bertolucci Sports", "tm_contrato": "30/06/2031", "tm_equipador": "adidas", "tm_valor_mercado": "40,00 M. €"},
-        "Estevão": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Meia-armador"], "clube": "Chelsea FC", "tm_nascimento": "24/04/2007", "tm_naturalidade": "Franca, Brasil", "tm_altura": "1,78 m", "tm_pe": "esquerdo", "tm_empresario": "LINK SPORTS", "tm_contrato": "30/06/2033", "tm_equipador": "Nike", "tm_valor_mercado": "80,00 M. €"},
-        "Vinicius Junior": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Segundo atacante", "Centroavante"], "clube": "Real Madrid CF", "tm_nascimento": "12/07/2000", "tm_naturalidade": "São Gonçalo, Brasil", "tm_altura": "1,76 m", "tm_pe": "direito", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2027", "tm_equipador": "Nike", "tm_valor_mercado": "140,00 M. €"},
+        "Andrey Santos": {"posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala esquerdo", "Mezzala direito", "Lateral-esquerdo"], "clube": "Chelsea FC", "tm_nascimento": "03/05/2004", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,80 m", "tm_pe": "direito", "tm_empresario": "Bertolucci Sports", "tm_contrato": "30/06/2031", "tm_equipador": "adidas", "tm_valor_mercado": "40,00 M. €"},
+        "Estevão": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Meia-armador", "Meia-direita"], "clube": "Chelsea FC", "tm_nascimento": "24/04/2007", "tm_naturalidade": "Franca, Brasil", "tm_altura": "1,78 m", "tm_pe": "esquerdo", "tm_empresario": "LINK SPORTS", "tm_contrato": "30/06/2033", "tm_equipador": "Nike", "tm_valor_mercado": "80,00 M. €"},
+        "Vinicius Junior": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Segundo atacante", "Centroavante", "Meia-esquerda"], "clube": "Real Madrid CF", "tm_nascimento": "12/07/2000", "tm_naturalidade": "São Gonçalo, Brasil", "tm_altura": "1,76 m", "tm_pe": "direito", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2027", "tm_equipador": "Nike", "tm_valor_mercado": "140,00 M. €"},
         "Endrick": {"posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Segundo atacante", "Ponta-direita"], "clube": "Real Madrid CF", "tm_nascimento": "21/07/2006", "tm_naturalidade": "Taguatinga, Brasil", "tm_altura": "1,72 m", "tm_pe": "esquerdo", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2030", "tm_equipador": "New Balance", "tm_valor_mercado": "40,00 M. €"},
         "Gabriel Magalhães": {"posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro"], "clube": "FC Arsenal", "tm_nascimento": "19/12/1997", "tm_naturalidade": "São Paulo, Brasil", "tm_altura": "1,90 m", "tm_pe": "esquerdo", "tm_empresario": "Bertolucci Sports", "tm_contrato": "30/06/2029", "tm_equipador": "N/A", "tm_valor_mercado": "75,00 M. €"},
-        "Rodrygo": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante"], "clube": "Real Madrid CF", "tm_nascimento": "09/01/2001", "tm_naturalidade": "Osasco, Brasil", "tm_altura": "1,74 m", "tm_pe": "direito", "tm_empresario": "Familiar", "tm_contrato": "30/06/2028", "tm_equipador": "adidas", "tm_valor_mercado": "45,00 M. €"},
-        "Gabriel Martinelli": {"posicao": "Ponta-esquerda", "posicoes_multiplas": ["Ponta-esquerda", "Meia-armador", "Mezzala esquerdo"], "clube": "FC Arsenal", "tm_nascimento": "18/06/2001", "tm_naturalidade": "Guarulhos, Brasil", "tm_altura": "1,78 m", "tm_pe": "direito", "tm_empresario": "Roc Nation Sports", "tm_contrato": "30/06/2027", "tm_equipador": "adidas", "tm_valor_mercado": "45,00 M. €"},
+        "Rodrygo": {"posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Ponta-esquerda", "Meia-armador", "Segundo atacante", "Centroavante", "Meia-direita"], "clube": "Real Madrid CF", "tm_nascimento": "09/01/2001", "tm_naturalidade": "Osasco, Brasil", "tm_altura": "1,74 m", "tm_pe": "direito", "tm_empresario": "Familiar", "tm_contrato": "30/06/2028", "tm_equipador": "adidas", "tm_valor_mercado": "45,00 M. €"},
         "Wesley França": {"posicao": "Lateral-direito", "posicoes_multiplas": ["Lateral-direito", "Lateral-esquerdo"], "clube": "AS Roma", "tm_nascimento": "06/09/2003", "tm_naturalidade": "Açailândia, Brasil", "tm_altura": "1,78 m", "tm_pe": "direito", "tm_empresario": "MCL Agency", "tm_contrato": "30/06/2030", "tm_equipador": "Nike", "tm_valor_mercado": "40,00 M. €"},
-        "André": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"]},
-        "Matheus Cunha": {"posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Segundo atacante", "Meia-armador"]},
-        "Lucas Beraldo": {"posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro", "Lateral-esquerdo"]},
-        "Bruno Guimarães": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante"]},
-        "Breno Bidon": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante", "Meia-armador"]},
-        "Gabriel Mec": {"posicao": "Meia-armador", "posicoes_multiplas": ["Meia-armador", "Ponta-esquerda", "Segundo atacante"]}
+        "André": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante", "Meia-esquerda"]},
+        "Bruno Guimarães": {"posicao": "Mezzala esquerdo", "posicoes_multiplas": ["Mezzala esquerdo", "Mezzala direito", "Volante", "Meia-esquerda", "Meia-direita"]}
     }
 
     for jogador, campos in atualizacoes_obrigatorias.items():
@@ -249,77 +233,20 @@ def normalizar_banco_dados(data):
             for campo, valor in campos.items():
                 data[jogador][campo] = valor
 
-    # Dicionário com todas as novas joias mapeadas do Transfermarkt
+    # Adicionando o João Gomes para robustez tática
     novos_atletas = {
-        "Allan": {
-            "nome": "Allan", "nome_completo": "Allan Andrade Elias", "posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita", "Meia-armador", "Mezzala direito"],
-            "clube": "SE Palmeiras", "idade": 22, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.0, "nota_roberto": 7.5,
-            "pontos_fortes": "Dinâmica veloz na ponta e grande controle de bola colada no pé.", "pontos_fracos": "Oscilações de rendimento contra defesas de forte contato físico.", "historico": "Excelente promessa com margem para crescimento na ala ofensiva.",
-            "tm_nascimento": "19/04/2004", "tm_naturalidade": "Florianópolis, Brasil", "tm_altura": "1,74 m", "tm_pe": "esquerdo", "tm_empresario": "Talents Sports", "tm_contrato": "31/12/2029", "tm_equipador": "N/A", "tm_valor_mercado": "20,00 M. €"
-        },
-        "Diego Callai": {
-            "nome": "Diego Callai", "nome_completo": "Diego Callai Silva", "posicao": "Goleiro", "posicoes_multiplas": ["Goleiro"],
-            "clube": "Sporting CP B", "idade": 22, "grupo": "Observação", "tipo": "Observação", "nota_vini": 6.5, "nota_roberto": 6.5,
-            "pontos_fortes": "Boa envergadura e vivência tática na escola portuguesa de goleiros.", "pontos_fracos": "Necessita de vitrine em ligas primárias para ser testado no alto nível.", "historico": "Guarda-redes monitorado por atuar na escola europeia.",
-            "tm_nascimento": "18/07/2004", "tm_naturalidade": "Caxias do Sul, Brasil", "tm_altura": "1,92 m", "tm_pe": "direito", "tm_empresario": "AS1", "tm_contrato": "30/06/2030", "tm_equipador": "N/A", "tm_valor_mercado": "1,50 M. €"
-        },
-        "Luis Gustavo": {
-            "nome": "Luis Gustavo", "nome_completo": "Luis Gustavo Roncholeta Benedetti", "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro"],
-            "clube": "SE Palmeiras", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.0, "nota_roberto": 7.0,
-            "pontos_fortes": "Estatura raríssima e imponente (1,97 m) garantindo domínio aéreo total.", "pontos_fracos": "Fase inicial de adaptação no nível de exigência do time principal.", "historico": "Zagueiro canhoto gigante, aposta de altíssimo teto.",
-            "tm_nascimento": "07/06/2006", "tm_naturalidade": "Bauru, Brasil", "tm_altura": "1,97 m", "tm_pe": "esquerdo", "tm_empresario": "Bertolucci Sports", "tm_contrato": "31/12/2029", "tm_equipador": "N/A", "tm_valor_mercado": "4,00 M. €"
-        },
-        "Guilherme Garutti": {
-            "nome": "Guilherme Garutti", "nome_completo": "Guilherme Gomes Garutti", "posicao": "Zagueiro", "posicoes_multiplas": ["Zagueiro"],
-            "clube": "ACSC FC Arges", "idade": 32, "grupo": "Observação", "tipo": "Certeza Atual", "nota_vini": 6.0, "nota_roberto": 6.5,
-            "pontos_fortes": "Boa altura e rodagem internacional, trazendo segurança física e tática.", "pontos_fracos": "Idade avançada (36 na Copa 2030) diminui apelo para o ciclo longo.", "historico": "Anotado para conhecimento geral de peças rodando no leste europeu.",
-            "tm_nascimento": "08/03/1994", "tm_naturalidade": "N/A, Brasil", "tm_altura": "1,94 m", "tm_pe": "direito", "tm_empresario": "FGA", "tm_contrato": "N/A", "tm_equipador": "N/A", "tm_valor_mercado": "175 mil €"
-        },
-        "Luis Felipe": {
-            "nome": "Luis Felipe", "nome_completo": "Luis Felipe Pacheco da Costa", "posicao": "Volante", "posicoes_multiplas": ["Volante", "Mezzala direito", "Mezzala esquerdo"],
-            "clube": "SE Palmeiras Sub-20", "idade": 18, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 6.5, "nota_roberto": 7.0,
-            "pontos_fortes": "Dinamismo na marcação, bom controle de espaço e versatilidade na meia cancha.", "pontos_fracos": "Ainda em processo de maturação nas categorias de base.", "historico": "Peça a ser observada no desenvolvimento da base.",
-            "tm_nascimento": "02/02/2008", "tm_naturalidade": "Lajeado, Brasil", "tm_altura": "1,80 m", "tm_pe": "direito", "tm_empresario": "GlobalSportsLtda", "tm_contrato": "31/12/2029", "tm_equipador": "adidas", "tm_valor_mercado": "500 mil €"
-        },
-        "Jhuan": {
-            "nome": "Jhuan", "nome_completo": "Jhuan Nunes Coelho", "posicao": "Ponta-direita", "posicoes_multiplas": ["Ponta-direita"],
-            "clube": "RB Bragantino Sub-20", "idade": 19, "grupo": "Observação", "tipo": "Observação", "nota_vini": 6.0, "nota_roberto": 6.5,
-            "pontos_fortes": "Arrancada forte e agressividade nas ações pelo flanco ofensivo.", "pontos_fracos": "Necessita refinar a tomada de decisão no último terço do campo.", "historico": "Monitorado como projeto futuro na base do Bragantino.",
-            "tm_nascimento": "03/06/2007", "tm_naturalidade": "N/A, Brasil", "tm_altura": "N/A", "tm_pe": "esquerdo", "tm_empresario": "Roc Nation Sports", "tm_contrato": "N/A", "tm_equipador": "N/A", "tm_valor_mercado": "N/A"
-        },
-        "Carlos Miguel": {
-            "nome": "Carlos Miguel", "nome_completo": "Carlos Miguel dos Santos Pereira", "posicao": "Goleiro", "posicoes_multiplas": ["Goleiro"],
-            "clube": "SE Palmeiras", "idade": 27, "grupo": "Observação", "tipo": "Certeza Atual", "nota_vini": 7.0, "nota_roberto": 7.0,
-            "pontos_fortes": "Estatura monumental (2,04m), excelente envergadura e bom reflexo sob as traves.", "pontos_fracos": "Tempo de reação rasteiro devido à sua alta estatura.", "historico": "Ótima opção de segurança no gol com presença física imponente.",
-            "tm_nascimento": "09/10/1998", "tm_naturalidade": "Rio das Ostras, Brasil", "tm_altura": "2,04 m", "tm_pe": "esquerdo", "tm_empresario": "Bertolucci Sports", "tm_contrato": "31/07/2030", "tm_equipador": "Nike", "tm_valor_mercado": "7,00 M. €"
-        },
-        "Leonardo Nannetti": {
-            "nome": "Leonardo Nannetti", "nome_completo": "Leonardo Nannetti Lopes", "posicao": "Goleiro", "posicoes_multiplas": ["Goleiro"],
-            "clube": "CR Flamengo Sub-20", "idade": 18, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 6.5, "nota_roberto": 7.0,
-            "pontos_fortes": "Altíssimo potencial, excelente base formativa rubro-negra e perfil europeu.", "pontos_fracos": "Ainda em processo final de transição para o profissional de elite.", "historico": "Goleiro com dupla nacionalidade, requer monitoramento do nosso scout antes de ser assediado.",
-            "tm_nascimento": "21/08/2007", "tm_naturalidade": "Rio de Janeiro, Brasil", "tm_altura": "1,96 m", "tm_pe": "esquerdo", "tm_empresario": "SportsMaxi", "tm_contrato": "31/12/2029", "tm_equipador": "N/A", "tm_valor_mercado": "N/A"
-        },
-        "Hugo Souza": {
-            "nome": "Hugo Souza", "nome_completo": "Hugo de Souza Nogueira", "posicao": "Goleiro", "posicoes_multiplas": ["Goleiro"],
-            "clube": "SC Corinthians", "idade": 27, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 7.5,
-            "pontos_fortes": "Envergadura formidável (1,99m), agilidade felina sob as traves e recuperação mental após retorno ao Brasil.", "pontos_fracos": "Jogo com os pés em pressão alta exige refino tático.", "historico": "Recuperou a confiança técnica e exibe totais condições de disputar posição no ciclo.",
-            "tm_nascimento": "31/01/1999", "tm_naturalidade": "Duque de Caxias, Brasil", "tm_altura": "1,99 m", "tm_pe": "direito", "tm_empresario": "OTB Sports", "tm_contrato": "31/12/2030", "tm_equipador": "adidas", "tm_valor_mercado": "11,00 M. €"
-        },
-        "Igor Jesus": {
-            "nome": "Igor Jesus", "nome_completo": "Igor Jesus Maciel da Cruz", "posicao": "Centroavante", "posicoes_multiplas": ["Centroavante"],
-            "clube": "Nottingham Forest", "idade": 25, "grupo": "Reservas", "tipo": "Certeza Atual", "nota_vini": 7.5, "nota_roberto": 8.0,
-            "pontos_fortes": "Força física impressionante, pivô dominante, presença de área invejável e cabeceio de elite.", "pontos_fracos": "Menor mobilidade fora da área em esquemas estritos de transição rápida.", "historico": "Atacante letal perfeito para perfurar defesas em blocos extremamente baixos.",
-            "tm_nascimento": "25/02/2001", "tm_naturalidade": "Cuiabá, Brasil", "tm_altura": "1,79 m", "tm_pe": "direito", "tm_empresario": "JBSports", "tm_contrato": "30/06/2029", "tm_equipador": "N/A", "tm_valor_mercado": "25,00 M. €"
-        },
-        "Kauã Elias": {
-            "nome": "Kauã Elias", "nome_completo": "Kauã Elias Nogueira", "posicao": "Centroavante", "posicoes_multiplas": ["Centroavante", "Segundo atacante"],
-            "clube": "Shakhtar Donetsk", "idade": 20, "grupo": "Observação", "tipo": "Promessa 2030", "nota_vini": 7.5, "nota_roberto": 8.0,
-            "pontos_fortes": "Faro de gol artilheiro, explosão muscular precoce fantástica e ótima mobilidade no terço final.", "pontos_fracos": "Precisa continuar maturando seu jogo associativo de costas para a baliza.", "historico": "É a principal aposta da base brasileira para ser a sombra direta do Endrick rumo a 2030.",
-            "tm_nascimento": "28/03/2006", "tm_naturalidade": "Uberlândia, Brasil", "tm_altura": "1,81 m", "tm_pe": "direito", "tm_empresario": "LINK SPORTS", "tm_contrato": "31/12/2029", "tm_equipador": "N/A", "tm_valor_mercado": "15,00 M. €"
+        "João Gomes": {
+            "nome": "João Gomes", "nome_completo": "João Victor Gomes da Silva", "posicao": "Volante", 
+            "posicoes_multiplas": ["Volante", "Mezzala direito", "Mezzala esquerdo", "Meia-direita"],
+            "clube": "Wolverhampton Wanderers", "idade": 25, "grupo": "Reservas", "tipo": "Certeza Atual", 
+            "nota_vini": 7.5, "nota_roberto": 8.0,
+            "pontos_fortes": "Combate defensivo agressivo de elite, alto índice de desarmes e fôlego interminável.", 
+            "pontos_fracos": "Controle disciplinar e passes longos de quebra de bloco.", 
+            "historico": "O verdadeiro cão de guarda do radar. Excelente para fechar a casinha."
         }
     }
 
-    # Mescla Segura dos Atletas
+    # Mescla Segura (Self-Healing JSON)
     for nome, dados in novos_atletas.items():
         if nome not in data:
             data[nome] = dados
@@ -328,13 +255,13 @@ def normalizar_banco_dados(data):
                 if k.startswith('tm_') or k == "nome_completo" or k == "clube":
                     data[nome][k] = v
 
-    # Faxina Final de Padronização WCAG/Arquitetura
+    # Padronização WCAG/Arquitetura de Limpeza
     pos_map_limpeza = {
         "Lateral Esquerdo": "Lateral-esquerdo", "Lateral Direito": "Lateral-direito",
         "Zagueiro Esquerdo": "Zagueiro", "Zagueiro Direito": "Zagueiro", "Zagueiro": "Zagueiro",
         "Meio-Campo (Defensivo)": "Volante", "Meio-Campo (Apoio)": "Mezzala esquerdo",
         "Meio-Campo (Criativo)": "Meia-armador", "Ponta Esquerda": "Ponta-esquerda",
-        "Ponta Direita": "Ponta-direita"
+        "Ponta Direita": "Ponta-direita", "Meia Esquerda": "Meia-esquerda", "Meia Direita": "Meia-direita"
     }
 
     for jogador, info in data.items():
@@ -351,7 +278,6 @@ def carregar_jogadores():
     contingencia = {
         "Alisson": {"nome": "Alisson", "posicao": "Goleiro", "clube": "Liverpool", "idade": 33, "posicoes_multiplas": ["Goleiro"]}
     }
-    
     if not os.path.exists(DATA_FILE):
         salvar_jogadores(contingencia)
         return contingencia
@@ -419,7 +345,7 @@ TATICAS = {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
         "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
         "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Vitor Reis", "63%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
         "Volante (VOL)": (["Volante"], "André", "38%", "46%", "VOL"),
         "Volante Apoio (VOL)": (["Volante", "Mezzala esquerdo", "Mezzala direito"], "Bruno Guimarães", "62%", "46%", "VOL"),
@@ -432,14 +358,66 @@ TATICAS = {
         "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
         "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
         "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
-        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Vitor Reis", "63%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
         "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
         "Volante (VOL)": (["Volante"], "André", "50%", "42%", "VOL"),
         "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo"], "Bruno Guimarães", "32%", "53%", "MCE"),
-        "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "Danilo", "68%", "53%", "MCD"),
+        "Mezzala Direito (MCD)": (["Mezzala direito", "Mezzala esquerdo", "Meia-armador"], "João Gomes", "68%", "53%", "MCD"),
         "Meia-Armador (MEI)": (["Meia-armador"], "Rodrygo", "50%", "65%", "MEI"),
         "Segundo Atacante (SA)": (["Segundo atacante", "Ponta-esquerda", "Ponta-direita", "Centroavante"], "Vinicius Junior", "35%", "83%", "SA"),
         "Centroavante (CA)": (["Centroavante"], "Endrick", "65%", "83%", "CA")
+    },
+    "4-4-2 Clássico": {
+        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
+        "Meia-esquerda (ME)": (["Meia-esquerda", "Mezzala esquerdo", "Ponta-esquerda"], "Bruno Guimarães", "20%", "55%", "ME"),
+        "Volante Esquerdo (VOL)": (["Volante"], "André", "40%", "45%", "VOL"),
+        "Volante Direito (VOL)": (["Volante"], "João Gomes", "60%", "45%", "VOL"),
+        "Meia-direita (MD)": (["Meia-direita", "Mezzala direito", "Ponta-direita"], "Estevão", "80%", "55%", "MD"),
+        "Segundo Atacante (SA)": (["Segundo atacante", "Meia-armador", "Ponta-esquerda"], "Vinicius Junior", "38%", "80%", "SA"),
+        "Centroavante (CA)": (["Centroavante", "Segundo atacante"], "Endrick", "62%", "83%", "CA")
+    },
+    "4-3-3 Diamante": {
+        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
+        "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo", "Meia-esquerda", "Volante"], "Bruno Guimarães", "30%", "45%", "MCE"),
+        "Volante (VOL)": (["Volante"], "André", "50%", "35%", "VOL"),
+        "Mezzala Direito (MCD)": (["Mezzala direito", "Meia-direita", "Volante"], "João Gomes", "70%", "45%", "MCD"),
+        "Ponta-esquerda (PE)": (["Ponta-esquerda", "Segundo atacante"], "Vinicius Junior", "20%", "75%", "PE"),
+        "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "85%", "CA"),
+        "Ponta-direita (PD)": (["Ponta-direita", "Meia-armador"], "Estevão", "80%", "75%", "PD")
+    },
+    "4-2-3-1": {
+        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
+        "Volante Esquerdo (VOL)": (["Volante", "Mezzala esquerdo"], "André", "38%", "42%", "VOL"),
+        "Volante Direito (VOL)": (["Volante", "Mezzala direito"], "Bruno Guimarães", "62%", "42%", "VOL"),
+        "Ponta-esquerda (PE)": (["Ponta-esquerda", "Meia-esquerda"], "Vinicius Junior", "20%", "65%", "PE"),
+        "Meia-Armador (MEI)": (["Meia-armador", "Segundo atacante"], "Rodrygo", "50%", "60%", "MEI"),
+        "Ponta-direita (PD)": (["Ponta-direita", "Meia-direita"], "Estevão", "80%", "65%", "PD"),
+        "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "85%", "CA")
+    },
+    "4-3-2-1 Árvore de Natal": {
+        "Goleiro (GOL)": (["Goleiro"], "Alisson", "50%", "8%", "GOL"),
+        "Lateral-esquerdo (LE)": (["Lateral-esquerdo"], "Kaiki Bruno", "15%", "26%", "LE"),
+        "Zagueiro Esquerdo (ZAG)": (["Zagueiro"], "Gabriel Magalhães", "37%", "23%", "ZAG"),
+        "Zagueiro Direito (ZAG)": (["Zagueiro"], "Lucas Beraldo", "63%", "23%", "ZAG"),
+        "Lateral-direito (LD)": (["Lateral-direito"], "Wesley França", "85%", "26%", "LD"),
+        "Mezzala Esquerdo (MCE)": (["Mezzala esquerdo", "Volante"], "Bruno Guimarães", "30%", "45%", "MCE"),
+        "Volante (VOL)": (["Volante"], "André", "50%", "42%", "VOL"),
+        "Mezzala Direito (MCD)": (["Mezzala direito", "Volante"], "João Gomes", "70%", "45%", "MCD"),
+        "Meia-Armador Esq (MEI)": (["Meia-armador", "Segundo atacante", "Ponta-esquerda"], "Vinicius Junior", "35%", "65%", "MEI"),
+        "Meia-Armador Dir (MEI)": (["Meia-armador", "Segundo atacante", "Ponta-direita"], "Rodrygo", "65%", "65%", "MEI"),
+        "Centroavante (CA)": (["Centroavante"], "Endrick", "50%", "85%", "CA")
     }
 }
 
@@ -473,7 +451,7 @@ menu = st.sidebar.radio(
 if "escalados" not in st.session_state:
     st.session_state.escalados = {
         "Goleiro (GOL)": "Alisson", "Lateral-esquerdo (LE)": "Kaiki Bruno",
-        "Zagueiro Esquerdo (ZAG)": "Gabriel Magalhães", "Zagueiro Direito (ZAG)": "Vitor Reis",
+        "Zagueiro Esquerdo (ZAG)": "Gabriel Magalhães", "Zagueiro Direito (ZAG)": "Lucas Beraldo",
         "Lateral-direito (LD)": "Wesley França", "Volante (VOL)": "André",
         "Volante Apoio (VOL)": "Bruno Guimarães", "Meia-Armador (MEI)": "Rodrygo",
         "Ponta-esquerda (PE)": "Vinicius Junior", "Centroavante (CA)": "Endrick",
