@@ -40,7 +40,7 @@
     },
     "Wesley": {
         "nome": "Wesley",
-        "posicao": "Lateral Direito",
+        "posicao": "Lateral-direito",
         "grupo": "Titulares",
         "nota_vini": 7.5,
         "nota_roberto": 7.5,
@@ -53,7 +53,7 @@
     },
     "Kaiki Bruno": {
         "nome": "Kaiki Bruno",
-        "posicao": "Lateral Esquerdo",
+        "posicao": "Lateral-esquerdo",
         "grupo": "Titulares",
         "nota_vini": 6.0,
         "nota_roberto": 6.0,
@@ -66,7 +66,7 @@
     },
     "Yan Couto": {
         "nome": "Yan Couto",
-        "posicao": "Lateral Direito",
+        "posicao": "Lateral-direito",
         "grupo": "Reservas",
         "nota_vini": 7.5,
         "nota_roberto": 7.0,
@@ -79,7 +79,7 @@
     },
     "Denner": {
         "nome": "Denner",
-        "posicao": "Lateral Esquerdo",
+        "posicao": "Lateral-esquerdo",
         "grupo": "Reservas",
         "nota_vini": 7.0,
         "nota_roberto": 8.0,
@@ -92,7 +92,7 @@
     },
     "Luciano Juba": {
         "nome": "Luciano Juba",
-        "posicao": "Lateral Esquerdo",
+        "posicao": "Lateral-esquerdo",
         "grupo": "Observação",
         "nota_vini": 6.5,
         "nota_roberto": 7.0,
@@ -105,7 +105,7 @@
     },
     "Gabriel Magalhães": {
         "nome": "Gabriel Magalhães",
-        "posicao": "Zagueiro Esquerdo",
+        "posicao": "Zagueiro",
         "grupo": "Titulares",
         "nota_vini": 9.0,
         "nota_roberto": 9.0,
@@ -118,7 +118,7 @@
     },
     "Lucas Beraldo": {
         "nome": "Lucas Beraldo",
-        "posicao": "Zagueiro Direito",
+        "posicao": "Zagueiro",
         "grupo": "Titulares",
         "nota_vini": 8.0,
         "nota_roberto": 8.0,
@@ -131,7 +131,7 @@
     },
     "Murillo": {
         "nome": "Murillo",
-        "posicao": "Zagueiro Esquerdo",
+        "posicao": "Zagueiro",
         "grupo": "Reservas",
         "nota_vini": 8.0,
         "nota_roberto": 8.0,
@@ -144,7 +144,7 @@
     },
     "Andrey Santos": {
         "nome": "Andrey Santos",
-        "posicao": "Meio-Campo (Defensivo)",
+        "posicao": "Volante",
         "grupo": "Titulares",
         "nota_vini": 7.5,
         "nota_roberto": 8.0,
@@ -157,7 +157,7 @@
     },
     "Bruno Guimarães": {
         "nome": "Bruno Guimarães",
-        "posicao": "Meio-Campo (Apoio)",
+        "posicao": "Mezzala esquerdo",
         "grupo": "Titulares",
         "nota_vini": 8.0,
         "nota_roberto": 8.5,
@@ -170,7 +170,7 @@
     },
     "Rodrygo": {
         "nome": "Rodrygo",
-        "posicao": "Meio-Campo (Criativo)",
+        "posicao": "Meia-armador",
         "grupo": "Titulares",
         "nota_vini": 8.0,
         "nota_roberto": 8.0,
@@ -183,7 +183,7 @@
     },
     "Breno Bidon": {
         "nome": "Breno Bidon",
-        "posicao": "Meio-Campo (Apoio)",
+        "posicao": "Mezzala esquerdo",
         "grupo": "Reservas",
         "nota_vini": 7.0,
         "nota_roberto": 8.0,
@@ -196,7 +196,7 @@
     },
     "Gabriel Mec": {
         "nome": "Gabriel Mec",
-        "posicao": "Meio-Campo (Criativo)",
+        "posicao": "Meia-armador",
         "grupo": "Observação",
         "nota_vini": 7.5,
         "nota_roberto": 7.5,
@@ -209,7 +209,7 @@
     },
     "Vini Jr.": {
         "nome": "Vini Jr.",
-        "posicao": "Ponta Esquerda",
+        "posicao": "Ponta-esquerda",
         "grupo": "Titulares",
         "nota_vini": 9.0,
         "nota_roberto": 9.0,
@@ -222,7 +222,7 @@
     },
     "Estevão": {
         "nome": "Estevão",
-        "posicao": "Ponta Direita",
+        "posicao": "Ponta-direita",
         "grupo": "Titulares",
         "nota_vini": 9.0,
         "nota_roberto": 10.0,
@@ -248,7 +248,7 @@
     },
     "Gabriel Martinelli": {
         "nome": "Gabriel Martinelli",
-        "posicao": "Ponta Esquerda",
+        "posicao": "Ponta-esquerda",
         "grupo": "Reservas",
         "nota_vini": 7.5,
         "nota_roberto": 8.0,
