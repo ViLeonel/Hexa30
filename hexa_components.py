@@ -195,6 +195,7 @@ def render_cartao_perfil(nome: str, dados: Mapping[str, Any]) -> None:
             <h2>{_esc(dados.get('nome', nome))}</h2>
             <div class="profile-details">
                 <b>Posições do projeto:</b> {_esc(' / '.join(siglas))}<br>
+                <b>Nome completo:</b> {_esc(dados.get('nome_completo', dados.get('nome', nome)))}<br>
                 <b>Clube atual:</b> {_esc(dados.get('clube'))}<br>
                 <b>Grupo:</b> {_esc(dados.get('grupo'))}<br>
                 <b>Idade em 2026:</b> {int(dados.get('idade', 22))} anos<br>
@@ -241,6 +242,7 @@ def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
 
     linhas = [
         f"<b>Nome completo:</b> {_esc(dados.get('nome_completo', dados.get('nome')))}",
+        f"<b>Clube atual:</b> {_esc(dados.get('clube'))}",
         f"<b>Nascimento:</b> {_esc(dados.get('tm_nascimento'))} &nbsp; | &nbsp; <b>Naturalidade:</b> {_esc(dados.get('tm_naturalidade'))}",
         f"<b>Altura:</b> {_esc(dados.get('tm_altura'))} &nbsp; | &nbsp; <b>Pé:</b> {_esc(dados.get('tm_pe'))}",
         f"<b>Nacionalidades:</b> {_esc(', '.join(nacionalidades) if nacionalidades else 'N/A')}",
@@ -251,12 +253,28 @@ def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
         linhas.append(f"<b>Opção contratual:</b> {_esc(dados.get('tm_opcao_contrato'))}")
     if dados.get("tm_ultima_renovacao"):
         linhas.append(f"<b>Última renovação:</b> {_esc(dados.get('tm_ultima_renovacao'))}")
+    if dados.get("tm_observacao_transferencia"):
+        linhas.append(
+            f"<b>Observação de transferência:</b> {_esc(dados.get('tm_observacao_transferencia'))}"
+        )
+    if dados.get("tm_clube_imagem"):
+        linhas.append(
+            f"<b>Clube exibido na imagem:</b> {_esc(dados.get('tm_clube_imagem'))}"
+            f" &nbsp; | &nbsp; <b>Contrato exibido:</b> {_esc(dados.get('tm_contrato_imagem'))}"
+        )
     if dados.get("tm_equipador"):
         linhas.append(f"<b>Equipador:</b> {_esc(dados.get('tm_equipador'))}")
     linhas.append(
         f"<b>Posição no site externo:</b> {_esc(dados.get('tm_posicao_site'))}"
         + (f" ({_esc(', '.join(posicoes_site))})" if posicoes_site else "")
     )
+    if dados.get("tm_altura_metros"):
+        linhas.append(f"<b>Altura normalizada:</b> {_esc(f'{float(dados["tm_altura_metros"]):.2f} m'.replace('.', ','))}")
+    if dados.get("tm_fonte") or dados.get("tm_extraido_em"):
+        linhas.append(
+            f"<b>Origem do registro:</b> {_esc(dados.get('tm_fonte'))}"
+            f" &nbsp; | &nbsp; <b>Extraído em:</b> {_esc(dados.get('tm_extraido_em'))}"
+        )
 
     st.markdown(
         '<div class="market-card" style="border-left-color:#3B82F6">'
