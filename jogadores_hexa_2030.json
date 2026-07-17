@@ -721,8 +721,32 @@
             "Meia-armador",
             "Meia-direita"
         ],
-        "tm_nacionalidades": [],
-        "tm_posicoes_secundarias_site": []
+        "tm_nacionalidades": [
+            "Brasil"
+        ],
+        "tm_posicoes_secundarias_site": [
+            "Médio Ofensivo",
+            "Médio Direito"
+        ],
+        "nome_completo": "Estêvão Willian Almeida de Oliveira Gonçalves",
+        "tm_nascimento": "24/04/2007",
+        "tm_naturalidade": "Franca, Brasil",
+        "tm_altura": "1,78 m",
+        "tm_pe": "Esquerdo",
+        "tm_empresario": "LINK SPORTS",
+        "tm_clube_desde": "14/07/2025",
+        "tm_contrato": "30/06/2033",
+        "tm_equipador": "Nike",
+        "tm_posicao_site": "Extremo Direito",
+        "tm_valor_mercado": "80,00 M. €",
+        "tm_valor_mercado_milhoes": 80.0,
+        "tm_valor_maximo": "80,00 M. €",
+        "tm_valor_maximo_milhoes": 80.0,
+        "tm_data_valor_maximo": "08/12/2025",
+        "tm_ultima_atualizacao": "02/06/2026",
+        "tm_fonte": "Imagem fornecida pelo usuário",
+        "tm_extraido_em": "17/07/2026",
+        "tm_altura_metros": 1.78
     },
     "Endrick": {
         "nome": "Endrick",
@@ -783,8 +807,34 @@
             "Meia-armador",
             "Mezzala esquerdo"
         ],
-        "tm_nacionalidades": [],
-        "tm_posicoes_secundarias_site": []
+        "tm_nacionalidades": [
+            "Brasil",
+            "Itália"
+        ],
+        "tm_posicoes_secundarias_site": [
+            "Extremo Direito"
+        ],
+        "nome_completo": "Gabriel Teodoro Martinelli Silva",
+        "tm_nascimento": "18/06/2001",
+        "tm_naturalidade": "Guarulhos, Brasil",
+        "tm_altura": "1,78 m",
+        "tm_pe": "Direito",
+        "tm_empresario": "Roc Nation Sports",
+        "tm_clube_desde": "02/07/2019",
+        "tm_contrato": "30/06/2027",
+        "tm_opcao_contrato": "Mais um ano",
+        "tm_ultima_renovacao": "03/02/2023",
+        "tm_equipador": "adidas",
+        "tm_posicao_site": "Extremo Esquerdo",
+        "tm_valor_mercado": "45,00 M. €",
+        "tm_valor_mercado_milhoes": 45.0,
+        "tm_valor_maximo": "85,00 M. €",
+        "tm_valor_maximo_milhoes": 85.0,
+        "tm_data_valor_maximo": "18/12/2023",
+        "tm_ultima_atualizacao": "02/06/2026",
+        "tm_fonte": "Imagem fornecida pelo usuário",
+        "tm_extraido_em": "17/07/2026",
+        "tm_altura_metros": 1.78
     },
     "João Gomes": {
         "nome": "João Gomes",
@@ -813,8 +863,24 @@
         "tm_contrato": "30/06/2030",
         "tm_equipador": "Nike",
         "tm_altura_metros": 1.76,
-        "tm_nacionalidades": [],
-        "tm_posicoes_secundarias_site": []
+        "tm_nacionalidades": [
+            "Brasil"
+        ],
+        "tm_posicoes_secundarias_site": [
+            "Médio Defensivo"
+        ],
+        "tm_clube_desde": "30/01/2023",
+        "tm_opcao_contrato": "Opção do clube por 1 ano",
+        "tm_ultima_renovacao": "01/04/2025",
+        "tm_posicao_site": "Médio Centro",
+        "tm_valor_mercado": "40,00 M. €",
+        "tm_valor_mercado_milhoes": 40.0,
+        "tm_valor_maximo": "40,00 M. €",
+        "tm_valor_maximo_milhoes": 40.0,
+        "tm_data_valor_maximo": "30/09/2024",
+        "tm_ultima_atualizacao": "02/06/2026",
+        "tm_fonte": "Imagem fornecida pelo usuário",
+        "tm_extraido_em": "17/07/2026"
     },
     "Allan": {
         "nome": "Allan",
@@ -947,8 +1013,28 @@
         "pontos_fortes": "",
         "pontos_fracos": "",
         "historico": "",
-        "tm_nacionalidades": [],
-        "tm_posicoes_secundarias_site": []
+        "tm_nacionalidades": [
+            "Brasil",
+            "Itália"
+        ],
+        "tm_posicoes_secundarias_site": [],
+        "nome_completo": "Guilherme Gomes Garutti",
+        "tm_nascimento": "08/03/1994",
+        "tm_altura": "1,94 m",
+        "tm_pe": "Direito",
+        "tm_empresario": "FGA",
+        "tm_clube_desde": "23/07/2024",
+        "tm_contrato": "-",
+        "tm_posicao_site": "Defesa Central",
+        "tm_valor_mercado": "175 mil €",
+        "tm_valor_mercado_milhoes": 0.175,
+        "tm_valor_maximo": "400 mil €",
+        "tm_valor_maximo_milhoes": 0.4,
+        "tm_data_valor_maximo": "02/06/2022",
+        "tm_ultima_atualizacao": "07/06/2026",
+        "tm_fonte": "Imagem fornecida pelo usuário",
+        "tm_extraido_em": "17/07/2026",
+        "tm_altura_metros": 1.94
     },
     "Luis Felipe": {
         "nome": "Luis Felipe",
@@ -1098,8 +1184,29 @@
         "pontos_fortes": "",
         "pontos_fracos": "",
         "historico": "",
-        "tm_nacionalidades": [],
-        "tm_posicoes_secundarias_site": []
+        "tm_nacionalidades": [
+            "Brasil",
+            "Emirados Árabes Unidos"
+        ],
+        "tm_posicoes_secundarias_site": [],
+        "nome_completo": "Igor Jesus Maciel da Cruz",
+        "tm_nascimento": "25/02/2001",
+        "tm_naturalidade": "Cuiabá, Brasil",
+        "tm_altura": "1,79 m",
+        "tm_pe": "Direito",
+        "tm_empresario": "JBSports",
+        "tm_clube_desde": "05/07/2025",
+        "tm_contrato": "30/06/2029",
+        "tm_posicao_site": "Ponta de Lança",
+        "tm_valor_mercado": "25,00 M. €",
+        "tm_valor_mercado_milhoes": 25.0,
+        "tm_valor_maximo": "25,00 M. €",
+        "tm_valor_maximo_milhoes": 25.0,
+        "tm_data_valor_maximo": "02/06/2026",
+        "tm_ultima_atualizacao": "02/06/2026",
+        "tm_fonte": "Imagem fornecida pelo usuário",
+        "tm_extraido_em": "17/07/2026",
+        "tm_altura_metros": 1.79
     },
     "Kauã Elias": {
         "nome": "Kauã Elias",
@@ -1188,7 +1295,7 @@
     "Matheus Cunha": {
         "nome": "Matheus Cunha",
         "posicao": "Centroavante",
-        "clube": "Wolverhampton Wanderers",
+        "clube": "Manchester United FC",
         "idade": 27,
         "grupo": "Reservas",
         "nota_vini": 7.0,
@@ -1202,8 +1309,33 @@
         "pontos_fortes": "",
         "pontos_fracos": "",
         "historico": "",
-        "tm_nacionalidades": [],
-        "tm_posicoes_secundarias_site": []
+        "tm_nacionalidades": [
+            "Brasil"
+        ],
+        "tm_posicoes_secundarias_site": [
+            "Segundo Avançado",
+            "Extremo Esquerdo"
+        ],
+        "nome_completo": "Matheus Santos Carneiro da Cunha",
+        "tm_nascimento": "27/05/1999",
+        "tm_naturalidade": "João Pessoa, Brasil",
+        "tm_altura": "1,83 m",
+        "tm_pe": "Direito",
+        "tm_empresario": "Bertolucci Sports",
+        "tm_clube_desde": "01/07/2025",
+        "tm_contrato": "30/06/2030",
+        "tm_opcao_contrato": "Mais um ano",
+        "tm_equipador": "Nike",
+        "tm_posicao_site": "Ponta de Lança",
+        "tm_valor_mercado": "75,00 M. €",
+        "tm_valor_mercado_milhoes": 75.0,
+        "tm_valor_maximo": "75,00 M. €",
+        "tm_valor_maximo_milhoes": 75.0,
+        "tm_data_valor_maximo": "02/06/2026",
+        "tm_ultima_atualizacao": "02/06/2026",
+        "tm_fonte": "Imagem fornecida pelo usuário",
+        "tm_extraido_em": "17/07/2026",
+        "tm_altura_metros": 1.83
     },
     "Danilo": {
         "nome": "Danilo",
@@ -1838,7 +1970,7 @@
             "Volante",
             "Meia-armador"
         ],
-        "clube": "Manchester United FC",
+        "clube": "Atalanta BC",
         "idade": 27,
         "grupo": "Observação",
         "tipo": "Observação",
@@ -1855,11 +1987,6 @@
         ],
         "tm_pe": "Direito",
         "tm_empresario": "LINK SPORTS",
-        "tm_clube_imagem": "Atalanta BC",
-        "tm_clube_desde_imagem": "06/07/2022",
-        "tm_contrato_imagem": "30/06/2031",
-        "tm_ultima_renovacao_imagem": "17/07/2026",
-        "tm_observacao_transferencia": "Clube atual ajustado para Manchester United FC por informação do usuário; datas contratuais da imagem referem-se à Atalanta BC.",
         "tm_equipador": "adidas",
         "tm_posicao_site": "Médio Centro",
         "tm_posicoes_secundarias_site": [
@@ -1874,7 +2001,10 @@
         "tm_ultima_atualizacao": "28/05/2026",
         "tm_fonte": "Imagem fornecida pelo usuário",
         "tm_extraido_em": "17/07/2026",
-        "tm_altura_metros": 1.83
+        "tm_altura_metros": 1.83,
+        "tm_clube_desde": "06/07/2022",
+        "tm_contrato": "30/06/2031",
+        "tm_ultima_renovacao": "17/07/2026"
     },
     "Raphinha": {
         "nome": "Raphinha",
