@@ -1,0 +1,42 @@
+RELATÓRIO DE TESTES — RC4 UX E CONVOCAÇÃO
+Data: 2026-07-18
+Versão: 1.0.0-rc4-ux-convocacao
+
+TESTES REALIZADOS
+1. Compilação dos arquivos Python alterados: APROVADO.
+2. Compilação dos testes RC4: APROVADO.
+3. Parse com gramática Python 3.10: APROVADO.
+4. Verificação estática de imports locais alterados: APROVADO.
+5. Varredura de dependências: somente streamlit e pandas.
+6. Instalação isolada:
+   - streamlit 1.59.2: APROVADO.
+   - pandas 2.3.3: APROVADO.
+7. Testes unitários RC4: 11 executados, 11 aprovados.
+8. AppTest — tela Campo de Jogo: 0 exceções.
+   - 27 selectboxes: 1 formação + 11 titulares + 11 reservas posicionais + 4 livres.
+9. AppTest — Jogadores, Scout e Avaliações: 0 exceções.
+10. AppTest — Lista de Jogadores: 0 exceções.
+11. AppTest — Análises & Mercado: 0 exceções.
+12. AppTest — perfil selecionado: Beto exibido; nome público antigo ausente.
+13. AppTest — entrypoint isolado: 0 exceções.
+14. Regra de duplicidade titular/reserva: APROVADO.
+15. Ordenação tática das vagas livres: APROVADO.
+16. Parse JSON:
+   - jogadores_hexa_2030.json: 61 atletas.
+   - enriquecimentos_tm.json: 58 registros.
+17. Campos protegidos presentes nos 61 atletas: APROVADO.
+18. SHA-256 antes/depois dos JSONs: INALTERADO.
+
+SHA-256 DOS JSONS CANÔNICOS
+jogadores_hexa_2030.json
+cefc26680b407f645eb72d013e3c1e78ada06cdc764c2bdef79df06053a659c1
+
+enriquecimentos_tm.json
+72dd628b1c5dcdfe83125c02b254b389f1ec3ae4d61372888d011bd064bcab58
+
+LIMITAÇÕES
+- A suíte histórica completa não estava materializada no sandbox.
+- Os módulos não alterados ausentes foram representados por dublês nos testes isolados.
+- Não foram executados testes reais em Chrome, Firefox, Edge, Brave e Safari.
+- Não foram executados leitores de tela, navegação integral por teclado ou zoom de 200%.
+- A matriz GitHub Actions Python 3.10–3.14 não foi executada neste ambiente.

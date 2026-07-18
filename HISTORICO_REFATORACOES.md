@@ -496,3 +496,67 @@ Resultado consolidado: 75 testes aprovados.
 - Identidade do editor está disponível para auditoria.
 - Auditoria recebeu campos opcionais de ator sem quebrar eventos anteriores.
 - Adicionado template seguro de Secrets e exclusão do arquivo real no `.gitignore`.
+
+---
+
+## RC4 — UX e Convocação
+
+## Objetivo
+
+Atualizar a identidade editorial das telas e substituir o multiselect único
+do banco por uma convocação posicional orientada pela formação ativa.
+
+## Alterações
+
+- cabeçalho principal com taça vetorial autoral inspirada em troféus mundiais;
+- descrição do propósito e do fluxo do aplicativo;
+- menus e páginas renomeados para:
+  - `Jogadores, Scout e Avaliações`;
+  - `Lista de Jogadores`;
+  - `Análises & Mercado`;
+- remoção do cadastro público de atletas da página de lista;
+- nomes públicos centralizados como Vini Leonel/Vini e Beto Muñoz/Beto;
+- `nota_roberto` preservado como contrato interno de dados;
+- históricos exibidos com atualização de nomes sem alterar o JSON canônico;
+- banco com 11 vagas posicionais equivalentes aos slots da formação;
+- quatro vagas livres ordenadas pela prioridade posicional da tática;
+- bloqueio de duplicidades entre titulares e todas as vagas do banco;
+- migração em sessão do antigo multiselect de reservas;
+- versão atualizada para `1.0.0-rc4-ux-convocacao`.
+
+## Integridade
+
+- `jogadores_hexa_2030.json` não foi modificado;
+- `enriquecimentos_tm.json` não foi modificado;
+- campos editoriais e posições definidas pelos analistas permanecem intactos;
+- a função técnica `adicionar_jogador` continua no módulo de dados, mas não é
+  exposta na interface pública.
+
+## Validação executada no ambiente de geração
+
+- compilação dos arquivos Python alterados e dos novos testes;
+- parse com gramática Python 3.10;
+- 11 testes unitários específicos da RC4 aprovados em harness isolado;
+- instalação isolada de `streamlit==1.59.2` e `pandas==2.3.3`;
+- smoke tests das quatro telas com `streamlit.testing.v1.AppTest`;
+- tela de campo iniciada sem exceções, com 27 selectboxes:
+  1 formação, 11 titulares, 11 reservas posicionais e 4 vagas livres;
+- verificação de exclusão de titular das opções de reserva;
+- verificação da ordem tática nas vagas livres;
+- parse dos JSONs: 61 atletas e 58 enriquecimentos;
+- comparação SHA-256 confirmou que os dois JSONs permaneceram inalterados.
+
+## Limites da validação
+
+Os módulos não alterados `hexa_taticas.py`, `hexa_components.py`,
+`hexa_messages.py`, `hexa_auth.py`, `hexa_repository.py` e `hexa_models.py`,
+assim como a suíte histórica completa, não estavam materializados no sandbox.
+Os smoke tests usaram dublês somente para esses módulos ausentes. Permanecem
+necessários no repositório completo:
+
+- suíte integral de regressão;
+- inicialização do entrypoint com todos os módulos reais;
+- GitHub Actions em Python 3.10 a 3.14;
+- inspeção visual em Chrome, Firefox, Edge, Brave e Safari;
+- testes com leitor de tela, teclado e zoom de 200%.
+

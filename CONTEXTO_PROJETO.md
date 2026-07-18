@@ -67,8 +67,12 @@ Campos cadastrais e de mercado podem ser atualizados por enriquecimento seguro:
 - remoção visual da classificação `tipo`;
 - remoção de corte de jogador;
 - remoção de compartilhamento público;
-- formulário com “Sugerir jogador” e “Sugerir melhoria”;
-- limite de 11 titulares e 15 reservas.
+- formulário lateral com “Sugerir jogador” e “Sugerir melhoria”;
+- lista pública sem função de adicionar atleta;
+- limite de 11 titulares e 15 reservas;
+- banco com 11 vagas posicionais espelhadas na tática e 4 vagas livres;
+- vagas livres ordenadas pela prioridade posicional da formação;
+- nomes públicos dos analistas: Vini Leonel/Vini e Beto Muñoz/Beto.
 
 ## Protocolo de entrega
 Toda alteração de código deve gerar arquivos completos, testados e prontos para deploy. O usuário não deve receber apenas linhas para substituir.
@@ -85,9 +89,10 @@ Toda alteração de código deve gerar arquivos completos, testados e prontos pa
 
 ## Estado de release
 
-A arquitetura consolidada está identificada como `1.0.0-rc1`.
-Os contratos públicos são protegidos por testes, o grafo de imports não possui
-ciclos e o GitHub Actions valida Python 3.10 a 3.14.
+A entrega atual está identificada como `1.0.0-rc4-ux-convocacao`.
+A RC4 preserva os contratos de dados das versões anteriores e altera somente
+apresentação, navegação e estado da convocação. A validação completa em Python
+3.10 a 3.14 continua a cargo da matriz configurada no GitHub Actions.
 
 ## Auditoria operacional
 
