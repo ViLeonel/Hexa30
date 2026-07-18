@@ -12,18 +12,22 @@ __all__ = [
     "chave_reserva_posicional",
     "chave_reservas",
     "chave_titular",
+    "chaves_convocacao",
     "ler_convocacao",
     "limpar_convocacao",
+    "limpar_todas_convocacoes",
     "migrar_reservas_legadas",
     "normalizar_escolha_reserva",
     "normalizar_escolha_titular",
     "normalizar_reservas",
+    "ocupados_convocacao",
     "opcoes_reserva_livre",
     "opcoes_reserva_posicional",
     "opcoes_reservas",
     "opcoes_titular",
     "prioridade_posicoes_tatica",
     "quantidade_vagas_livres",
+    "reconciliar_convocacao",
     "reservas_da_sessao",
 ]
 
@@ -50,30 +54,52 @@ def quantidade_vagas_livres(total_slots_taticos: int) -> int:
     return max(0, LIMITE_RESERVAS - max(0, int(total_slots_taticos)))
 
 
+def chaves_convocacao(tatica: str, total_slots: int) -> tuple[str, ...]:
+    """Retorna todas as chaves atuais e a chave legada de uma formação."""
+    return (
+        *(
+            chave_titular(tatica, indice)
+            for indice in range(total_slots)
+        ),
+        *(
+            chave_reserva_posicional(tatica, indice)
+            for indice in range(total_slots)
+        ),
+        *(
+            chave_reserva_livre(tatica, indice)
+            for indice in range(quantidade_vagas_livres(total_slots))
+        ),
+        chave_reservas(tatica),
+    )
+
+
 def limpar_convocacao(
     estado: MutableMapping[str, Any],
     tatica: str,
     total_slots: int,
 ) -> None:
     """Remove titulares e reservas de uma formação sem afetar outras telas."""
-    for indice in range(total_slots):
-        estado.pop(chave_titular(tatica, indice), None)
-        estado.pop(chave_reserva_posicional(tatica, indice), None)
+    for chave in chaves_convocacao(tatica, total_slots):
+        estado.pop(chave, None)
 
-    for indice in range(quantidade_vagas_livres(total_slots)):
-        estado.pop(chave_reserva_livre(tatica, indice), None)
 
-    estado.pop(chave_reservas(tatica), None)
+def limpar_todas_convocacoes(
+    estado: MutableMapping[str, Any],
+    taticas: Mapping[str, Mapping[str, SlotTatico]],
+) -> None:
+    """Remove todas as formações salvas sem tocar em outros estados da interface."""
+    for tatica, layout in taticas.items():
+        limpar_convocacao(estado, tatica, len(layout))
 
 
 def opcoes_titular(
     jogadores: Mapping[str, Mapping[str, Any]],
     posicoes_slot: Sequence[str],
-    selecionados: set[str],
+    indisponiveis: set[str],
 ) -> list[str]:
-    """Retorna atletas compatíveis ainda não usados na convocação titular."""
+    """Retorna atletas compatíveis que não ocupam outra vaga da convocação."""
     validos = obter_atletas_compativeis(jogadores, posicoes_slot)
-    return [nome for nome in validos if nome not in selecionados]
+    return [nome for nome in validos if nome not in indisponiveis]
 
 
 def normalizar_escolha_titular(
@@ -81,7 +107,7 @@ def normalizar_escolha_titular(
     chave: str,
     opcoes_disponiveis: Sequence[str],
 ) -> str | None:
-    """Descarta uma escolha que deixou de ser válida após mudanças anteriores."""
+    """Descarta uma escolha que deixou de ser válida antes de criar o widget."""
     valor = estado.get(chave)
     if valor not in opcoes_disponiveis:
         estado[chave] = None
@@ -162,7 +188,8 @@ def opcoes_reserva_livre(
 ) -> list[str]:
     """Ordena qualquer atleta pela sequência posicional da formação ativa."""
     candidatos = [
-        nome for nome in jogadores
+        nome
+        for nome in jogadores
         if nome not in indisponiveis
     ]
     return sorted(
@@ -214,6 +241,105 @@ def normalizar_reservas(
     return resultado
 
 
+def _valor_compativel(
+    valor: Any,
+    jogadores: Mapping[str, Mapping[str, Any]],
+    posicoes: Sequence[str] | None,
+) -> str | None:
+    if not isinstance(valor, str) or valor not in jogadores:
+        return None
+    if posicoes is None:
+        return valor
+    compativeis = obter_atletas_compativeis(jogadores, posicoes)
+    return valor if valor in compativeis else None
+
+
+def reconciliar_convocacao(
+    estado: MutableMapping[str, Any],
+    tatica: str,
+    layout: Mapping[str, SlotTatico],
+    jogadores: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Corrige a convocação inteira antes da criação dos widgets.
+
+    A ordem canônica de prioridade é: titulares, reservas posicionais e vagas
+    livres. Em um estado antigo com atleta repetido, a primeira ocorrência
+    válida é preservada e as posteriores são limpas.
+    """
+    usados: set[str] = set()
+    titulares: dict[str, str] = {}
+    reservas: list[str] = []
+    chaves_limpas: list[str] = []
+
+    for indice, (slot, configuracao) in enumerate(layout.items()):
+        chave = chave_titular(tatica, indice)
+        nome = _valor_compativel(
+            estado.get(chave),
+            jogadores,
+            configuracao.posicoes,
+        )
+        if nome is None or nome in usados:
+            valor_original = estado.get(chave)
+            if valor_original not in (None, ""):
+                chaves_limpas.append(chave)
+                estado[chave] = None
+            continue
+        titulares[slot] = nome
+        usados.add(nome)
+
+    for indice, (_, configuracao) in enumerate(layout.items()):
+        chave = chave_reserva_posicional(tatica, indice)
+        nome = _valor_compativel(
+            estado.get(chave),
+            jogadores,
+            configuracao.posicoes,
+        )
+        if nome is None or nome in usados:
+            valor_original = estado.get(chave)
+            if valor_original not in (None, ""):
+                chaves_limpas.append(chave)
+                estado[chave] = None
+            continue
+        reservas.append(nome)
+        usados.add(nome)
+
+    for indice in range(quantidade_vagas_livres(len(layout))):
+        chave = chave_reserva_livre(tatica, indice)
+        nome = _valor_compativel(estado.get(chave), jogadores, None)
+        if nome is None or nome in usados:
+            valor_original = estado.get(chave)
+            if valor_original not in (None, ""):
+                chaves_limpas.append(chave)
+                estado[chave] = None
+            continue
+        reservas.append(nome)
+        usados.add(nome)
+
+    estado.pop(chave_reservas(tatica), None)
+    return {
+        "titulares": titulares,
+        "reservas": reservas[:LIMITE_RESERVAS],
+        "ocupados": usados,
+        "chaves_limpas": tuple(chaves_limpas),
+    }
+
+
+def ocupados_convocacao(
+    estado: Mapping[str, Any],
+    tatica: str,
+    layout: Mapping[str, SlotTatico],
+    jogadores: Mapping[str, Mapping[str, Any]],
+) -> set[str]:
+    """Lê todas as escolhas válidas sem modificar o estado."""
+    escalados, reservas = ler_convocacao(
+        estado,
+        tatica,
+        layout,
+        jogadores,
+    )
+    return {*escalados.values(), *reservas}
+
+
 def reservas_da_sessao(
     estado: Mapping[str, Any],
     tatica: str,
@@ -249,7 +375,10 @@ def migrar_reservas_legadas(
     """
     total_slots = len(layout)
     chaves_novas = [
-        *(chave_reserva_posicional(tatica, indice) for indice in range(total_slots)),
+        *(
+            chave_reserva_posicional(tatica, indice)
+            for indice in range(total_slots)
+        ),
         *(
             chave_reserva_livre(tatica, indice)
             for indice in range(quantidade_vagas_livres(total_slots))
@@ -299,6 +428,12 @@ def migrar_reservas_legadas(
                 break
 
     estado.pop(chave_reservas(tatica), None)
+    reconciliar_convocacao(
+        estado,
+        tatica,
+        layout,
+        jogadores,
+    )
     return reservas_da_sessao(estado, tatica, total_slots)
 
 

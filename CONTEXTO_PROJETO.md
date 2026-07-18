@@ -129,3 +129,22 @@ planilha validada
 ```
 
 A chave lógica de uma avaliação é `id_atleta + periodo`.
+
+## Estado após a RC5.1
+
+A RC5.1 finaliza a primeira etapa pública com:
+
+- espaçamento superior mais compacto no conteúdo e na barra lateral;
+- acessibilidade recolhida no final da barra lateral;
+- reconciliação global da convocação antes dos widgets;
+- proibição de duplicidade entre titulares, reservas posicionais e vagas livres;
+- persistência automática da última seleção por formação no `localStorage`;
+- armazenamento por `id_atleta`, nunca pelo nome de exibição;
+- restauração segura com descarte de IDs inexistentes e incompatibilidades;
+- cartões compactos para situação, saldo projetado e data de referência;
+- terminologia explícita para pico de valor de mercado;
+- busca com exemplo neutro: `Real Madrid ou Vini Jr`.
+
+A seleção local pertence exclusivamente ao navegador e dispositivo do usuário.
+Ela não é enviada ao servidor e não sincroniza entre dispositivos.
+

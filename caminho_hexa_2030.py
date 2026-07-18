@@ -91,13 +91,14 @@ def render_erros_configuracao(
             st.warning(mensagem)
 
 
-def render_preferencias_acessibilidade() -> bool:
-    st.sidebar.markdown("### Acessibilidade")
-    return st.sidebar.toggle(
-        "Modo de alto contraste",
-        key="modo_alto_contraste",
-        help="Aumenta o contraste de textos, bordas, foco e superfícies.",
-    )
+def render_preferencias_acessibilidade() -> None:
+    st.sidebar.markdown("---")
+    with st.sidebar.expander("Acessibilidade", expanded=False):
+        st.toggle(
+            "Modo de alto contraste",
+            key="modo_alto_contraste",
+            help="Aumenta o contraste de textos, bordas, foco e superfícies.",
+        )
 
 
 def render_navegacao() -> tuple[str, IdentidadeUsuario]:
@@ -156,7 +157,9 @@ def render_seletor_periodo(base: BaseAvaliacoes) -> str:
 
 def main() -> None:
     st.set_page_config(**PAGE_CONFIG)
-    alto_contraste = render_preferencias_acessibilidade()
+    alto_contraste = bool(
+        st.session_state.get("modo_alto_contraste", False)
+    )
     aplicar_estilos(alto_contraste=alto_contraste)
     st.markdown(
         '<a class="skip-link" href="#conteudo-principal">'
@@ -181,13 +184,14 @@ def main() -> None:
         )
     else:
         render_tela(
-            menu,
-            jogadores,
-            base_avaliacoes,
-            periodo,
+            menu=menu,
+            jogadores=jogadores,
+            base_avaliacoes=base_avaliacoes,
+            periodo=periodo,
         )
 
     render_feedback_sidebar()
+    render_preferencias_acessibilidade()
 
 
 if __name__ == "__main__":

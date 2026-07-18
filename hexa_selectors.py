@@ -142,8 +142,8 @@ def construir_registros_roster(
                 "Saldo projetado": metricas["saldo_projetado"],
                 "Situação": metricas["status"],
                 "Valor atual": formatar_valor_milhoes(atual),
-                "Pico": formatar_valor_milhoes(maximo),
-                "% do pico": (
+                "Pico de mercado": formatar_valor_milhoes(maximo),
+                "% do pico de mercado": (
                     round(percentual_do_pico(dados) or 0.0, 1)
                     if atual > 0
                     else None
@@ -192,9 +192,9 @@ def construir_registros_mercado(
                 "Nome": nome,
                 "Posição": _texto_apresentacao(dados.get("posicao")),
                 "Atual (M€)": atual,
-                "Pico (M€)": maximo,
-                "% do pico": percentual_do_pico(dados) or 0.0,
-                "Diferença para o pico (M€)": max(maximo - atual, 0.0),
+                "Pico de mercado (M€)": maximo,
+                "% do pico de mercado": percentual_do_pico(dados) or 0.0,
+                "Diferença para o pico de mercado (M€)": max(maximo - atual, 0.0),
                 "Atualização do mercado": _texto_apresentacao(
                     dados.get("tm_ultima_atualizacao")
                 ),

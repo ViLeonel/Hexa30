@@ -35,6 +35,9 @@ CSS = """
         --color-warning: var(--orange);
         --color-danger: var(--red);
         --color-focus: #60A5FA;
+        --space-page-top: .75rem;
+        --space-sidebar-top: .65rem;
+        --space-hero-bottom: 1rem;
     }
 
     .stApp {
@@ -45,7 +48,7 @@ CSS = """
 
     .block-container {
         max-width: 1500px;
-        padding-top: 1.5rem;
+        padding-top: var(--space-page-top);
         padding-bottom: 3rem;
     }
 
@@ -75,8 +78,8 @@ CSS = """
         justify-content: center;
         gap: clamp(1rem, 3vw, 2rem);
         max-width: 1120px;
-        margin: 0 auto 2rem;
-        padding: .5rem 1rem 1.25rem;
+        margin: 0 auto var(--space-hero-bottom);
+        padding: .25rem 1rem .65rem;
     }
 
     .project-trophy {
@@ -476,12 +479,16 @@ CSS = """
 
     .sidebar-title {
         color: var(--gold);
-        margin-top: 15px;
+        margin-top: 0;
         text-align: center;
     }
 
     section[data-testid="stSidebar"] {
         background-color: var(--navy-950) !important;
+    }
+
+    section[data-testid="stSidebar"] div[data-testid="stSidebarContent"] {
+        padding-top: var(--space-sidebar-top);
     }
 
     section[data-testid="stSidebar"] h2,
@@ -513,7 +520,11 @@ CSS = """
     }
 
     @media (max-width: 600px) {
-        .block-container { padding-left: .75rem; padding-right: .75rem; }
+        .block-container {
+            padding-top: .5rem;
+            padding-left: .75rem;
+            padding-right: .75rem;
+        }
         .project-hero {
             flex-direction: column;
             gap: .65rem;
@@ -928,7 +939,8 @@ CSS = """
 
     @media (forced-colors: active) {
         * { forced-color-adjust: auto; }
-        .player-card-pitch, .bench-card, .tactical-list-item {
+        .player-card-pitch, .bench-card, .tactical-list-item,
+        .evaluation-meta-card {
             border: 2px solid CanvasText !important;
         }
         .world-cup-trophy {
@@ -960,7 +972,8 @@ HIGH_CONTRAST_CSS = """
     }
     .stApp { background: #000000 !important; color: #FFFFFF !important; }
     .player-card-pitch, .bench-card, .tactical-list-item,
-    .summary-card, .profile-card, .market-card, .legend-box {
+    .summary-card, .profile-card, .market-card, .legend-box,
+    .evaluation-meta-card {
         background: #000000 !important;
         border-width: 3px !important;
     }
@@ -1026,6 +1039,40 @@ RC5_CSS = """
         color: var(--slate-400);
         line-height: 1.5;
     }
+    .evaluation-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: .75rem;
+        margin: .9rem 0 1rem;
+    }
+    .evaluation-meta-card {
+        min-width: 0;
+        padding: .8rem .9rem;
+        border: 1px solid var(--navy-800);
+        border-radius: 10px;
+        background: var(--navy-950);
+    }
+    .evaluation-meta-label {
+        color: var(--slate-400);
+        font-size: .72rem;
+        font-weight: 800;
+        line-height: 1.3;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+    }
+    .evaluation-meta-value {
+        margin-top: .35rem;
+        color: var(--white);
+        font-size: clamp(1rem, 1.7vw, 1.2rem);
+        font-weight: 800;
+        line-height: 1.25;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    .evaluation-meta-emphasis {
+        color: var(--gold);
+        font-size: clamp(1.15rem, 2vw, 1.4rem);
+    }
     @media (max-width: 700px) {
         .evaluation-context,
         .evaluation-context-main,
@@ -1038,7 +1085,8 @@ RC5_CSS = """
             width: 100%;
             border-radius: 8px;
         }
-        .market-details {
+        .market-details,
+        .evaluation-meta-grid {
             grid-template-columns: 1fr;
         }
     }

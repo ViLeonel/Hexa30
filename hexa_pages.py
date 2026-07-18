@@ -49,6 +49,11 @@ from hexa_config import (
     TITULO_PROJETO,
 )
 from hexa_data import formatar_valor_milhoes
+from hexa_persistencia_local import (
+    CHAVE_AVISO_RESTAURACAO,
+    apagar_convocacoes_locais,
+    sincronizar_persistencia_local,
+)
 from hexa_messages import (
     FEEDBACK_MENSAGEM_OBRIGATORIA,
     FEEDBACK_PREPARADO,
@@ -77,6 +82,7 @@ from hexa_session import (
     opcoes_titular,
     prioridade_posicoes_tatica,
     quantidade_vagas_livres,
+    reconciliar_convocacao,
 )
 from hexa_taticas import (
     LIMITE_RESERVAS,
@@ -186,14 +192,16 @@ def _render_linha_seletores_posicionais(
     itens: Sequence[tuple[int, str, SlotTatico]],
     jogadores: Mapping[str, Mapping[str, Any]],
     tatica_ativa: str,
-    indisponiveis_base: set[str],
-    selecionados_reservas: set[str],
+    ocupados: set[str],
 ) -> None:
+    """Renderiza reservas posicionais sem oferecer atletas já ocupados."""
     colunas = st.columns(len(itens))
     for coluna, (indice, slot, configuracao) in zip(colunas, itens):
         with coluna:
             chave = chave_reserva_posicional(tatica_ativa, indice)
-            indisponiveis = indisponiveis_base | selecionados_reservas
+            valor_atual = st.session_state.get(chave)
+            atual = valor_atual if isinstance(valor_atual, str) else None
+            indisponiveis = ocupados - ({atual} if atual else set())
             disponiveis = opcoes_reserva_posicional(
                 jogadores,
                 configuracao.posicoes,
@@ -204,7 +212,7 @@ def _render_linha_seletores_posicionais(
                 chave,
                 disponiveis,
             )
-            escolha = st.selectbox(
+            st.selectbox(
                 f"Reserva — {slot}:",
                 disponiveis,
                 index=None,
@@ -218,8 +226,6 @@ def _render_linha_seletores_posicionais(
                     "o respectivo slot titular."
                 ),
             )
-            if escolha:
-                selecionados_reservas.add(escolha)
 
 
 def _render_linha_seletores_livres(
@@ -227,14 +233,16 @@ def _render_linha_seletores_livres(
     jogadores: Mapping[str, Mapping[str, Any]],
     tatica_ativa: str,
     prioridade_posicoes: Sequence[str],
-    indisponiveis_base: set[str],
-    selecionados_reservas: set[str],
+    ocupados: set[str],
 ) -> None:
+    """Renderiza vagas livres sem repetir titulares ou outras reservas."""
     colunas = st.columns(len(itens))
     for coluna, indice in zip(colunas, itens):
         with coluna:
             chave = chave_reserva_livre(tatica_ativa, indice)
-            indisponiveis = indisponiveis_base | selecionados_reservas
+            valor_atual = st.session_state.get(chave)
+            atual = valor_atual if isinstance(valor_atual, str) else None
+            indisponiveis = ocupados - ({atual} if atual else set())
             disponiveis = opcoes_reserva_livre(
                 jogadores,
                 prioridade_posicoes,
@@ -245,7 +253,7 @@ def _render_linha_seletores_livres(
                 chave,
                 disponiveis,
             )
-            escolha = st.selectbox(
+            st.selectbox(
                 f"Vaga livre {indice + 1}:",
                 disponiveis,
                 index=None,
@@ -259,8 +267,6 @@ def _render_linha_seletores_livres(
                     "ordem posicional da formação ativa."
                 ),
             )
-            if escolha:
-                selecionados_reservas.add(escolha)
 
 
 def _render_selecao_reservas(
@@ -276,6 +282,13 @@ def _render_selecao_reservas(
         jogadores,
         titulares,
     )
+    reconciliacao = reconciliar_convocacao(
+        st.session_state,
+        tatica_ativa,
+        layout_ativo,
+        jogadores,
+    )
+    ocupados = set(reconciliacao["ocupados"])
 
     st.markdown("---")
     st.markdown("## Banco de reservas")
@@ -284,7 +297,6 @@ def _render_selecao_reservas(
         "As quatro vagas finais aceitam qualquer posição oficial."
     )
 
-    selecionados_reservas: set[str] = set()
     itens_layout = [
         (indice, slot, configuracao)
         for indice, (slot, configuracao) in enumerate(layout_ativo.items())
@@ -296,8 +308,7 @@ def _render_selecao_reservas(
             itens_layout[inicio:inicio + 3],
             jogadores,
             tatica_ativa,
-            titulares,
-            selecionados_reservas,
+            ocupados,
         )
 
     prioridade = prioridade_posicoes_tatica(layout_ativo)
@@ -320,29 +331,16 @@ def _render_selecao_reservas(
             jogadores,
             tatica_ativa,
             prioridade,
-            titulares,
-            selecionados_reservas,
+            ocupados,
         )
 
-    posicionais = [
-        nome
-        for nome in (
-            st.session_state.get(
-                chave_reserva_posicional(tatica_ativa, indice)
-            )
-            for indice in range(len(layout_ativo))
-        )
-        if isinstance(nome, str) and nome
-    ]
-    livres = [
-        nome
-        for nome in (
-            st.session_state.get(chave_reserva_livre(tatica_ativa, indice))
-            for indice in range(total_livres)
-        )
-        if isinstance(nome, str) and nome
-    ]
-    return [*posicionais, *livres]
+    reconciliacao_final = reconciliar_convocacao(
+        st.session_state,
+        tatica_ativa,
+        layout_ativo,
+        jogadores,
+    )
+    return list(reconciliacao_final["reservas"])
 
 
 def _render_metricas_convocacao(
@@ -393,6 +391,22 @@ def render_tela_campo(
     )
     avaliacoes_periodo = _avaliacoes_por_nome(base_avaliacoes, periodo)
 
+    persistencia = sincronizar_persistencia_local(
+        st.session_state,
+        TATICAS,
+        jogadores,
+    )
+    if not persistencia.pronta:
+        st.caption("Restaurando a última convocação salva neste navegador…")
+        return
+    if st.session_state.pop(CHAVE_AVISO_RESTAURACAO, False):
+        st.toast("Escalação restaurada deste navegador.")
+    if not persistencia.disponivel:
+        st.warning(
+            "O navegador bloqueou o armazenamento local. A convocação será "
+            "mantida somente enquanto esta sessão permanecer aberta."
+        )
+
     col_config, col_campo = st.columns([1, 2], gap="large")
 
     with col_config:
@@ -404,6 +418,14 @@ def render_tela_campo(
         )
         layout_ativo = TATICAS[tatica_ativa]
 
+        reconciliacao = reconciliar_convocacao(
+            st.session_state,
+            tatica_ativa,
+            layout_ativo,
+            jogadores,
+        )
+        ocupados = set(reconciliacao["ocupados"])
+
         if st.button("Limpar titulares e reservas", width="stretch"):
             limpar_convocacao(
                 st.session_state,
@@ -412,19 +434,37 @@ def render_tela_campo(
             )
             st.rerun()
 
+        with st.expander("Persistência da escalação", expanded=False):
+            st.caption(
+                "Suas escolhas ficam salvas apenas neste navegador e "
+                "dispositivo. Cada esquema tático mantém sua própria seleção."
+            )
+            if st.button(
+                "Apagar escalações salvas neste navegador",
+                width="stretch",
+                key="apagar_convocacoes_locais",
+            ):
+                apagar_convocacoes_locais(
+                    st.session_state,
+                    TATICAS,
+                )
+                st.rerun()
+
         st.caption(
             "Cada campo começa vazio e aceita somente atletas compatíveis "
             "com as posições oficiais do projeto."
         )
         escalados: dict[str, str] = {}
-        selecionados: set[str] = set()
 
         for indice, (slot, configuracao) in enumerate(layout_ativo.items()):
             chave = chave_titular(tatica_ativa, indice)
+            valor_atual = st.session_state.get(chave)
+            atual = valor_atual if isinstance(valor_atual, str) else None
+            indisponiveis = ocupados - ({atual} if atual else set())
             disponiveis = opcoes_titular(
                 jogadores,
                 configuracao.posicoes,
-                selecionados,
+                indisponiveis,
             )
             normalizar_escolha_titular(
                 st.session_state,
@@ -444,7 +484,6 @@ def render_tela_campo(
             )
             if escolha:
                 escalados[slot] = escolha
-                selecionados.add(escolha)
 
     with col_campo:
         modo_visualizacao = st.radio(
@@ -476,21 +515,13 @@ def render_tela_campo(
 
         render_legenda_adaptabilidade()
 
+    titulares = set(escalados.values())
     reservas = _render_selecao_reservas(
         jogadores,
         tatica_ativa,
         layout_ativo,
-        selecionados,
+        titulares,
     )
-    reservas_unicas: list[str] = []
-    for nome in reservas:
-        if (
-            nome not in selecionados
-            and nome not in reservas_unicas
-            and nome in jogadores
-        ):
-            reservas_unicas.append(nome)
-    reservas = reservas_unicas[:LIMITE_RESERVAS]
 
     resumo_texto = resumo_convocacao(len(escalados), len(reservas))
     st.markdown(
@@ -536,6 +567,44 @@ def _valor_analista(
         return float(valor)
     except (TypeError, ValueError):
         return None
+
+
+def _render_resumo_avaliacao(
+    metricas: Mapping[str, Any],
+    registro: Mapping[str, Any],
+) -> None:
+    """Exibe situação, saldo e data sem truncamento em colunas estreitas."""
+    situacao = str(metricas["status"])
+    saldo = formatar_numero(metricas["saldo_projetado"], sinal=True)
+    data_referencia = formatar_data_referencia(
+        str(registro["data_referencia"])
+    )
+    st.markdown(
+        '<section class="evaluation-meta-grid" '
+        'aria-label="Resumo da avaliação trimestral">'
+        '<article class="evaluation-meta-card">'
+        '<div class="evaluation-meta-label">Situação</div>'
+        f'<div class="evaluation-meta-value">{_esc(situacao)}</div>'
+        '</article>'
+        '<article class="evaluation-meta-card" '
+        'title="Média de potencial menos capacidade atual, calculada apenas '
+        'para cada analista que preencheu o par completo.">'
+        '<div class="evaluation-meta-label">Saldo projetado</div>'
+        f'<div class="evaluation-meta-value evaluation-meta-emphasis">'
+        f'{_esc(saldo)}</div>'
+        '</article>'
+        '<article class="evaluation-meta-card">'
+        '<div class="evaluation-meta-label">Data de referência</div>'
+        f'<div class="evaluation-meta-value">{_esc(data_referencia)}</div>'
+        '</article>'
+        '</section>'
+        '<div class="sr-only">'
+        f'Situação da avaliação: {_esc(situacao)}. '
+        f'Saldo projetado: {_esc(saldo)}. '
+        f'Data de referência: {_esc(data_referencia)}.'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
 
 def _render_avaliacao_trimestral(
@@ -601,20 +670,7 @@ def _render_avaliacao_trimestral(
         },
     )
 
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Situação", str(metricas["status"]))
-    c2.metric(
-        "Saldo projetado",
-        formatar_numero(metricas["saldo_projetado"], sinal=True),
-        help=(
-            "Média de potencial menos capacidade atual, calculada apenas "
-            "para cada analista que preencheu o par completo."
-        ),
-    )
-    c3.metric(
-        "Data de referência",
-        formatar_data_referencia(str(registro["data_referencia"])),
-    )
+    _render_resumo_avaliacao(metricas, registro)
 
     st.caption(
         "Posição no período: "
@@ -746,7 +802,7 @@ def render_tela_roster(
     filtro_1, filtro_2, filtro_3 = st.columns([2, 1, 1])
     busca = filtro_1.text_input(
         "Buscar por nome ou clube",
-        placeholder="Ex.: Palmeiras",
+        placeholder="Ex.: Real Madrid ou Vini Jr",
     )
     posicao_filtro = filtro_2.selectbox(
         "Posição",
@@ -785,7 +841,7 @@ def render_tela_roster(
             "Capacidade atual": st.column_config.NumberColumn(format="%.2f"),
             "Potencial 2030": st.column_config.NumberColumn(format="%.2f"),
             "Saldo projetado": st.column_config.NumberColumn(format="%+.2f"),
-            "% do pico": st.column_config.ProgressColumn(
+            "% do pico de mercado": st.column_config.ProgressColumn(
                 min_value=0,
                 max_value=100,
                 format="%.1f%%",
@@ -1014,14 +1070,14 @@ def render_tela_analise(
         return
 
     total_atual = df_mercado["Atual (M€)"].sum()
-    total_pico = df_mercado["Pico (M€)"].sum()
+    total_pico = df_mercado["Pico de mercado (M€)"].sum()
     col_m1, col_m2, col_m3 = st.columns(3)
     col_m1.metric("Atletas com valor", len(df_mercado))
     col_m2.metric(
         "Valor atual somado",
         formatar_valor_milhoes(total_atual),
     )
-    col_m3.metric("Pico somado", formatar_valor_milhoes(total_pico))
+    col_m3.metric("Pico de mercado somado", formatar_valor_milhoes(total_pico))
 
     mercado_ordenado = df_mercado.sort_values(
         "Atual (M€)",
@@ -1033,13 +1089,13 @@ def render_tela_analise(
         hide_index=True,
         column_config={
             "Atual (M€)": st.column_config.NumberColumn(format="€ %.2f mi"),
-            "Pico (M€)": st.column_config.NumberColumn(format="€ %.2f mi"),
-            "% do pico": st.column_config.ProgressColumn(
+            "Pico de mercado (M€)": st.column_config.NumberColumn(format="€ %.2f mi"),
+            "% do pico de mercado": st.column_config.ProgressColumn(
                 min_value=0,
                 max_value=100,
                 format="%.1f%%",
             ),
-            "Diferença para o pico (M€)": (
+            "Diferença para o pico de mercado (M€)": (
                 st.column_config.NumberColumn(format="€ %.2f mi")
             ),
         },

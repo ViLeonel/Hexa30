@@ -82,3 +82,18 @@ Na interface pública, usar sempre:
 - `Beto Muñoz` ou `Beto`.
 
 Outras formas não devem ser exibidas.
+
+## Persistência pessoal da convocação
+
+- A convocação pessoal usa apenas `id_atleta` estável.
+- Cada formação mantém titulares e reservas próprios.
+- Um atleta não pode ocupar mais de uma das 26 vagas.
+- A prioridade de reconciliação é: titulares, reservas posicionais e vagas
+  livres.
+- Em duplicidade legada, preserva-se a primeira ocorrência válida.
+- Dados restaurados devem ser revalidados contra existência e compatibilidade.
+- O armazenamento local não contém notas, observações, mercado ou dados
+  sensíveis.
+- A persistência é exclusiva do navegador e dispositivo.
+- Falha ou bloqueio do armazenamento local não pode impedir o uso da aplicação.
+

@@ -562,3 +562,44 @@ editoriais antigos não são lidos nem exibidos pela interface pública.
 - saldo médio +0,7659574468.
 
 Os resultados dos testes executados constam em `RELATORIO_TESTES_RC5.md`.
+
+---
+
+## RC5.1 — Finalização de UX, convocação única e persistência local
+
+## Objetivo
+
+Concluir os ajustes da primeira etapa do projeto sem alterar avaliações,
+cadastro, mercado ou regras táticas.
+
+## Alterações
+
+- redução de aproximadamente 50% do respiro superior;
+- controle de alto contraste movido para expansor no final da barra lateral;
+- cartões responsivos para situação, saldo projetado e data de referência;
+- placeholder alterado para `Ex.: Real Madrid ou Vini Jr`;
+- rótulos de mercado explicitam `% do pico de mercado`;
+- reconciliação canônica de 26 vagas antes da criação dos widgets;
+- atleta selecionado deixa de aparecer em qualquer outro seletor;
+- estados antigos duplicados preservam a primeira ocorrência válida;
+- persistência local por formação com IDs estáveis;
+- botão para apagar todas as escalações salvas no navegador;
+- nenhuma dependência externa adicionada.
+
+## Persistência
+
+A seleção é armazenada no `localStorage` do navegador por um componente
+Streamlit V2. O servidor não recebe um arquivo pessoal do usuário. O estado é
+validado novamente ao ser restaurado e pode ser descartado quando o atleta não
+existe mais ou deixou de ser compatível com o slot.
+
+## Garantias
+
+- avaliações trimestrais e JSONs permaneceram byte a byte iguais;
+- cada tática mantém uma seleção independente;
+- limpar a formação atual não apaga as demais;
+- apagar as escalações locais remove todas as formações do navegador;
+- ausência de `localStorage` não impede o uso normal durante a sessão.
+
+Os resultados constam em `RELATORIO_TESTES_RC5_1.md`.
+
