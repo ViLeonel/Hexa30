@@ -362,8 +362,7 @@ def render_feedback_sidebar() -> None:
     corpo = urllib.parse.quote(f"{SAUDACAO_FEEDBACK}\n\n{detalhes.strip()}")
     mailto = f"mailto:{EMAIL_FEEDBACK}?subject={assunto}&body={corpo}"
     st.sidebar.markdown(
-        f'<a href="{mailto}" style="display:block;text-align:center;background:#EAB308;color:#020617;'
-        'font-weight:800;padding:10px;border-radius:8px;text-decoration:none;">Abrir e-mail</a>',
+        f'<a href="{mailto}" class="feedback-link">Abrir e-mail</a>',
         unsafe_allow_html=True,
     )
 

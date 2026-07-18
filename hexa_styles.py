@@ -459,6 +459,216 @@ CSS = """
         .bench-grid { grid-template-columns: 1fr 1fr; }
         .rating-grid { grid-template-columns: 1fr; }
     }
+
+    /* Estados semânticos: adaptabilidade e informação */
+    .player-card-pitch.adapt-primary { border-color: var(--green); }
+    .player-card-pitch.adapt-secondary { border-color: var(--gold); }
+    .player-card-pitch.adapt-tertiary { border-color: var(--orange); }
+    .player-card-pitch.adapt-incompatible { border-color: var(--red); }
+
+    .player-adaptability-tag {
+        display: block;
+        margin-top: 4px;
+        color: var(--slate-300);
+        font-size: .56rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .legend-primary { background: var(--green); }
+    .legend-secondary { background: var(--gold); }
+    .legend-tertiary { background: var(--orange); }
+    .legend-empty { background: var(--slate-500); }
+
+    .summary-highlight,
+    .profile-highlight { color: var(--gold); font-weight: 800; }
+    .summary-positive { color: var(--green); }
+
+    .market-card-info { border-left-color: var(--blue); }
+    .market-details {
+        color: var(--slate-300);
+        line-height: 1.85;
+        font-size: .88rem;
+    }
+
+    .stat-positive { border-left-color: var(--green); }
+    .stat-negative { border-left-color: var(--red); }
+    .stat-info { border-left-color: var(--blue); }
+
+    .feedback-link {
+        display: block;
+        min-height: 44px;
+        padding: 11px 14px;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        background: var(--gold);
+        color: var(--navy-950) !important;
+        font-weight: 800;
+        line-height: 1.35;
+        text-align: center;
+        text-decoration: none !important;
+    }
+
+    .feedback-link:hover {
+        filter: brightness(1.08);
+        text-decoration: underline !important;
+    }
+
+    .feedback-link:focus-visible,
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    [role="radio"]:focus-visible,
+    [role="option"]:focus-visible {
+        outline: 3px solid var(--blue) !important;
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            scroll-behavior: auto !important;
+            transition-duration: .01ms !important;
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+        }
+    }
+
+    /* Posições do campo sem atributos style inline. */
+    .pitch-pos-l15-b28 { left: 15%; bottom: 28%; }
+    .pitch-pos-l20-b55 { left: 20%; bottom: 55%; }
+    .pitch-pos-l20-b65 { left: 20%; bottom: 65%; }
+    .pitch-pos-l20-b72 { left: 20%; bottom: 72%; }
+    .pitch-pos-l25-b45 { left: 25%; bottom: 45%; }
+    .pitch-pos-l30-b52 { left: 30%; bottom: 52%; }
+    .pitch-pos-l35-b65 { left: 35%; bottom: 65%; }
+    .pitch-pos-l37-b22 { left: 37%; bottom: 22%; }
+    .pitch-pos-l38-b42 { left: 38%; bottom: 42%; }
+    .pitch-pos-l38-b45 { left: 38%; bottom: 45%; }
+    .pitch-pos-l38-b78 { left: 38%; bottom: 78%; }
+    .pitch-pos-l40-b45 { left: 40%; bottom: 45%; }
+    .pitch-pos-l50-b40 { left: 50%; bottom: 40%; }
+    .pitch-pos-l50-b42 { left: 50%; bottom: 42%; }
+    .pitch-pos-l50-b60 { left: 50%; bottom: 60%; }
+    .pitch-pos-l50-b62 { left: 50%; bottom: 62%; }
+    .pitch-pos-l50-b65 { left: 50%; bottom: 65%; }
+    .pitch-pos-l50-b8 { left: 50%; bottom: 8%; }
+    .pitch-pos-l50-b82 { left: 50%; bottom: 82%; }
+    .pitch-pos-l60-b45 { left: 60%; bottom: 45%; }
+    .pitch-pos-l62-b42 { left: 62%; bottom: 42%; }
+    .pitch-pos-l62-b45 { left: 62%; bottom: 45%; }
+    .pitch-pos-l62-b78 { left: 62%; bottom: 78%; }
+    .pitch-pos-l63-b22 { left: 63%; bottom: 22%; }
+    .pitch-pos-l65-b65 { left: 65%; bottom: 65%; }
+    .pitch-pos-l70-b52 { left: 70%; bottom: 52%; }
+    .pitch-pos-l75-b45 { left: 75%; bottom: 45%; }
+    .pitch-pos-l80-b55 { left: 80%; bottom: 55%; }
+    .pitch-pos-l80-b65 { left: 80%; bottom: 65%; }
+    .pitch-pos-l80-b72 { left: 80%; bottom: 72%; }
+    .pitch-pos-l85-b28 { left: 85%; bottom: 28%; }
+
+    /* Larguras discretas do comparativo de mercado sem style inline. */
+    .progress-pct-0 { width: 0%; }
+    .progress-pct-1 { width: 1%; }
+    .progress-pct-2 { width: 2%; }
+    .progress-pct-3 { width: 3%; }
+    .progress-pct-4 { width: 4%; }
+    .progress-pct-5 { width: 5%; }
+    .progress-pct-6 { width: 6%; }
+    .progress-pct-7 { width: 7%; }
+    .progress-pct-8 { width: 8%; }
+    .progress-pct-9 { width: 9%; }
+    .progress-pct-10 { width: 10%; }
+    .progress-pct-11 { width: 11%; }
+    .progress-pct-12 { width: 12%; }
+    .progress-pct-13 { width: 13%; }
+    .progress-pct-14 { width: 14%; }
+    .progress-pct-15 { width: 15%; }
+    .progress-pct-16 { width: 16%; }
+    .progress-pct-17 { width: 17%; }
+    .progress-pct-18 { width: 18%; }
+    .progress-pct-19 { width: 19%; }
+    .progress-pct-20 { width: 20%; }
+    .progress-pct-21 { width: 21%; }
+    .progress-pct-22 { width: 22%; }
+    .progress-pct-23 { width: 23%; }
+    .progress-pct-24 { width: 24%; }
+    .progress-pct-25 { width: 25%; }
+    .progress-pct-26 { width: 26%; }
+    .progress-pct-27 { width: 27%; }
+    .progress-pct-28 { width: 28%; }
+    .progress-pct-29 { width: 29%; }
+    .progress-pct-30 { width: 30%; }
+    .progress-pct-31 { width: 31%; }
+    .progress-pct-32 { width: 32%; }
+    .progress-pct-33 { width: 33%; }
+    .progress-pct-34 { width: 34%; }
+    .progress-pct-35 { width: 35%; }
+    .progress-pct-36 { width: 36%; }
+    .progress-pct-37 { width: 37%; }
+    .progress-pct-38 { width: 38%; }
+    .progress-pct-39 { width: 39%; }
+    .progress-pct-40 { width: 40%; }
+    .progress-pct-41 { width: 41%; }
+    .progress-pct-42 { width: 42%; }
+    .progress-pct-43 { width: 43%; }
+    .progress-pct-44 { width: 44%; }
+    .progress-pct-45 { width: 45%; }
+    .progress-pct-46 { width: 46%; }
+    .progress-pct-47 { width: 47%; }
+    .progress-pct-48 { width: 48%; }
+    .progress-pct-49 { width: 49%; }
+    .progress-pct-50 { width: 50%; }
+    .progress-pct-51 { width: 51%; }
+    .progress-pct-52 { width: 52%; }
+    .progress-pct-53 { width: 53%; }
+    .progress-pct-54 { width: 54%; }
+    .progress-pct-55 { width: 55%; }
+    .progress-pct-56 { width: 56%; }
+    .progress-pct-57 { width: 57%; }
+    .progress-pct-58 { width: 58%; }
+    .progress-pct-59 { width: 59%; }
+    .progress-pct-60 { width: 60%; }
+    .progress-pct-61 { width: 61%; }
+    .progress-pct-62 { width: 62%; }
+    .progress-pct-63 { width: 63%; }
+    .progress-pct-64 { width: 64%; }
+    .progress-pct-65 { width: 65%; }
+    .progress-pct-66 { width: 66%; }
+    .progress-pct-67 { width: 67%; }
+    .progress-pct-68 { width: 68%; }
+    .progress-pct-69 { width: 69%; }
+    .progress-pct-70 { width: 70%; }
+    .progress-pct-71 { width: 71%; }
+    .progress-pct-72 { width: 72%; }
+    .progress-pct-73 { width: 73%; }
+    .progress-pct-74 { width: 74%; }
+    .progress-pct-75 { width: 75%; }
+    .progress-pct-76 { width: 76%; }
+    .progress-pct-77 { width: 77%; }
+    .progress-pct-78 { width: 78%; }
+    .progress-pct-79 { width: 79%; }
+    .progress-pct-80 { width: 80%; }
+    .progress-pct-81 { width: 81%; }
+    .progress-pct-82 { width: 82%; }
+    .progress-pct-83 { width: 83%; }
+    .progress-pct-84 { width: 84%; }
+    .progress-pct-85 { width: 85%; }
+    .progress-pct-86 { width: 86%; }
+    .progress-pct-87 { width: 87%; }
+    .progress-pct-88 { width: 88%; }
+    .progress-pct-89 { width: 89%; }
+    .progress-pct-90 { width: 90%; }
+    .progress-pct-91 { width: 91%; }
+    .progress-pct-92 { width: 92%; }
+    .progress-pct-93 { width: 93%; }
+    .progress-pct-94 { width: 94%; }
+    .progress-pct-95 { width: 95%; }
+    .progress-pct-96 { width: 96%; }
+    .progress-pct-97 { width: 97%; }
+    .progress-pct-98 { width: 98%; }
+    .progress-pct-99 { width: 99%; }
+    .progress-pct-100 { width: 100%; }
 </style>
 """
 
