@@ -45,3 +45,40 @@ Meia-armador; Ponta-esquerda; Ponta-direita; Segundo atacante; Centroavante.
 - Campos sem alteração não devem gerar novo evento.
 - Falha de persistência canônica não pode produzir evento de auditoria.
 - O histórico operacional não substitui o campo editorial `historico`.
+
+
+---
+
+## Avaliações trimestrais — RC5
+
+- O histórico começa em T2 2026.
+- Cada registro possui período e data de referência.
+- A planilha fornece somente dados brutos; indicadores são recalculados em
+  Python.
+- Capacidade atual e potencial 2030 são independentes para Vini e Beto.
+- Média usa apenas notas disponíveis.
+- Zero é nota válida; ausência é `null`.
+- Avaliação completa exige as quatro notas.
+- Avaliação parcial possui pelo menos uma nota, sem completar as quatro.
+- Saldo projetado é a média de `potencial − capacidade` por analista com par
+  completo.
+- Saldo negativo representa regressão projetada e deve ser preservado.
+- Divergência só é calculada quando os dois analistas preencheram a mesma
+  dimensão.
+- Variação trimestral usa o último período anterior efetivamente avaliado.
+- Média histórica anterior não inclui o trimestre corrente.
+- Posição e clube da avaliação são snapshots e não alteram as posições
+  editoriais do cadastro.
+- A importação é append-only.
+- Alteração retroativa é bloqueada por padrão e exige autorização explícita.
+- Mercado e avaliação esportiva usam datas distintas e nunca devem ser
+  fundidos em uma única referência temporal.
+
+## Identidade dos analistas
+
+Na interface pública, usar sempre:
+
+- `Vini Leonel` ou `Vini`;
+- `Beto Muñoz` ou `Beto`.
+
+Outras formas não devem ser exibidas.

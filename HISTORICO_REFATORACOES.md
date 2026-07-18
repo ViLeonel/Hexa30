@@ -497,66 +497,68 @@ Resultado consolidado: 75 testes aprovados.
 - Auditoria recebeu campos opcionais de ator sem quebrar eventos anteriores.
 - Adicionado template seguro de Secrets e exclusão do arquivo real no `.gitignore`.
 
+
 ---
 
-## RC4 — UX e Convocação
+# RC5 — Avaliações Trimestrais e Histórico
 
 ## Objetivo
 
-Atualizar a identidade editorial das telas e substituir o multiselect único
-do banco por uma convocação posicional orientada pela formação ativa.
+Substituir o modelo público de notas únicas pelo histórico trimestral de
+capacidade atual e potencial 2030.
 
-## Alterações
+## Arquivos adicionados
 
-- cabeçalho principal com taça vetorial autoral inspirada em troféus mundiais;
-- descrição do propósito e do fluxo do aplicativo;
-- menus e páginas renomeados para:
-  - `Jogadores, Scout e Avaliações`;
-  - `Lista de Jogadores`;
-  - `Análises & Mercado`;
-- remoção do cadastro público de atletas da página de lista;
-- nomes públicos centralizados como Vini Leonel/Vini e Beto Muñoz/Beto;
-- `nota_roberto` preservado como contrato interno de dados;
-- históricos exibidos com atualização de nomes sem alterar o JSON canônico;
-- banco com 11 vagas posicionais equivalentes aos slots da formação;
-- quatro vagas livres ordenadas pela prioridade posicional da tática;
-- bloqueio de duplicidades entre titulares e todas as vagas do banco;
-- migração em sessão do antigo multiselect de reservas;
-- versão atualizada para `1.0.0-rc4-ux-convocacao`.
+- `hexa_avaliacoes.py`;
+- `avaliacoes_trimestrais_hexa_2030.json`;
+- `arquivo/avaliacoes_editoriais_legado_pre_t2_2026.json`;
+- `scripts/importar_avaliacoes_planilha.py`;
+- `tests/test_rc5_avaliacoes.py`;
+- `tests/test_rc5_contrato.py`;
+- `tests/test_rc5_importador.py`;
+- documentação e relatório de testes da RC5.
 
-## Integridade
+## Arquivos alterados
 
-- `jogadores_hexa_2030.json` não foi modificado;
-- `enriquecimentos_tm.json` não foi modificado;
-- campos editoriais e posições definidas pelos analistas permanecem intactos;
-- a função técnica `adicionar_jogador` continua no módulo de dados, mas não é
-  exposta na interface pública.
+- `caminho_hexa_2030.py`;
+- `hexa_admin.py`;
+- `hexa_components.py`;
+- `hexa_config.py`;
+- `hexa_pages.py`;
+- `hexa_selectors.py`;
+- `hexa_styles.py`;
+- `jogadores_hexa_2030.json`.
 
-## Validação executada no ambiente de geração
+`hexa_session.py` acompanha o pacote sem alteração funcional para preservar a
+seleção posicional de reservas da RC4.
 
-- compilação dos arquivos Python alterados e dos novos testes;
-- parse com gramática Python 3.10;
-- 11 testes unitários específicos da RC4 aprovados em harness isolado;
-- instalação isolada de `streamlit==1.59.2` e `pandas==2.3.3`;
-- smoke tests das quatro telas com `streamlit.testing.v1.AppTest`;
-- tela de campo iniciada sem exceções, com 27 selectboxes:
-  1 formação, 11 titulares, 11 reservas posicionais e 4 vagas livres;
-- verificação de exclusão de titular das opções de reserva;
-- verificação da ordem tática nas vagas livres;
-- parse dos JSONs: 61 atletas e 58 enriquecimentos;
-- comparação SHA-256 confirmou que os dois JSONs permaneceram inalterados.
+## Contrato temporal
 
-## Limites da validação
+- início oficial em T2 2026;
+- data de referência 30/06/2026;
+- chave lógica `id_atleta + periodo`;
+- 61 IDs estáveis;
+- dados brutos separados dos indicadores;
+- ausência preservada como nula;
+- saldo negativo aceito;
+- variação baseada no último trimestre avaliado;
+- importação append-only com escrita atômica e backup.
 
-Os módulos não alterados `hexa_taticas.py`, `hexa_components.py`,
-`hexa_messages.py`, `hexa_auth.py`, `hexa_repository.py` e `hexa_models.py`,
-assim como a suíte histórica completa, não estavam materializados no sandbox.
-Os smoke tests usaram dublês somente para esses módulos ausentes. Permanecem
-necessários no repositório completo:
+## Interface
 
-- suíte integral de regressão;
-- inicialização do entrypoint com todos os módulos reais;
-- GitHub Actions em Python 3.10 a 3.14;
-- inspeção visual em Chrome, Firefox, Edge, Brave e Safari;
-- testes com leitor de tela, teclado e zoom de 200%.
+As quatro páginas passam a usar exclusivamente o período selecionado. A data de
+referência fica visível e a data de mercado permanece independente. Os campos
+editoriais antigos não são lidos nem exibidos pela interface pública.
 
+## Indicadores de regressão
+
+- 61 atletas;
+- 47 com alguma avaliação;
+- 43 completos;
+- 4 parciais;
+- 14 não avaliados;
+- capacidade média 7,1542553191;
+- potencial médio 7,9202127660;
+- saldo médio +0,7659574468.
+
+Os resultados dos testes executados constam em `RELATORIO_TESTES_RC5.md`.
