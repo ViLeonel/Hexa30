@@ -7,6 +7,7 @@ from pathlib import Path
 __all__ = [
     "ANO_BASE_DADOS",
     "ANO_COPA",
+    "AUDIT_FILE",
     "ASSUNTO_FEEDBACK_PREFIXO",
     "BASE_DIR",
     "DATA_FILE",
@@ -43,7 +44,7 @@ BASE_DIR = Path(__file__).resolve().parent
 NOME_APLICACAO = "O Caminho para o Hexa 2030"
 TITULO_PROJETO = "🏆 O Caminho para o Hexa"
 ICONE_APLICACAO = "🏆"
-VERSAO_APLICACAO = "1.0.0-rc1"
+VERSAO_APLICACAO = "1.0.0-rc2"
 TITULO_SIDEBAR = "CONSELHO TÁTICO"
 ROTULO_NAVEGACAO = "Navegação do Painel:"
 
@@ -90,8 +91,10 @@ SAUDACAO_FEEDBACK = "Olá, Vini e Roberto!"
 # Persistência
 NOME_ARQUIVO_JOGADORES = "jogadores_hexa_2030.json"
 NOME_ARQUIVO_ENRIQUECIMENTOS = "enriquecimentos_tm.json"
+NOME_ARQUIVO_AUDITORIA = "auditoria_jogadores.jsonl"
 DATA_FILE = BASE_DIR / NOME_ARQUIVO_JOGADORES
 ENRICHMENTS_FILE = BASE_DIR / NOME_ARQUIVO_ENRIQUECIMENTOS
+AUDIT_FILE = BASE_DIR / NOME_ARQUIVO_AUDITORIA
 
 # Configuração da página Streamlit. Mantida como estrutura simples para não
 # introduzir dependência do Streamlit neste módulo.

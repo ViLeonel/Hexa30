@@ -13,7 +13,13 @@ import re
 from datetime import datetime
 from typing import Any, Mapping
 
+from hexa_audit import (
+    AuditoriaRepository,
+    JsonlAuditoriaRepository,
+    gerar_eventos_alteracao,
+)
 from hexa_config import (
+    AUDIT_FILE,
     DATA_FILE,
     ENRICHMENTS_FILE,
     GRUPO_OBSERVACAO,
@@ -38,6 +44,7 @@ __all__ = [
     "BaseJogadores",
     "DataIntegrityError",
     "adicionar_jogador",
+    "auditoria_padrao",
     "carregar_jogadores",
     "extrair_altura_metros",
     "extrair_numero",
@@ -380,6 +387,18 @@ def validar_integridade_jogadores(
     return validar_jogadores_normalizados(jogadores)
 
 
+def auditoria_padrao(
+    repositorio: JogadoresRepository | None = None,
+) -> AuditoriaRepository | None:
+    """Retorna auditoria JSONL apenas para a implementação JSON do projeto."""
+    if repositorio is None:
+        return JsonlAuditoriaRepository(AUDIT_FILE)
+    if isinstance(repositorio, JsonJogadoresRepository):
+        caminho = repositorio.caminho.with_name(AUDIT_FILE.name)
+        return JsonlAuditoriaRepository(caminho)
+    return None
+
+
 def repositorio_padrao() -> JogadoresRepository:
     """Cria a implementação padrão sem manter estado global mutável."""
     return JsonJogadoresRepository(DATA_FILE)
@@ -391,6 +410,8 @@ def salvar_jogadores(
     *,
     versao_esperada: str | None = None,
     origem: str = "aplicacao",
+    estado_anterior: Mapping[str, Mapping[str, Any]] | None = None,
+    auditoria: AuditoriaRepository | None = None,
 ) -> RegistroVersao:
     """Valida e persiste a base respeitando a versão lida pela sessão."""
     estrutural = validar_estrutura_bruta(dados)
@@ -408,11 +429,34 @@ def salvar_jogadores(
     if versao_esperada is None and isinstance(dados, BaseJogadores):
         versao_esperada = dados.versao_fonte
 
-    registro = (repositorio or repositorio_padrao()).salvar(
+    repositorio_ativo = repositorio or repositorio_padrao()
+
+    if estado_anterior is None:
+        try:
+            estado_anterior = repositorio_ativo.carregar().jogadores
+        except DataIntegrityError:
+            estado_anterior = {}
+
+    registro = repositorio_ativo.salvar(
         dados,
         versao_esperada=versao_esperada,
         origem=origem,
     )
+
+    auditoria_ativa = auditoria if auditoria is not None else auditoria_padrao(
+        repositorio_ativo
+    )
+    if auditoria_ativa is not None:
+        eventos = gerar_eventos_alteracao(
+            estado_anterior,
+            dados,  # type: ignore[arg-type]
+            origem=origem,
+            versao_anterior=versao_esperada or VERSAO_AUSENTE,
+            versao_nova=registro.versao,
+            ocorrido_em=registro.atualizado_em,
+        )
+        auditoria_ativa.registrar(eventos)
+
     if isinstance(dados, BaseJogadores):
         dados.versao_fonte = registro.versao
     return registro
@@ -464,6 +508,7 @@ def carregar_jogadores(
             repositorio_ativo,
             versao_esperada=resultado.versao,
             origem="self_healing",
+            estado_anterior=dados_brutos,
         )
         base.versao_fonte = registro.versao
     return base
@@ -500,6 +545,7 @@ def adicionar_jogador(
         repositorio,
         versao_esperada=versao_esperada,
         origem="cadastro_interface",
+        estado_anterior=jogadores,
     )
 
     # Atualiza a sessão somente depois que a persistência termina com sucesso.
