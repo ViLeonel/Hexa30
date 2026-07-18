@@ -103,19 +103,19 @@ def render_campo(
             f'<div class="player-card-pitch {classe_adaptabilidade}">'
             f'<div class="player-pos-tag">{_esc(configuracao.tag)}</div>'
             f'<div class="player-name-tag" title="{_esc(dados.get("nome", nome))}">{_esc(dados.get("nome", nome))}</div>'
-            f'<div class="player-rating-tag">★ {nota_vini:.1f} / {nota_roberto:.1f}</div>'\
+            f'<div class="player-rating-tag" aria-label="Notas: Vini {nota_vini:.1f}; Roberto {nota_roberto:.1f}">Vini {nota_vini:.1f} · Roberto {nota_roberto:.1f}</div>'\
             f'<div class="player-adaptability-tag">{_esc(rotulo_adaptabilidade)}</div>'
             '</div></div>'
         )
 
     campo = (
-        '<div class="pitch-container">'
+        '<section class="pitch-container" role="img" aria-label="Campo tático com onze vagas" tabindex="0">'
         '<div class="pitch-line-center"></div>'
         '<div class="pitch-circle"></div>'
         '<div class="pitch-penalty-top"></div>'
         '<div class="pitch-penalty-bottom"></div>'
         f'{"".join(cards)}'
-        '</div>'
+        '</section>'
     )
     st.markdown(campo, unsafe_allow_html=True)
 
@@ -123,12 +123,12 @@ def render_campo(
 def render_legenda_adaptabilidade() -> None:
     st.markdown(
         """
-        <div class="legend-box">
+        <aside class="legend-box" aria-label="Legenda de adaptabilidade">
             <div class="legend-item"><span class="legend-dot legend-primary"></span><b>Primária:</b> posição principal</div>
             <div class="legend-item"><span class="legend-dot legend-secondary"></span><b>Secundária:</b> segunda função</div>
             <div class="legend-item"><span class="legend-dot legend-tertiary"></span><b>Alternativa:</b> terceira função ou posterior</div>
             <div class="legend-item"><span class="legend-dot legend-empty"></span><b>Vaga aberta:</b> atleta não selecionado</div>
-        </div>
+        </aside>
         """,
         unsafe_allow_html=True,
     )
@@ -187,7 +187,7 @@ def render_lista_tatica(
         )
 
     st.markdown(
-        '<div class="tactical-list" aria-label="Formação tática em lista">'
+        '<div class="tactical-list" role="region" aria-label="Formação tática em lista" tabindex="0">'
         + "".join(secoes)
         + '</div>',
         unsafe_allow_html=True,
@@ -216,9 +216,9 @@ def render_banco_reservas(
         )
 
     st.markdown(
-        '<div class="bench-box"><div class="bench-grid">'
+        '<section class="bench-box" role="region" aria-label="Banco de reservas" tabindex="0"><div class="bench-grid">'
         + ''.join(cards)
-        + '</div></div>',
+        + '</div></section>',
         unsafe_allow_html=True,
     )
 
@@ -258,7 +258,7 @@ def render_resumo_elenco(
 
     st.markdown(
         f"""
-        <div class="summary-box">
+        <section class="summary-box live-region" role="status" aria-live="polite" aria-atomic="true">
             <div class="summary-grid">
                 <div><div class="summary-label">{_esc(GRUPO_TITULARES)}</div><div class="summary-value">{len(titulares)}/{LIMITE_TITULARES}</div></div>
                 <div><div class="summary-label">{_esc(GRUPO_RESERVAS)}</div><div class="summary-value">{len(reservas)}/{LIMITE_RESERVAS}</div></div>
@@ -270,7 +270,7 @@ def render_resumo_elenco(
             <div class="summary-footnote">
                 Cobertura dos {len(elenco)} selecionados: mercado de {int(resumo['cobertura_mercado'])}; altura de {int(resumo['cobertura_altura'])}.
             </div>
-        </div>
+        </section>
         """,
         unsafe_allow_html=True,
     )
@@ -375,7 +375,7 @@ def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
         '<div class="market-card market-card-info">'
         + '<div class="market-details">'
         + '<br>'.join(linhas)
-        + '</div></div>',
+        + '</div></section>',
         unsafe_allow_html=True,
     )
 

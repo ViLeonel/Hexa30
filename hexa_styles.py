@@ -21,6 +21,15 @@ CSS = """
         --orange: #F97316;
         --red: #EF4444;
         --blue: #3B82F6;
+        --color-background: var(--navy-900);
+        --color-surface: var(--navy-800);
+        --color-text: var(--white);
+        --color-text-muted: var(--slate-400);
+        --color-highlight: var(--gold);
+        --color-success: var(--green);
+        --color-warning: var(--orange);
+        --color-danger: var(--red);
+        --color-focus: #60A5FA;
     }
 
     .stApp {
@@ -790,9 +799,104 @@ CSS = """
     .progress-pct-98 { width: 98%; }
     .progress-pct-99 { width: 99%; }
     .progress-pct-100 { width: 100%; }
+
+    .skip-link {
+        position: fixed;
+        top: .5rem;
+        left: .5rem;
+        z-index: 10000;
+        transform: translateY(-180%);
+        background: var(--white);
+        color: var(--navy-950);
+        border: 3px solid var(--color-focus);
+        border-radius: .5rem;
+        padding: .75rem 1rem;
+        font-weight: 800;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    :where(a, button, input, textarea, select, [role="button"], [role="radio"],
+    [role="checkbox"], [role="switch"], [role="tab"], summary):focus-visible {
+        outline: 3px solid var(--color-focus) !important;
+        outline-offset: 3px !important;
+        box-shadow: 0 0 0 5px var(--navy-950) !important;
+    }
+
+    [data-baseweb="select"] > div,
+    [data-baseweb="input"] > div,
+    [data-baseweb="textarea"] > div {
+        min-height: 44px;
+    }
+
+    button, [role="button"], [role="radio"], [role="checkbox"], [role="switch"], summary {
+        min-height: 44px;
+    }
+
+    .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+
+    .live-region { margin: .5rem 0 1rem; }
+    .pitch-container:focus, .tactical-list:focus, .bench-box:focus {
+        outline: 3px solid var(--color-focus);
+        outline-offset: 4px;
+    }
+
+    @media (max-width: 900px), (min-resolution: 1.5dppx) {
+        .block-container { max-width: 100%; }
+        .player-name-tag { white-space: normal; overflow: visible; }
+    }
+
+    @media (forced-colors: active) {
+        * { forced-color-adjust: auto; }
+        .player-card-pitch, .bench-card, .tactical-list-item {
+            border: 2px solid CanvasText !important;
+        }
+    }
+
 </style>
 """
 
 
-def aplicar_estilos() -> None:
+HIGH_CONTRAST_CSS = """
+<style>
+    :root {
+        --navy-950: #000000;
+        --navy-900: #000000;
+        --navy-800: #111111;
+        --slate-500: #E5E7EB;
+        --slate-400: #F3F4F6;
+        --slate-300: #FFFFFF;
+        --white: #FFFFFF;
+        --gold: #FFF200;
+        --green: #7CFF6B;
+        --orange: #FFD166;
+        --red: #FF7B7B;
+        --blue: #7DD3FC;
+        --color-focus: #00E5FF;
+    }
+    .stApp { background: #000000 !important; color: #FFFFFF !important; }
+    .player-card-pitch, .bench-card, .tactical-list-item,
+    .summary-card, .profile-card, .market-card, .legend-box {
+        background: #000000 !important;
+        border-width: 3px !important;
+    }
+    .project-subtitle, .profile-secondary, .market-label,
+    .bench-club, .tactical-list-slot { color: #FFFFFF !important; }
+    a { text-decoration: underline !important; text-decoration-thickness: 2px !important; }
+</style>
+"""
+
+
+def aplicar_estilos(*, alto_contraste: bool = False) -> None:
     st.markdown(CSS, unsafe_allow_html=True)
+    if alto_contraste:
+        st.markdown(HIGH_CONTRAST_CSS, unsafe_allow_html=True)

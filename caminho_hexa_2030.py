@@ -38,6 +38,15 @@ def render_erros_configuracao(jogadores: dict[str, dict]) -> None:
             st.error(mensagem)
 
 
+def render_preferencias_acessibilidade() -> bool:
+    st.sidebar.markdown("### Acessibilidade")
+    return st.sidebar.toggle(
+        "Modo de alto contraste",
+        key="modo_alto_contraste",
+        help="Aumenta o contraste de textos, bordas, foco e superfícies.",
+    )
+
+
 def render_navegacao() -> str:
     st.sidebar.markdown(
         f"<h2 class='sidebar-title'>{TITULO_SIDEBAR}</h2>",
@@ -49,7 +58,10 @@ def render_navegacao() -> str:
 
 def main() -> None:
     st.set_page_config(**PAGE_CONFIG)
-    aplicar_estilos()
+    alto_contraste = render_preferencias_acessibilidade()
+    aplicar_estilos(alto_contraste=alto_contraste)
+    st.markdown('<a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>', unsafe_allow_html=True)
+    st.markdown('<main id="conteudo-principal" tabindex="-1"></main>', unsafe_allow_html=True)
 
     jogadores = carregar_base_segura()
     render_erros_configuracao(jogadores)

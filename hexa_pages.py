@@ -90,7 +90,7 @@ def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
     col_config, col_campo = st.columns([1, 2], gap="large")
 
     with col_config:
-        st.markdown("### Montar convocação")
+        st.markdown("## Montar convocação")
         tatica_ativa = st.selectbox(
             "Esquema tático:",
             list(TATICAS.keys()),
@@ -123,7 +123,7 @@ def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
                 escalados[slot] = escolha
                 selecionados.add(escolha)
 
-        st.markdown(f"### {GRUPO_RESERVAS}")
+        st.markdown(f"## {GRUPO_RESERVAS}")
         chave_reservas_ativa = chave_reservas(tatica_ativa)
         opcoes_banco = opcoes_reservas(jogadores, selecionados)
         normalizar_reservas(
@@ -142,6 +142,10 @@ def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
             key=chave_reservas_ativa,
         )
         resumo = resumo_convocacao(len(escalados), len(reservas))
+        st.markdown(
+            f'<div class="sr-only" role="status" aria-live="polite" aria-atomic="true">{resumo}</div>',
+            unsafe_allow_html=True,
+        )
         if convocacao_completa(len(escalados)):
             st.success(resumo)
         else:
@@ -217,17 +221,17 @@ def render_tela_perfis(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
 
     with col_perfil:
         render_cartao_perfil(selected_name, atleta)
-        st.markdown("### Avaliação dos analistas")
+        st.markdown("## Avaliação dos analistas")
         render_avaliacao_leitura(atleta)
 
     with col_dados:
-        st.markdown("### Valor de mercado")
+        st.markdown("## Valor de mercado")
         render_comparativo_mercado(atleta)
 
         with st.expander("Dados externos e contratuais", expanded=True):
             render_dados_transfermarkt(atleta)
 
-        st.markdown("### Dossiê do projeto")
+        st.markdown("## Dossiê do projeto")
         render_dossie(atleta)
 
 
@@ -258,6 +262,7 @@ def render_tela_roster(jogadores: dict[str, dict[str, Any]]) -> None:
         if df_roster.empty:
             st.info(ROSTER_SEM_RESULTADOS)
         else:
+            st.caption("Tabela com nome, posição, grupo, idade, clube, notas e dados de mercado dos atletas filtrados.")
             st.dataframe(df_roster, width="stretch", hide_index=True)
 
     with tab_novo:
@@ -335,7 +340,7 @@ def render_tela_analise(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
 
         col_consenso, col_divergencia = st.columns(2, gap="large")
         with col_consenso:
-            st.markdown("### Maiores consensos")
+            st.markdown("## Maiores consensos")
             consenso = pd.DataFrame(ordenar_consensos(avaliados))
             st.dataframe(
                 consenso[["Nome", "Posição", "Vini", "Roberto", "Média"]],
@@ -344,7 +349,7 @@ def render_tela_analise(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
             )
 
         with col_divergencia:
-            st.markdown("### Maiores divergências")
+            st.markdown("## Maiores divergências")
             divergencias = pd.DataFrame(ordenar_divergencias(avaliados))
             st.dataframe(
                 divergencias[["Nome", "Posição", "Vini", "Roberto", "Diferença"]],
@@ -353,7 +358,7 @@ def render_tela_analise(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
             )
 
     st.markdown("---")
-    st.markdown("### Leitura de mercado")
+    st.markdown("## Leitura de mercado")
     if df_mercado.empty:
         st.info(MERCADO_SEM_DADOS)
         return
@@ -366,6 +371,7 @@ def render_tela_analise(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
     col_m3.metric("Pico somado", formatar_valor_milhoes(total_pico))
 
     mercado_ordenado = df_mercado.sort_values("Atual (M€)", ascending=False)
+    st.caption("Tabela textual dos valores atuais, picos e percentuais do pico de mercado.")
     st.dataframe(
         mercado_ordenado,
         width="stretch",
