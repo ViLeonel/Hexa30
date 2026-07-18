@@ -15,7 +15,7 @@ import shutil
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator, Mapping, Protocol, runtime_checkable
 
@@ -167,7 +167,7 @@ class JsonJogadoresRepository:
                     descritor,
                     (
                         f"pid={os.getpid()}\n"
-                        f"criado_em={datetime.now(UTC).isoformat()}\n"
+                        f"criado_em={datetime.now(timezone.utc).isoformat()}\n"
                     ).encode("utf-8"),
                 )
                 os.close(descritor)
@@ -249,7 +249,7 @@ class JsonJogadoresRepository:
             versao_nova = self._hash_bytes(bytes_novos)
             registro = RegistroVersao(
                 versao=versao_nova,
-                atualizado_em=datetime.now(UTC).isoformat(),
+                atualizado_em=datetime.now(timezone.utc).isoformat(),
                 origem=str(origem or "aplicacao"),
             )
             self._salvar_metadados(registro)
