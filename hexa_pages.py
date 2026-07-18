@@ -9,6 +9,25 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+from hexa_config import (
+    ANO_BASE_DADOS,
+    ASSUNTO_FEEDBACK_PREFIXO,
+    EMAIL_FEEDBACK,
+    GRUPO_OBSERVACAO,
+    GRUPO_RESERVAS,
+    GRUPOS_EDITORIAIS,
+    IDADE_MAXIMA_CADASTRO,
+    IDADE_MINIMA_CADASTRO,
+    IDADE_PADRAO,
+    MENU_ANALISE,
+    MENU_CAMPO,
+    MENU_PERFIS,
+    MENU_ROSTER,
+    SAUDACAO_FEEDBACK,
+    TIPOS_SUGESTAO,
+    TITULO_PROJETO,
+)
+
 from hexa_components import (
     render_avaliacao_leitura,
     render_banco_reservas,
@@ -46,16 +65,11 @@ from hexa_taticas import (
     formatar_jogador_com_posicao,
 )
 
-MENU_CAMPO = "🏟️ Campo de Jogo"
-MENU_PERFIS = "👤 Perfis & Scout"
-MENU_ROSTER = "📋 Gestão do Roster"
-MENU_ANALISE = "📊 Análise de Opiniões"
-MENUS = (MENU_CAMPO, MENU_PERFIS, MENU_ROSTER, MENU_ANALISE)
 
 
 def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
     render_cabecalho(
-        "🏆 O Caminho para o Hexa",
+        TITULO_PROJETO,
         "Monte os 11 titulares e até 15 reservas, sem atletas pré-selecionados.",
     )
 
@@ -95,7 +109,7 @@ def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
                 escalados[slot] = escolha
                 selecionados.add(escolha)
 
-        st.markdown("### Reservas")
+        st.markdown(f"### {GRUPO_RESERVAS}")
         chave_reservas_ativa = chave_reservas(tatica_ativa)
         opcoes_banco = opcoes_reservas(jogadores, selecionados)
         normalizar_reservas(
@@ -194,7 +208,7 @@ def render_tela_roster(jogadores: dict[str, dict[str, Any]]) -> None:
         filtro_1, filtro_2, filtro_3 = st.columns([2, 1, 1])
         busca = filtro_1.text_input("Buscar por nome ou clube", placeholder="Ex.: Palmeiras")
         posicao_filtro = filtro_2.selectbox("Posição", ["Todas", *POSICOES_OFICIAIS])
-        grupos = sorted({str(d.get("grupo", "Observação")) for d in jogadores.values()})
+        grupos = sorted({str(d.get("grupo", GRUPO_OBSERVACAO)) for d in jogadores.values()})
         grupo_filtro = filtro_3.selectbox("Grupo", ["Todos", *grupos])
 
         registros = construir_registros_roster(
@@ -225,8 +239,8 @@ def render_tela_roster(jogadores: dict[str, dict[str, Any]]) -> None:
             )
 
             col_e, col_f = st.columns(2)
-            idade = col_e.number_input("Idade em 2026", min_value=15, max_value=45, value=22)
-            grupo = col_f.selectbox("Grupo", ["Titulares", "Reservas", "Observação"])
+            idade = col_e.number_input(f"Idade em {ANO_BASE_DADOS}", min_value=IDADE_MINIMA_CADASTRO, max_value=IDADE_MAXIMA_CADASTRO, value=IDADE_PADRAO)
+            grupo = col_f.selectbox("Grupo", GRUPOS_EDITORIAIS)
 
             pontos_fortes = st.text_area("Pontos fortes")
             pontos_fracos = st.text_area("Pontos fracos")
@@ -331,7 +345,7 @@ def render_feedback_sidebar() -> None:
     st.sidebar.markdown("---")
     st.sidebar.subheader("Radar do projeto")
     with st.sidebar.form("form_sugestao", clear_on_submit=True):
-        tipo_sugestao = st.selectbox("Tipo de sugestão:", ["Sugerir jogador", "Sugerir melhoria"])
+        tipo_sugestao = st.selectbox("Tipo de sugestão:", TIPOS_SUGESTAO)
         detalhes = st.text_area(
             "Mensagem:",
             placeholder="Descreva sua sugestão com o máximo de contexto possível.",
@@ -344,9 +358,9 @@ def render_feedback_sidebar() -> None:
         st.sidebar.warning("Digite uma mensagem antes de continuar.")
         return
 
-    assunto = urllib.parse.quote(f"Caminho para o Hexa: {tipo_sugestao}")
-    corpo = urllib.parse.quote(f"Olá, Vini e Roberto!\n\n{detalhes.strip()}")
-    mailto = f"mailto:viniciusbl87@gmail.com?subject={assunto}&body={corpo}"
+    assunto = urllib.parse.quote(f"{ASSUNTO_FEEDBACK_PREFIXO}: {tipo_sugestao}")
+    corpo = urllib.parse.quote(f"{SAUDACAO_FEEDBACK}\n\n{detalhes.strip()}")
+    mailto = f"mailto:{EMAIL_FEEDBACK}?subject={assunto}&body={corpo}"
     st.sidebar.markdown(
         f'<a href="{mailto}" style="display:block;text-align:center;background:#EAB308;color:#020617;'
         'font-weight:800;padding:10px;border-radius:8px;text-decoration:none;">Abrir e-mail</a>',

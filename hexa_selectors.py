@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from hexa_config import ANO_BASE_DADOS, ANO_COPA, LIMITE_DESTAQUES_ANALISE
 from hexa_data import (
     formatar_valor_milhoes,
     percentual_do_pico,
@@ -60,8 +61,8 @@ def construir_registros_roster(
     busca: str = "",
     posicao: str | None = None,
     grupo: str | None = None,
-    ano_base: int = 2026,
-    ano_copa: int = 2030,
+    ano_base: int = ANO_BASE_DADOS,
+    ano_copa: int = ANO_COPA,
 ) -> list[dict[str, Any]]:
     """Monta linhas de exibição do roster sem depender de pandas ou Streamlit."""
     diferenca_anos = ano_copa - ano_base
@@ -170,7 +171,7 @@ def calcular_medias_titulares(
 
 def ordenar_consensos(
     avaliacoes: Sequence[Mapping[str, Any]],
-    limite: int = 8,
+    limite: int = LIMITE_DESTAQUES_ANALISE,
 ) -> list[Mapping[str, Any]]:
     """Ordena por menor diferença e, em empate, maior média."""
     return sorted(
@@ -181,7 +182,7 @@ def ordenar_consensos(
 
 def ordenar_divergencias(
     avaliacoes: Sequence[Mapping[str, Any]],
-    limite: int = 8,
+    limite: int = LIMITE_DESTAQUES_ANALISE,
 ) -> list[Mapping[str, Any]]:
     """Ordena por maior diferença e, em empate, maior média."""
     return sorted(

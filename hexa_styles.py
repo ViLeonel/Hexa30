@@ -4,12 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-PAGE_CONFIG = {
-    "page_title": "O Caminho para o Hexa 2030",
-    "page_icon": "🏆",
-    "layout": "wide",
-    "initial_sidebar_state": "expanded",
-}
+from hexa_config import PAGE_CONFIG
 
 CSS = """
 <style>
@@ -410,6 +405,12 @@ CSS = """
     }
 
     .stat-box strong { color: var(--white); }
+
+    .sidebar-title {
+        color: var(--gold);
+        margin-top: 15px;
+        text-align: center;
+    }
 
     section[data-testid="stSidebar"] {
         background-color: var(--navy-950) !important;

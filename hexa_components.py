@@ -8,6 +8,14 @@ from typing import Any
 
 import streamlit as st
 
+from hexa_config import (
+    ANO_BASE_DADOS,
+    ANO_COPA,
+    GRUPO_OBSERVACAO,
+    GRUPO_RESERVAS,
+    GRUPO_TITULARES,
+    IDADE_PADRAO,
+)
 from hexa_data import (
     extrair_altura_metros,
     formatar_valor_milhoes,
@@ -138,7 +146,7 @@ def calcular_resumo_elenco(elenco: Sequence[Mapping[str, Any]]) -> dict[str, flo
     valores_maximos_validos = [valor for valor in valores_maximos if valor > 0]
 
     return {
-        "idade_2030": (sum(idades) / len(idades) + 4) if idades else 0.0,
+        "idade_copa": (sum(idades) / len(idades) + (ANO_COPA - ANO_BASE_DADOS)) if idades else 0.0,
         "altura_media": sum(alturas_validas) / len(alturas_validas) if alturas_validas else 0.0,
         "valor_atual": sum(valores_atuais_validos),
         "valor_maximo": sum(valores_maximos_validos),
@@ -165,10 +173,10 @@ def render_resumo_elenco(
         f"""
         <div class="summary-box">
             <div class="summary-grid">
-                <div><div class="summary-label">Titulares</div><div class="summary-value">{len(titulares)}/{LIMITE_TITULARES}</div></div>
-                <div><div class="summary-label">Reservas</div><div class="summary-value">{len(reservas)}/{LIMITE_RESERVAS}</div></div>
+                <div><div class="summary-label">{_esc(GRUPO_TITULARES)}</div><div class="summary-value">{len(titulares)}/{LIMITE_TITULARES}</div></div>
+                <div><div class="summary-label">{_esc(GRUPO_RESERVAS)}</div><div class="summary-value">{len(reservas)}/{LIMITE_RESERVAS}</div></div>
                 <div><div class="summary-label">Convocados</div><div class="summary-value" style="color:#EAB308">{len(elenco)}/{LIMITE_CONVOCADOS}</div></div>
-                <div><div class="summary-label">Idade média em 2030</div><div class="summary-value">{resumo['idade_2030']:.1f}</div></div>
+                <div><div class="summary-label">Idade média em {ANO_COPA}</div><div class="summary-value">{resumo['idade_copa']:.1f}</div></div>
                 <div><div class="summary-label">Valor atual</div><div class="summary-value" style="color:#22C55E">{formatar_valor_milhoes(atual)}</div></div>
                 <div><div class="summary-label">Atual / pico</div><div class="summary-value">{percentual:.0f}%</div></div>
             </div>
@@ -198,8 +206,8 @@ def render_cartao_perfil(nome: str, dados: Mapping[str, Any]) -> None:
                 <b>Nome completo:</b> {_esc(dados.get('nome_completo', dados.get('nome', nome)))}<br>
                 <b>Clube atual:</b> {_esc(dados.get('clube'))}<br>
                 <b>Grupo:</b> {_esc(dados.get('grupo'))}<br>
-                <b>Idade em 2026:</b> {int(dados.get('idade', 22))} anos<br>
-                <b>Idade em 2030:</b> <span style="color:#EAB308;font-weight:800">{int(dados.get('idade', 22)) + 4} anos</span>
+                <b>Idade em {ANO_BASE_DADOS}:</b> {int(dados.get('idade', IDADE_PADRAO))} anos<br>
+                <b>Idade em {ANO_COPA}:</b> <span style="color:#EAB308;font-weight:800">{int(dados.get('idade', IDADE_PADRAO)) + (ANO_COPA - ANO_BASE_DADOS)} anos</span>
             </div>
         </div>
         """,

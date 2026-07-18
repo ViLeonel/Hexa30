@@ -12,14 +12,15 @@ import json
 import re
 import shutil
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Mapping
 
+from hexa_config import (
+    DATA_FILE,
+    ENRICHMENTS_FILE,
+    GRUPO_OBSERVACAO,
+    IDADE_PADRAO,
+)
 from hexa_taticas import POSICOES_OFICIAIS, normalizar_lista_posicoes, normalizar_posicao
-
-BASE_DIR = Path(__file__).resolve().parent
-DATA_FILE = BASE_DIR / "jogadores_hexa_2030.json"
-ENRICHMENTS_FILE = BASE_DIR / "enriquecimentos_tm.json"
 
 CAMPOS_EDITORIAIS_PROTEGIDOS = {
     "nota_vini",
@@ -41,9 +42,9 @@ CAMPOS_MINIMOS: dict[str, Any] = {
     "posicao": "Centroavante",
     "posicoes_multiplas": [],
     "clube": "N/A",
-    "idade": 22,
-    "grupo": "Observação",
-    "tipo": "Observação",
+    "idade": IDADE_PADRAO,
+    "grupo": GRUPO_OBSERVACAO,
+    "tipo": GRUPO_OBSERVACAO,
     "nota_vini": 0.0,
     "nota_roberto": 0.0,
     "pontos_fortes": "",
@@ -208,9 +209,9 @@ def _normalizar_registro(nome_chave: str, registro: Mapping[str, Any]) -> dict[s
             dados[campo] = copy.deepcopy(valor_padrao)
 
     try:
-        dados["idade"] = int(dados.get("idade", 22))
+        dados["idade"] = int(dados.get("idade", IDADE_PADRAO))
     except (TypeError, ValueError):
-        dados["idade"] = 22
+        dados["idade"] = IDADE_PADRAO
 
     for campo in ("nota_vini", "nota_roberto"):
         try:

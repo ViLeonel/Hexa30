@@ -11,9 +11,10 @@ BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
+from hexa_config import MENUS, PAGE_CONFIG, ROTULO_NAVEGACAO, TITULO_SIDEBAR
 from hexa_data import DataIntegrityError, carregar_jogadores, validar_posicoes
-from hexa_pages import MENUS, render_feedback_sidebar, render_tela
-from hexa_styles import PAGE_CONFIG, aplicar_estilos
+from hexa_pages import render_feedback_sidebar, render_tela
+from hexa_styles import aplicar_estilos
 from hexa_taticas import validar_taticas
 
 
@@ -39,11 +40,11 @@ def render_erros_configuracao(jogadores: dict[str, dict]) -> None:
 
 def render_navegacao() -> str:
     st.sidebar.markdown(
-        "<h2 style='text-align:center;color:#EAB308;margin-top:15px;'>CONSELHO TÁTICO</h2>",
+        f"<h2 class='sidebar-title'>{TITULO_SIDEBAR}</h2>",
         unsafe_allow_html=True,
     )
     st.sidebar.markdown("---")
-    return st.sidebar.radio("Navegação do Painel:", MENUS)
+    return st.sidebar.radio(ROTULO_NAVEGACAO, MENUS)
 
 
 def main() -> None:
