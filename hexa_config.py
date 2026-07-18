@@ -8,6 +8,7 @@ __all__ = [
     "ANO_BASE_DADOS",
     "ANO_COPA",
     "AUDIT_FILE",
+    "AVALIACOES_FILE",
     "ASSUNTO_FEEDBACK_PREFIXO",
     "BASE_DIR",
     "DATA_FILE",
@@ -21,6 +22,7 @@ __all__ = [
     "IDADE_MAXIMA_CADASTRO",
     "IDADE_MINIMA_CADASTRO",
     "IDADE_PADRAO",
+    "LEGACY_EVALUATIONS_ARCHIVE",
     "LIMITE_DESTAQUES_ANALISE",
     "MENUS",
     "MENU_ADMIN",
@@ -49,7 +51,7 @@ BASE_DIR = Path(__file__).resolve().parent
 NOME_APLICACAO = "O Caminho para o Hexa 2030"
 TITULO_PROJETO = "O Caminho para o Hexa"
 ICONE_APLICACAO = "🏆"
-VERSAO_APLICACAO = "1.0.0-rc4-ux-convocacao"
+VERSAO_APLICACAO = "1.1.0-rc5-avaliacoes-trimestrais"
 TITULO_SIDEBAR = "CONSELHO TÁTICO"
 ROTULO_NAVEGACAO = "Navegação do Painel:"
 
@@ -74,7 +76,7 @@ MENUS: tuple[str, ...] = (
 ANO_BASE_DADOS = 2026
 ANO_COPA = 2030
 
-# Vocabulário editorial
+# Vocabulário editorial legado. Mantido apenas para compatibilidade cadastral.
 GRUPO_TITULARES = "Titulares"
 GRUPO_RESERVAS = "Reservas"
 GRUPO_OBSERVACAO = "Observação"
@@ -105,12 +107,17 @@ SAUDACAO_FEEDBACK = (
 NOME_ARQUIVO_JOGADORES = "jogadores_hexa_2030.json"
 NOME_ARQUIVO_ENRIQUECIMENTOS = "enriquecimentos_tm.json"
 NOME_ARQUIVO_AUDITORIA = "auditoria_jogadores.jsonl"
+NOME_ARQUIVO_AVALIACOES = "avaliacoes_trimestrais_hexa_2030.json"
+
 DATA_FILE = BASE_DIR / NOME_ARQUIVO_JOGADORES
 ENRICHMENTS_FILE = BASE_DIR / NOME_ARQUIVO_ENRIQUECIMENTOS
 AUDIT_FILE = BASE_DIR / NOME_ARQUIVO_AUDITORIA
+AVALIACOES_FILE = BASE_DIR / NOME_ARQUIVO_AVALIACOES
+LEGACY_EVALUATIONS_ARCHIVE = (
+    BASE_DIR / "arquivo" / "avaliacoes_editoriais_legado_pre_t2_2026.json"
+)
 
-# Configuração da página Streamlit. Mantida como estrutura simples para não
-# introduzir dependência do Streamlit neste módulo.
+# Configuração da página Streamlit.
 PAGE_CONFIG = {
     "page_title": NOME_APLICACAO,
     "page_icon": ICONE_APLICACAO,

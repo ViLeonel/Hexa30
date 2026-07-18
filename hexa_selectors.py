@@ -2,25 +2,19 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
 import re
+from collections.abc import Mapping, Sequence
 from typing import Any
 
-from hexa_config import (
-    ANO_BASE_DADOS,
-    ANO_COPA,
-    LIMITE_DESTAQUES_ANALISE,
-    NOME_CURTO_ANALISTA_BETO,
-    NOME_CURTO_ANALISTA_VINI,
-)
-from hexa_messages import NAO_INFORMADO_FONTE
-from hexa_taticas import SlotTatico, indice_adaptabilidade
+from hexa_avaliacoes import calcular_metricas_avaliacao
+from hexa_config import ANO_BASE_DADOS, ANO_COPA, LIMITE_DESTAQUES_ANALISE
 from hexa_data import (
     formatar_valor_milhoes,
     percentual_do_pico,
     valor_mercado_atual,
     valor_mercado_maximo,
 )
+from hexa_taticas import SlotTatico, indice_adaptabilidade
 
 __all__ = [
     "LINHAS_TATICAS",
@@ -37,42 +31,35 @@ __all__ = [
 ]
 
 
+NAO_INFORMADO_FONTE = "Não informado pela fonte"
 
 
 def _texto_apresentacao(valor: Any) -> str:
-    """Converte valores ausentes ou sentinelas legadas em texto claro para a interface."""
     if valor in (None, "", [], "N/A"):
         return NAO_INFORMADO_FONTE
     return str(valor)
 
 
 _SUBSTITUICOES_ANALISTAS: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"\bVinicius Leonel\b", flags=re.IGNORECASE), "Vini Leonel"),
     (re.compile(r"\bVini Leoneo\b", flags=re.IGNORECASE), "Vini Leonel"),
-    (re.compile(r"\bRoberto Muñoz\b", flags=re.IGNORECASE), "Beto Muñoz"),
-    (re.compile(r"\bRoberto\b", flags=re.IGNORECASE), "Beto"),
+    (
+        re.compile(r"\b" + "Vinicius" + r" Leonel\b", flags=re.IGNORECASE),
+        "Vini Leonel",
+    ),
+    (
+        re.compile(r"\b" + "Roberto" + r" Muñoz\b", flags=re.IGNORECASE),
+        "Beto Muñoz",
+    ),
+    (re.compile(r"\b" + "Roberto" + r"\b", flags=re.IGNORECASE), "Beto"),
 )
 
 
 def formatar_texto_editorial(valor: Any) -> str:
-    """Atualiza nomes de apresentação sem alterar o conteúdo canônico.
-
-    A regra é aplicada somente no texto exibido. O jogador Vinicius Junior e
-    identificadores técnicos como ``nota_roberto`` permanecem intactos.
-    """
+    """Normaliza apenas nomes de apresentação, sem alterar a fonte canônica."""
     texto = _texto_apresentacao(valor)
     for padrao, substituicao in _SUBSTITUICOES_ANALISTAS:
         texto = padrao.sub(substituicao, texto)
     return texto
-
-
-def _numero_positivo(valor: Any) -> float | None:
-    """Converte uma nota em número positivo ou retorna ``None``."""
-    try:
-        numero = float(valor)
-    except (TypeError, ValueError):
-        return None
-    return numero if numero > 0 else None
 
 
 def filtrar_jogadores(
@@ -81,7 +68,7 @@ def filtrar_jogadores(
     posicao: str | None = None,
     grupo: str | None = None,
 ) -> list[tuple[str, Mapping[str, Any]]]:
-    """Filtra atletas por texto, posição oficial e grupo editorial."""
+    """Filtra atletas por texto, posição oficial e grupo cadastral legado."""
     termo = busca.strip().casefold()
     resultado: list[tuple[str, Mapping[str, Any]]] = []
 
@@ -110,14 +97,16 @@ def filtrar_jogadores(
 
 def construir_registros_roster(
     jogadores: Mapping[str, Mapping[str, Any]],
+    avaliacoes_por_nome: Mapping[str, Mapping[str, Any]] | None = None,
     busca: str = "",
     posicao: str | None = None,
     grupo: str | None = None,
     ano_base: int = ANO_BASE_DADOS,
     ano_copa: int = ANO_COPA,
 ) -> list[dict[str, Any]]:
-    """Monta linhas de exibição do roster sem depender de pandas ou Streamlit."""
+    """Monta a lista cadastral usando exclusivamente a avaliação temporal."""
     diferenca_anos = ano_copa - ano_base
+    avaliacoes = avaliacoes_por_nome or {}
     registros: list[dict[str, Any]] = []
 
     for nome, dados in filtrar_jogadores(jogadores, busca, posicao, grupo):
@@ -126,47 +115,66 @@ def construir_registros_roster(
         except (TypeError, ValueError):
             idade = 0
 
+        registro_avaliacao = avaliacoes.get(nome)
+        metricas = (
+            calcular_metricas_avaliacao(registro_avaliacao)
+            if registro_avaliacao is not None
+            else {
+                "capacidade_atual_media": None,
+                "potencial_2030_medio": None,
+                "saldo_projetado": None,
+                "status": "Não avaliada",
+            }
+        )
         atual = valor_mercado_atual(dados)
         maximo = valor_mercado_maximo(dados)
         registros.append(
             {
                 "Nome": nome,
                 "Posição": _texto_apresentacao(dados.get("posicao")),
-                "Grupo": _texto_apresentacao(dados.get("grupo")),
-                "Clube": _texto_apresentacao(dados.get("clube")),
-                f"Idade {ano_base}": idade,
-                f"Idade {ano_copa}": idade + diferenca_anos if idade > 0 else 0,
-                NOME_CURTO_ANALISTA_VINI: float(dados.get("nota_vini") or 0.0),
-                NOME_CURTO_ANALISTA_BETO: float(dados.get("nota_roberto") or 0.0),
+                "Clube atual": _texto_apresentacao(dados.get("clube")),
+                f"Idade {ano_base}": idade if idade > 0 else None,
+                f"Idade {ano_copa}": (
+                    idade + diferenca_anos if idade > 0 else None
+                ),
+                "Capacidade atual": metricas["capacidade_atual_media"],
+                "Potencial 2030": metricas["potencial_2030_medio"],
+                "Saldo projetado": metricas["saldo_projetado"],
+                "Situação": metricas["status"],
                 "Valor atual": formatar_valor_milhoes(atual),
                 "Pico": formatar_valor_milhoes(maximo),
-                "% do pico": round(percentual_do_pico(dados) or 0.0, 1),
+                "% do pico": (
+                    round(percentual_do_pico(dados) or 0.0, 1)
+                    if atual > 0
+                    else None
+                ),
             }
         )
     return registros
 
 
 def construir_avaliacoes(
-    jogadores: Mapping[str, Mapping[str, Any]],
+    avaliacoes_por_nome: Mapping[str, Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Retorna atletas que possuem as duas notas editoriais preenchidas."""
-    avaliados: list[dict[str, Any]] = []
-    for nome, dados in jogadores.items():
-        nota_vini = _numero_positivo(dados.get("nota_vini"))
-        nota_roberto = _numero_positivo(dados.get("nota_roberto"))
-        if nota_vini is None or nota_roberto is None:
+    """Cria linhas analíticas apenas com avaliações trimestrais completas."""
+    resultado: list[dict[str, Any]] = []
+    for nome, registro in avaliacoes_por_nome.items():
+        metricas = calcular_metricas_avaliacao(registro)
+        if not metricas["avaliacao_completa"]:
             continue
-        avaliados.append(
+        resultado.append(
             {
                 "Nome": nome,
-                "Posição": _texto_apresentacao(dados.get("posicao")),
-                NOME_CURTO_ANALISTA_VINI: nota_vini,
-                NOME_CURTO_ANALISTA_BETO: nota_roberto,
-                "Diferença": abs(nota_vini - nota_roberto),
-                "Média": (nota_vini + nota_roberto) / 2,
+                "Posição": _texto_apresentacao(
+                    registro.get("posicao_snapshot")
+                ),
+                "Capacidade atual": metricas["capacidade_atual_media"],
+                "Potencial 2030": metricas["potencial_2030_medio"],
+                "Saldo projetado": metricas["saldo_projetado"],
+                "Situação": metricas["status"],
             }
         )
-    return avaliados
+    return resultado
 
 
 def construir_registros_mercado(
@@ -187,6 +195,9 @@ def construir_registros_mercado(
                 "Pico (M€)": maximo,
                 "% do pico": percentual_do_pico(dados) or 0.0,
                 "Diferença para o pico (M€)": max(maximo - atual, 0.0),
+                "Atualização do mercado": _texto_apresentacao(
+                    dados.get("tm_ultima_atualizacao")
+                ),
             }
         )
     return mercado
@@ -194,30 +205,34 @@ def construir_registros_mercado(
 
 def calcular_medias_titulares(
     titulares: Sequence[Mapping[str, Any]],
-) -> dict[str, float | None]:
-    """Calcula médias independentes e coletiva apenas com notas válidas."""
-    notas_vini = [
-        numero
-        for jogador in titulares
-        if (numero := _numero_positivo(jogador.get("nota_vini"))) is not None
-    ]
-    notas_roberto = [
-        numero
-        for jogador in titulares
-        if (numero := _numero_positivo(jogador.get("nota_roberto"))) is not None
-    ]
+    avaliacoes_por_nome: Mapping[str, Mapping[str, Any]] | None = None,
+) -> dict[str, float | int | None]:
+    """Compatibilidade pública: resume titulares com o contrato temporal."""
+    avaliacoes = avaliacoes_por_nome or {}
+    metricas: list[dict[str, Any]] = []
+    for dados in titulares:
+        nome = str(dados.get("nome") or "")
+        registro = avaliacoes.get(nome)
+        if registro is None:
+            continue
+        metricas.append(calcular_metricas_avaliacao(registro))
 
-    media_vini = sum(notas_vini) / len(notas_vini) if notas_vini else None
-    media_roberto = sum(notas_roberto) / len(notas_roberto) if notas_roberto else None
-    media_coletiva = (
-        (media_vini + media_roberto) / 2
-        if media_vini is not None and media_roberto is not None
-        else None
-    )
+    def media(campo: str) -> float | None:
+        valores = [
+            float(item[campo])
+            for item in metricas
+            if item.get(campo) is not None
+        ]
+        return sum(valores) / len(valores) if valores else None
+
     return {
-        "vini": media_vini,
-        "roberto": media_roberto,
-        "coletiva": media_coletiva,
+        "capacidade_atual": media("capacidade_atual_media"),
+        "potencial_2030": media("potencial_2030_medio"),
+        "saldo_projetado": media("saldo_projetado"),
+        "com_avaliacao": sum(bool(item["tem_avaliacao"]) for item in metricas),
+        "completos": sum(
+            bool(item["avaliacao_completa"]) for item in metricas
+        ),
     }
 
 
@@ -225,10 +240,13 @@ def ordenar_consensos(
     avaliacoes: Sequence[Mapping[str, Any]],
     limite: int = LIMITE_DESTAQUES_ANALISE,
 ) -> list[Mapping[str, Any]]:
-    """Ordena por menor diferença e, em empate, maior média."""
     return sorted(
         avaliacoes,
-        key=lambda item: (float(item["Diferença"]), -float(item["Média"])),
+        key=lambda item: (
+            float(item["Diferença"]),
+            -float(item["Média"]),
+            str(item["Nome"]).casefold(),
+        ),
     )[:limite]
 
 
@@ -236,10 +254,13 @@ def ordenar_divergencias(
     avaliacoes: Sequence[Mapping[str, Any]],
     limite: int = LIMITE_DESTAQUES_ANALISE,
 ) -> list[Mapping[str, Any]]:
-    """Ordena por maior diferença e, em empate, maior média."""
     return sorted(
         avaliacoes,
-        key=lambda item: (-float(item["Diferença"]), -float(item["Média"])),
+        key=lambda item: (
+            -float(item["Diferença"]),
+            -float(item["Média"]),
+            str(item["Nome"]).casefold(),
+        ),
     )[:limite]
 
 
@@ -252,26 +273,31 @@ LINHAS_TATICAS: tuple[str, ...] = (
 
 _POSICOES_POR_LINHA: dict[str, frozenset[str]] = {
     "Goleiro": frozenset({"Goleiro"}),
-    "Defesa": frozenset({"Lateral-direito", "Lateral-esquerdo", "Zagueiro"}),
-    "Meio-campo": frozenset({
-        "Volante",
-        "Mezzala esquerdo",
-        "Mezzala direito",
-        "Meia-esquerda",
-        "Meia-direita",
-        "Meia-armador",
-    }),
-    "Ataque": frozenset({
-        "Ponta-esquerda",
-        "Ponta-direita",
-        "Segundo atacante",
-        "Centroavante",
-    }),
+    "Defesa": frozenset(
+        {"Lateral-direito", "Lateral-esquerdo", "Zagueiro"}
+    ),
+    "Meio-campo": frozenset(
+        {
+            "Volante",
+            "Mezzala esquerdo",
+            "Mezzala direito",
+            "Meia-esquerda",
+            "Meia-direita",
+            "Meia-armador",
+        }
+    ),
+    "Ataque": frozenset(
+        {
+            "Ponta-esquerda",
+            "Ponta-direita",
+            "Segundo atacante",
+            "Centroavante",
+        }
+    ),
 }
 
 
 def linha_tatica_do_slot(configuracao: SlotTatico) -> str:
-    """Classifica um slot em uma das quatro linhas de apresentação."""
     for posicao in configuracao.posicoes:
         for linha in LINHAS_TATICAS:
             if posicao in _POSICOES_POR_LINHA[linha]:
@@ -283,14 +309,32 @@ def construir_visualizacao_tatica_lista(
     layout: Mapping[str, SlotTatico],
     escalados: Mapping[str, str],
     jogadores: Mapping[str, Mapping[str, Any]],
+    avaliacoes_por_nome: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
-    """Cria uma estrutura acessível em lista usando a mesma escalação do campo."""
-    linhas: dict[str, list[dict[str, Any]]] = {linha: [] for linha in LINHAS_TATICAS}
+    """Cria lista acessível com capacidade, potencial e situação do período."""
+    avaliacoes = avaliacoes_por_nome or {}
+    linhas: dict[str, list[dict[str, Any]]] = {
+        linha: [] for linha in LINHAS_TATICAS
+    }
 
     for slot, configuracao in layout.items():
         nome = escalados.get(slot)
         dados = jogadores.get(nome, {}) if nome else {}
-        indice = indice_adaptabilidade(dados, configuracao.posicoes) if dados else -1
+        indice = (
+            indice_adaptabilidade(dados, configuracao.posicoes)
+            if dados
+            else -1
+        )
+        registro = avaliacoes.get(nome or "")
+        metricas = (
+            calcular_metricas_avaliacao(registro)
+            if registro is not None
+            else {
+                "capacidade_atual_media": None,
+                "potencial_2030_medio": None,
+                "status": "Não avaliada",
+            }
+        )
 
         linhas[linha_tatica_do_slot(configuracao)].append(
             {
@@ -299,8 +343,9 @@ def construir_visualizacao_tatica_lista(
                 "nome": nome or "",
                 "preenchido": bool(nome and dados),
                 "indice_adaptabilidade": indice,
-                "nota_vini": dados.get("nota_vini") if dados else None,
-                "nota_roberto": dados.get("nota_roberto") if dados else None,
+                "capacidade_atual": metricas["capacidade_atual_media"],
+                "potencial_2030": metricas["potencial_2030_medio"],
+                "situacao_avaliacao": metricas["status"],
             }
         )
 

@@ -10,6 +10,28 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+from hexa_avaliacoes import (
+    BaseAvaliacoes,
+    calcular_metricas_avaliacao,
+    calcular_resumo_convocados,
+    calcular_resumo_periodo,
+    comparar_analistas,
+    construir_rankings_periodo,
+    formatar_data_referencia,
+    formatar_numero,
+    formatar_periodo,
+    historico_atleta,
+)
+from hexa_components import (
+    render_banco_reservas,
+    render_campo,
+    render_cartao_perfil,
+    render_comparativo_mercado,
+    render_dados_transfermarkt,
+    render_legenda_adaptabilidade,
+    render_lista_tatica,
+    render_resumo_elenco,
+)
 from hexa_config import (
     ASSUNTO_FEEDBACK_PREFIXO,
     EMAIL_FEEDBACK,
@@ -26,18 +48,8 @@ from hexa_config import (
     TIPOS_SUGESTAO,
     TITULO_PROJETO,
 )
-from hexa_components import (
-    render_banco_reservas,
-    render_campo,
-    render_cartao_perfil,
-    render_comparativo_mercado,
-    render_dados_transfermarkt,
-    render_legenda_adaptabilidade,
-    render_resumo_elenco,
-)
 from hexa_data import formatar_valor_milhoes
 from hexa_messages import (
-    ANALISE_SEM_AVALIACOES,
     FEEDBACK_MENSAGEM_OBRIGATORIA,
     FEEDBACK_PREPARADO,
     MERCADO_SEM_DADOS,
@@ -46,12 +58,9 @@ from hexa_messages import (
     resumo_convocacao,
 )
 from hexa_selectors import (
-    calcular_medias_titulares,
-    construir_avaliacoes,
     construir_registros_mercado,
     construir_registros_roster,
     construir_visualizacao_tatica_lista,
-    formatar_texto_editorial,
     ordenar_consensos,
     ordenar_divergencias,
 )
@@ -92,23 +101,6 @@ def _esc(valor: Any, padrao: str = "") -> str:
     return html.escape(texto)
 
 
-def _nota_texto(valor: Any) -> str:
-    try:
-        numero = float(valor)
-    except (TypeError, ValueError):
-        return "Sem nota"
-    if numero <= 0:
-        return "Sem nota"
-    return f"{numero:.1f}".replace(".", ",")
-
-
-def _texto_com_quebras(valor: Any, *, editorial: bool = False) -> str:
-    texto = formatar_texto_editorial(valor) if editorial else str(valor or "").strip()
-    if not texto:
-        texto = "Conteúdo editorial ainda não registrado."
-    return _esc(texto).replace("\n", "<br>")
-
-
 def _render_cabecalho_pagina(
     titulo: str,
     subtitulo: str | None = None,
@@ -127,9 +119,10 @@ def _render_cabecalho_pagina(
 def _render_cabecalho_projeto() -> None:
     descricao = (
         f"Plataforma editorial e tática de {NOME_ANALISTA_VINI} e "
-        f"{NOME_ANALISTA_BETO} para acompanhar jogadores brasileiros no ciclo "
-        "da Copa de 2030. Escolha uma formação, monte 11 titulares e até 15 "
-        "reservas e consulte scout, avaliações, lista monitorada e dados de mercado."
+        f"{NOME_ANALISTA_BETO} para acompanhar jogadores brasileiros no "
+        "ciclo da Copa de 2030. Escolha uma formação, monte 11 titulares e "
+        "até 15 reservas e consulte scout, avaliações trimestrais, lista "
+        "monitorada e dados de mercado."
     )
     cabecalho = (
         '<section class="project-hero" aria-labelledby="titulo-projeto">'
@@ -146,140 +139,45 @@ def _render_cabecalho_projeto() -> None:
         '<path d="M29 99h38l6 13H23l6-13Zm-10 17h58v8H19v-8Z"/>'
         '<path class="trophy-detail" d="M35 18c7-5 18-6 27-1 '
         'M28 34c8 8 21 12 38 7 M38 57c7 2 14 2 21-1"/>'
-        '</svg>'
-        '</div>'
+        "</svg></div>"
         '<div class="project-hero-copy">'
         f'<h1 id="titulo-projeto" class="project-hero-title">{_esc(TITULO_PROJETO)}</h1>'
         f'<p class="project-hero-subtitle">{_esc(descricao)}</p>'
-        '</div>'
-        '</section>'
+        "</div></section>"
     )
     st.markdown(cabecalho, unsafe_allow_html=True)
 
 
-def _classe_adaptabilidade(indice: int, preenchido: bool) -> tuple[str, str]:
-    if not preenchido:
-        return "adapt-empty", "Vaga aberta"
-    if indice == 0:
-        return "adapt-primary", "Função primária"
-    if indice == 1:
-        return "adapt-secondary", "Função secundária"
-    if indice >= 2:
-        return "adapt-tertiary", "Função alternativa"
-    return "adapt-incompatible", "Compatibilidade não confirmada"
+def _avaliacoes_por_nome(
+    base: BaseAvaliacoes,
+    periodo: str,
+) -> dict[str, Mapping[str, Any]]:
+    return base.por_nome_no_periodo(periodo)
 
 
-def _render_lista_tatica(
-    linhas: Mapping[str, Sequence[Mapping[str, Any]]],
+def _render_contexto_periodo(
+    base: BaseAvaliacoes,
+    periodo: str,
+    *,
+    total_atletas: int,
 ) -> None:
-    secoes: list[str] = []
-    for linha, itens in linhas.items():
-        cards: list[str] = []
-        for item in itens:
-            preenchido = bool(item.get("preenchido"))
-            indice = int(item.get("indice_adaptabilidade", -1))
-            classe, status = _classe_adaptabilidade(indice, preenchido)
-            nome = str(item.get("nome") or "Selecionar atleta")
-            if preenchido:
-                notas = (
-                    f"{NOME_CURTO_ANALISTA_VINI} "
-                    f"{_nota_texto(item.get('nota_vini'))} · "
-                    f"{NOME_CURTO_ANALISTA_BETO} "
-                    f"{_nota_texto(item.get('nota_roberto'))}"
-                )
-            else:
-                notas = "Sem atleta selecionado"
-
-            cards.append(
-                f'<li class="tactical-list-item {classe}">'
-                '<div class="tactical-list-main">'
-                f'<span class="tactical-list-tag">{_esc(item.get("tag"))}</span>'
-                '<span class="tactical-list-copy">'
-                f'<strong class="tactical-list-name">{_esc(nome)}</strong>'
-                f'<span class="tactical-list-slot">{_esc(item.get("slot"))}</span>'
-                '</span>'
-                '</div>'
-                '<span class="tactical-list-meta">'
-                f'<span class="tactical-list-status">{_esc(status)}</span>'
-                f'<span class="tactical-list-ratings">{_esc(notas)}</span>'
-                '</span>'
-                '</li>'
-            )
-
-        secoes.append(
-            '<section class="tactical-list-section">'
-            f'<h2 class="tactical-list-heading">{_esc(linha)}</h2>'
-            f'<ul class="tactical-list-grid">{"".join(cards)}</ul>'
-            '</section>'
-        )
-
-    st.markdown(
-        '<div class="tactical-list" role="region" '
-        'aria-label="Escalação em lista">'
-        f'{"".join(secoes)}</div>',
-        unsafe_allow_html=True,
+    resumo = calcular_resumo_periodo(
+        base,
+        periodo,
+        total_atletas=total_atletas,
     )
-
-
-def _render_avaliacao_analistas(atleta: Mapping[str, Any]) -> None:
-    nota_vini = _nota_texto(atleta.get("nota_vini"))
-    nota_beto = _nota_texto(atleta.get("nota_roberto"))
-
-    valores_validos: list[float] = []
-    for campo in ("nota_vini", "nota_roberto"):
-        try:
-            numero = float(atleta.get(campo) or 0)
-        except (TypeError, ValueError):
-            continue
-        if numero > 0:
-            valores_validos.append(numero)
-
-    media = (
-        f"{sum(valores_validos) / len(valores_validos):.1f}".replace(".", ",")
-        if valores_validos
-        else "Sem base"
-    )
+    data_texto = formatar_data_referencia(resumo["data_referencia"])
     st.markdown(
-        '<div class="rating-box" role="group" '
-        'aria-label="Avaliações editoriais dos analistas">'
-        '<div class="rating-grid">'
-        '<div class="rating-card">'
-        f'<div class="rating-label">{_esc(NOME_CURTO_ANALISTA_VINI)}</div>'
-        f'<div class="rating-value">{_esc(nota_vini)}</div>'
-        '</div>'
-        '<div class="rating-card">'
-        f'<div class="rating-label">{_esc(NOME_CURTO_ANALISTA_BETO)}</div>'
-        f'<div class="rating-value">{_esc(nota_beto)}</div>'
-        '</div>'
-        '<div class="rating-card">'
-        '<div class="rating-label">Média</div>'
-        f'<div class="rating-value rating-gold">{_esc(media)}</div>'
-        '</div>'
-        '</div>'
-        '<p class="rating-note">Notas editoriais em escala de 0 a 10, '
-        'exibidas somente para leitura.</p>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
-
-
-def _render_dossie_projeto(atleta: Mapping[str, Any]) -> None:
-    historico = _texto_com_quebras(atleta.get("historico"), editorial=True)
-    st.markdown(
-        '<section class="stat-box stat-positive">'
-        '<strong>Pontos fortes</strong><br>'
-        f'{_texto_com_quebras(atleta.get("pontos_fortes"))}'
-        '</section>'
-        '<section class="stat-box stat-negative">'
-        '<strong>Pontos de atenção</strong><br>'
-        f'{_texto_com_quebras(atleta.get("pontos_fracos"))}'
-        '</section>'
-        '<section class="stat-box stat-info">'
-        f'<strong>Histórico das discussões — '
-        f'{_esc(NOME_CURTO_ANALISTA_VINI)} & '
-        f'{_esc(NOME_CURTO_ANALISTA_BETO)}</strong><br>'
-        f'{historico}'
-        '</section>',
+        '<section class="evaluation-context" role="note">'
+        '<div class="evaluation-context-main">'
+        f'<strong>Avaliações referentes ao {_esc(formatar_periodo(periodo))}</strong>'
+        f'<span>Data de referência: {_esc(data_texto)}</span>'
+        "</div>"
+        '<div class="evaluation-context-stats">'
+        f'<span>{resumo["com_alguma_avaliacao"]} com alguma avaliação</span>'
+        f'<span>{resumo["avaliacoes_completas"]} completas</span>'
+        f'<span>Cobertura completa: {resumo["cobertura_completa"]:.1%}</span>'
+        "</div></section>",
         unsafe_allow_html=True,
     )
 
@@ -426,7 +324,7 @@ def _render_selecao_reservas(
             selecionados_reservas,
         )
 
-    return [
+    posicionais = [
         nome
         for nome in (
             st.session_state.get(
@@ -435,7 +333,8 @@ def _render_selecao_reservas(
             for indice in range(len(layout_ativo))
         )
         if isinstance(nome, str) and nome
-    ] + [
+    ]
+    livres = [
         nome
         for nome in (
             st.session_state.get(chave_reserva_livre(tatica_ativa, indice))
@@ -443,12 +342,56 @@ def _render_selecao_reservas(
         )
         if isinstance(nome, str) and nome
     ]
+    return [*posicionais, *livres]
+
+
+def _render_metricas_convocacao(
+    nomes_titulares: Sequence[str],
+    jogadores: Mapping[str, Mapping[str, Any]],
+    avaliacoes_periodo: Mapping[str, Mapping[str, Any]],
+) -> None:
+    if not nomes_titulares:
+        return
+    resumo = calcular_resumo_convocados(
+        nomes_titulares,
+        jogadores,
+        avaliacoes_periodo,
+    )
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric(
+        "Capacidade atual",
+        formatar_numero(resumo["capacidade_atual_media"]),
+    )
+    c2.metric(
+        "Potencial 2030",
+        formatar_numero(resumo["potencial_2030_medio"]),
+    )
+    c3.metric(
+        "Saldo projetado",
+        formatar_numero(resumo["saldo_projetado_medio"], sinal=True),
+    )
+    c4.metric(
+        "Cobertura dos titulares",
+        f'{resumo["com_avaliacao"]}/{resumo["selecionados"]}',
+        help=(
+            f'{resumo["completos"]} titular(es) possuem avaliação completa '
+            "de Vini e Beto."
+        ),
+    )
 
 
 def render_tela_campo(
     jogadores: Mapping[str, Mapping[str, Any]],
+    base_avaliacoes: BaseAvaliacoes,
+    periodo: str,
 ) -> None:
     _render_cabecalho_projeto()
+    _render_contexto_periodo(
+        base_avaliacoes,
+        periodo,
+        total_atletas=len(jogadores),
+    )
+    avaliacoes_periodo = _avaliacoes_por_nome(base_avaliacoes, periodo)
 
     col_config, col_campo = st.columns([1, 2], gap="large")
 
@@ -520,10 +463,16 @@ def render_tela_campo(
                 layout_ativo,
                 escalados,
                 jogadores,
+                avaliacoes_periodo,
             )
-            _render_lista_tatica(linhas_taticas)
+            render_lista_tatica(linhas_taticas)
         else:
-            render_campo(layout_ativo, escalados, jogadores)
+            render_campo(
+                layout_ativo,
+                escalados,
+                jogadores,
+                avaliacoes_periodo,
+            )
 
         render_legenda_adaptabilidade()
 
@@ -533,8 +482,6 @@ def render_tela_campo(
         layout_ativo,
         selecionados,
     )
-    # A reconciliação dos widgets elimina duplicidades; a filtragem final
-    # protege também estados antigos ou manipulados externamente.
     reservas_unicas: list[str] = []
     for nome in reservas:
         if (
@@ -545,16 +492,16 @@ def render_tela_campo(
             reservas_unicas.append(nome)
     reservas = reservas_unicas[:LIMITE_RESERVAS]
 
-    resumo = resumo_convocacao(len(escalados), len(reservas))
+    resumo_texto = resumo_convocacao(len(escalados), len(reservas))
     st.markdown(
         f'<div class="sr-only" role="status" aria-live="polite" '
-        f'aria-atomic="true">{_esc(resumo)}</div>',
+        f'aria-atomic="true">{_esc(resumo_texto)}</div>',
         unsafe_allow_html=True,
     )
     if convocacao_completa(len(escalados)):
-        st.success(resumo)
+        st.success(resumo_texto)
     else:
-        st.info(resumo)
+        st.info(resumo_texto)
 
     render_banco_reservas(reservas, jogadores)
 
@@ -567,40 +514,181 @@ def render_tela_campo(
         jogadores[nome] for nome in reservas if nome in jogadores
     ]
     render_resumo_elenco(titulares_dados, reservas_dados)
+    _render_metricas_convocacao(
+        list(escalados.values()),
+        jogadores,
+        avaliacoes_periodo,
+    )
 
-    if titulares_dados:
-        medias = calcular_medias_titulares(titulares_dados)
-        c1, c2, c3 = st.columns(3)
-        c1.metric(
-            f"Média {NOME_CURTO_ANALISTA_VINI}",
-            f"{medias['vini']:.2f}"
-            if medias["vini"] is not None
-            else "Sem base",
+
+def _valor_analista(
+    registro: Mapping[str, Any],
+    analista: str,
+    campo: str,
+) -> float | None:
+    bloco = registro.get(analista)
+    if not isinstance(bloco, Mapping):
+        return None
+    valor = bloco.get(campo)
+    if valor is None:
+        return None
+    try:
+        return float(valor)
+    except (TypeError, ValueError):
+        return None
+
+
+def _render_avaliacao_trimestral(
+    registro: Mapping[str, Any] | None,
+    *,
+    periodo: str,
+) -> None:
+    st.markdown(f"## Avaliação trimestral — {formatar_periodo(periodo)}")
+    if registro is None:
+        st.info(
+            "Não há avaliação registrada para este atleta no período "
+            "selecionado."
         )
-        c2.metric(
-            f"Média {NOME_CURTO_ANALISTA_BETO}",
-            f"{medias['roberto']:.2f}"
-            if medias["roberto"] is not None
-            else "Sem base",
+        return
+
+    metricas = calcular_metricas_avaliacao(registro)
+    if metricas["status"] == "Parcial":
+        st.warning(
+            "Avaliação parcial: pelo menos uma das quatro notas ainda não "
+            "foi registrada neste período."
         )
-        c3.metric(
-            "Média coletiva",
-            f"{medias['coletiva']:.2f}"
-            if medias["coletiva"] is not None
-            else "Sem base",
+    elif metricas["status"] == "Não avaliada":
+        st.info(
+            "O atleta está na base, mas ainda não recebeu notas neste período."
         )
+
+    linhas = pd.DataFrame(
+        [
+            {
+                "Indicador": "Capacidade atual",
+                NOME_CURTO_ANALISTA_VINI: _valor_analista(
+                    registro, "vini", "capacidade_atual"
+                ),
+                NOME_CURTO_ANALISTA_BETO: _valor_analista(
+                    registro, "beto", "capacidade_atual"
+                ),
+                "Média": metricas["capacidade_atual_media"],
+            },
+            {
+                "Indicador": "Potencial 2030",
+                NOME_CURTO_ANALISTA_VINI: _valor_analista(
+                    registro, "vini", "potencial_2030"
+                ),
+                NOME_CURTO_ANALISTA_BETO: _valor_analista(
+                    registro, "beto", "potencial_2030"
+                ),
+                "Média": metricas["potencial_2030_medio"],
+            },
+        ]
+    )
+    st.dataframe(
+        linhas,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            NOME_CURTO_ANALISTA_VINI: st.column_config.NumberColumn(
+                format="%.1f"
+            ),
+            NOME_CURTO_ANALISTA_BETO: st.column_config.NumberColumn(
+                format="%.1f"
+            ),
+            "Média": st.column_config.NumberColumn(format="%.2f"),
+        },
+    )
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Situação", str(metricas["status"]))
+    c2.metric(
+        "Saldo projetado",
+        formatar_numero(metricas["saldo_projetado"], sinal=True),
+        help=(
+            "Média de potencial menos capacidade atual, calculada apenas "
+            "para cada analista que preencheu o par completo."
+        ),
+    )
+    c3.metric(
+        "Data de referência",
+        formatar_data_referencia(str(registro["data_referencia"])),
+    )
+
+    st.caption(
+        "Posição no período: "
+        f'{registro.get("posicao_snapshot", "Não informada")} · '
+        "Clube no período: "
+        f'{registro.get("clube_snapshot", "Não informado")}.'
+    )
+
+    observacao_vini = str(
+        (registro.get("vini") or {}).get("observacao") or ""
+    ).strip()
+    observacao_beto = str(
+        (registro.get("beto") or {}).get("observacao") or ""
+    ).strip()
+    st.markdown("### Observações do trimestre")
+    col_vini, col_beto = st.columns(2, gap="large")
+    with col_vini:
+        st.markdown(f"**{NOME_ANALISTA_VINI}**")
+        if observacao_vini:
+            st.write(observacao_vini)
+        else:
+            st.caption("Nenhuma observação registrada por Vini.")
+    with col_beto:
+        st.markdown(f"**{NOME_ANALISTA_BETO}**")
+        if observacao_beto:
+            st.write(observacao_beto)
+        else:
+            st.caption("Nenhuma observação registrada por Beto.")
+
+
+def _render_historico_atleta(
+    base: BaseAvaliacoes,
+    id_atleta: str,
+) -> None:
+    serie = historico_atleta(base, id_atleta)
+    if len(serie) <= 1:
+        st.caption(
+            "O gráfico histórico será exibido quando existir mais de um "
+            "trimestre avaliado para o atleta."
+        )
+        return
+
+    df = pd.DataFrame(
+        [
+            {
+                "Período": formatar_periodo(str(item["periodo"])),
+                "Capacidade atual": item["capacidade_atual_media"],
+                "Potencial 2030": item["potencial_2030_medio"],
+            }
+            for item in serie
+        ]
+    ).set_index("Período")
+    st.markdown("## Histórico de avaliações")
+    st.line_chart(df)
 
 
 def render_tela_perfis(
     jogadores: Mapping[str, Mapping[str, Any]],
+    base_avaliacoes: BaseAvaliacoes,
+    periodo: str,
 ) -> None:
     _render_cabecalho_pagina(
         "Jogadores, Scout e Avaliações",
         (
-            "Pesquise um atleta para consultar avaliação editorial, "
+            "Pesquise um atleta para consultar avaliação trimestral, "
             "contrato e valor de mercado."
         ),
     )
+    _render_contexto_periodo(
+        base_avaliacoes,
+        periodo,
+        total_atletas=len(jogadores),
+    )
+    avaliacoes_periodo = _avaliacoes_por_nome(base_avaliacoes, periodo)
 
     nomes = sorted(jogadores.keys(), key=str.casefold)
     selected_name = st.selectbox(
@@ -621,13 +709,13 @@ def render_tela_perfis(
         return
 
     atleta = jogadores[selected_name]
+    registro = avaliacoes_periodo.get(selected_name)
     st.markdown("---")
     col_perfil, col_dados = st.columns([1, 2], gap="large")
 
     with col_perfil:
         render_cartao_perfil(selected_name, atleta)
-        st.markdown("## Avaliação dos analistas")
-        _render_avaliacao_analistas(atleta)
+        _render_avaliacao_trimestral(registro, periodo=periodo)
 
     with col_dados:
         st.markdown("## Valor de mercado")
@@ -636,14 +724,24 @@ def render_tela_perfis(
         with st.expander("Dados externos e contratuais", expanded=True):
             render_dados_transfermarkt(atleta)
 
-        st.markdown("## Dossiê do projeto")
-        _render_dossie_projeto(atleta)
+        _render_historico_atleta(
+            base_avaliacoes,
+            str(atleta.get("id_atleta") or ""),
+        )
 
 
 def render_tela_roster(
     jogadores: Mapping[str, Mapping[str, Any]],
+    base_avaliacoes: BaseAvaliacoes,
+    periodo: str,
 ) -> None:
     _render_cabecalho_pagina("Lista de Jogadores")
+    _render_contexto_periodo(
+        base_avaliacoes,
+        periodo,
+        total_atletas=len(jogadores),
+    )
+    avaliacoes_periodo = _avaliacoes_por_nome(base_avaliacoes, periodo)
 
     filtro_1, filtro_2, filtro_3 = st.columns([2, 1, 1])
     busca = filtro_1.text_input(
@@ -660,10 +758,11 @@ def render_tela_roster(
             for dados in jogadores.values()
         }
     )
-    grupo_filtro = filtro_3.selectbox("Grupo", ["Todos", *grupos])
+    grupo_filtro = filtro_3.selectbox("Grupo cadastral", ["Todos", *grupos])
 
     registros = construir_registros_roster(
         jogadores,
+        avaliacoes_periodo,
         busca=busca,
         posicao=None if posicao_filtro == "Todas" else posicao_filtro,
         grupo=None if grupo_filtro == "Todos" else grupo_filtro,
@@ -676,73 +775,240 @@ def render_tela_roster(
     )
     if df_roster.empty:
         st.info(ROSTER_SEM_RESULTADOS)
-    else:
-        st.caption(
-            "Tabela com nome, posição, grupo, idade, clube, notas e "
-            "dados de mercado dos atletas filtrados."
-        )
-        st.dataframe(df_roster, width="stretch", hide_index=True)
+        return
+
+    st.dataframe(
+        df_roster,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            "Capacidade atual": st.column_config.NumberColumn(format="%.2f"),
+            "Potencial 2030": st.column_config.NumberColumn(format="%.2f"),
+            "Saldo projetado": st.column_config.NumberColumn(format="%+.2f"),
+            "% do pico": st.column_config.ProgressColumn(
+                min_value=0,
+                max_value=100,
+                format="%.1f%%",
+            ),
+        },
+    )
+
+
+def _tabela_ranking(
+    itens: Sequence[Mapping[str, Any]],
+    campo: str,
+    rotulo: str,
+) -> None:
+    if not itens:
+        st.info("Sem avaliações completas para este recorte.")
+        return
+    df = pd.DataFrame(
+        [
+            {
+                "Nome": item["nome"],
+                "Posição": item["posicao_snapshot"],
+                rotulo: item[campo],
+            }
+            for item in itens
+        ]
+    )
+    st.dataframe(
+        df,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            rotulo: st.column_config.NumberColumn(
+                format="%+.2f" if campo == "saldo_projetado" else "%.2f"
+            )
+        },
+    )
+
+
+def _render_comparacao_analistas(
+    base: BaseAvaliacoes,
+    periodo: str,
+) -> None:
+    capacidade = comparar_analistas(base, periodo, "capacidade")
+    potencial = comparar_analistas(base, periodo, "potencial")
+    aba_capacidade, aba_potencial = st.tabs(
+        ["Capacidade atual", "Potencial 2030"]
+    )
+
+    for aba, titulo, dados in (
+        (aba_capacidade, "capacidade atual", capacidade),
+        (aba_potencial, "potencial 2030", potencial),
+    ):
+        with aba:
+            if not dados:
+                st.info(
+                    f"Sem pares completos para comparar {titulo}."
+                )
+                continue
+            col_consenso, col_divergencia = st.columns(2, gap="large")
+            with col_consenso:
+                st.markdown("### Maiores consensos")
+                consenso = pd.DataFrame(ordenar_consensos(dados))
+                st.dataframe(
+                    consenso[
+                        [
+                            "Nome",
+                            "Posição",
+                            NOME_CURTO_ANALISTA_VINI,
+                            NOME_CURTO_ANALISTA_BETO,
+                            "Média",
+                        ]
+                    ],
+                    width="stretch",
+                    hide_index=True,
+                )
+            with col_divergencia:
+                st.markdown("### Maiores divergências")
+                divergencias = pd.DataFrame(ordenar_divergencias(dados))
+                st.dataframe(
+                    divergencias[
+                        [
+                            "Nome",
+                            "Posição",
+                            NOME_CURTO_ANALISTA_VINI,
+                            NOME_CURTO_ANALISTA_BETO,
+                            "Diferença",
+                        ]
+                    ],
+                    width="stretch",
+                    hide_index=True,
+                )
 
 
 def render_tela_analise(
     jogadores: Mapping[str, Mapping[str, Any]],
+    base_avaliacoes: BaseAvaliacoes,
+    periodo: str,
 ) -> None:
     _render_cabecalho_pagina("Análises & Mercado")
     st.markdown("## Compilado de avaliações para o Ciclo 2030")
+    _render_contexto_periodo(
+        base_avaliacoes,
+        periodo,
+        total_atletas=len(jogadores),
+    )
 
-    avaliados = construir_avaliacoes(jogadores)
-    mercado = construir_registros_mercado(jogadores)
+    resumo = calcular_resumo_periodo(
+        base_avaliacoes,
+        periodo,
+        total_atletas=len(jogadores),
+    )
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Atletas cadastrados", resumo["atletas_na_base"])
+    c2.metric("Com alguma avaliação", resumo["com_alguma_avaliacao"])
+    c3.metric("Avaliações completas", resumo["avaliacoes_completas"])
+    c4.metric("Cobertura completa", f'{resumo["cobertura_completa"]:.1%}')
 
-    df_avaliados = pd.DataFrame(avaliados)
-    df_mercado = pd.DataFrame(mercado)
+    c5, c6, c7 = st.columns(3)
+    c5.metric(
+        "Capacidade atual média",
+        formatar_numero(resumo["capacidade_atual_media"]),
+    )
+    c6.metric(
+        "Potencial médio 2030",
+        formatar_numero(resumo["potencial_2030_medio"]),
+    )
+    c7.metric(
+        "Saldo projetado médio",
+        formatar_numero(resumo["saldo_projetado_medio"], sinal=True),
+    )
 
-    if df_avaliados.empty:
-        st.info(ANALISE_SEM_AVALIACOES)
-    else:
-        media_geral = df_avaliados["Média"].mean()
-        divergencia_media = df_avaliados["Diferença"].mean()
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Atletas avaliados", len(df_avaliados))
-        c2.metric("Média geral", f"{media_geral:.2f}")
-        c3.metric("Divergência média", f"{divergencia_media:.2f}")
+    rankings = construir_rankings_periodo(
+        base_avaliacoes,
+        periodo,
+    )
+    st.markdown("## Destaques com avaliação completa")
+    col_atual, col_potencial = st.columns(2, gap="large")
+    with col_atual:
+        st.markdown("### Maior capacidade atual")
+        _tabela_ranking(
+            rankings["maior_capacidade"],
+            "capacidade_atual_media",
+            "Capacidade atual",
+        )
+    with col_potencial:
+        st.markdown("### Maior potencial 2030")
+        _tabela_ranking(
+            rankings["maior_potencial"],
+            "potencial_2030_medio",
+            "Potencial 2030",
+        )
 
-        col_consenso, col_divergencia = st.columns(2, gap="large")
-        with col_consenso:
-            st.markdown("## Maiores consensos")
-            consenso = pd.DataFrame(ordenar_consensos(avaliados))
+    col_evolucao, col_regressao = st.columns(2, gap="large")
+    with col_evolucao:
+        st.markdown("### Maior evolução projetada")
+        _tabela_ranking(
+            rankings["maior_evolucao"],
+            "saldo_projetado",
+            "Saldo projetado",
+        )
+    with col_regressao:
+        st.markdown("### Maior regressão projetada")
+        regressao = [
+            item
+            for item in rankings["maior_regressao"]
+            if item.get("saldo_projetado") is not None
+            and float(item["saldo_projetado"]) < 0
+        ]
+        _tabela_ranking(
+            regressao,
+            "saldo_projetado",
+            "Saldo projetado",
+        )
+
+    st.markdown("## Consensos e divergências")
+    _render_comparacao_analistas(base_avaliacoes, periodo)
+
+    with st.expander(
+        f'Avaliações parciais ({len(rankings["parciais"])})',
+        expanded=False,
+    ):
+        if rankings["parciais"]:
             st.dataframe(
-                consenso[
+                pd.DataFrame(
                     [
-                        "Nome",
-                        "Posição",
-                        NOME_CURTO_ANALISTA_VINI,
-                        NOME_CURTO_ANALISTA_BETO,
-                        "Média",
+                        {
+                            "Nome": item["nome"],
+                            "Posição": item["posicao_snapshot"],
+                            "Situação": item["status"],
+                        }
+                        for item in rankings["parciais"]
                     ]
-                ],
+                ),
                 width="stretch",
                 hide_index=True,
             )
+        else:
+            st.caption("Nenhuma avaliação parcial neste período.")
 
-        with col_divergencia:
-            st.markdown("## Maiores divergências")
-            divergencias = pd.DataFrame(ordenar_divergencias(avaliados))
-            st.dataframe(
-                divergencias[
-                    [
-                        "Nome",
-                        "Posição",
-                        NOME_CURTO_ANALISTA_VINI,
-                        NOME_CURTO_ANALISTA_BETO,
-                        "Diferença",
-                    ]
-                ],
-                width="stretch",
-                hide_index=True,
+    with st.expander(
+        f'Atletas ainda não avaliados ({len(rankings["nao_avaliados"])})',
+        expanded=False,
+    ):
+        if rankings["nao_avaliados"]:
+            st.write(
+                ", ".join(
+                    str(item["nome"])
+                    for item in rankings["nao_avaliados"]
+                )
             )
+        else:
+            st.caption("Todos os atletas possuem alguma avaliação.")
 
     st.markdown("---")
     st.markdown("## Leitura de mercado")
+    st.info(
+        "As avaliações esportivas usam a data de referência "
+        f'{formatar_data_referencia(resumo["data_referencia"])}. '
+        "Os valores de mercado possuem datas próprias de atualização e "
+        "não equivalem a avaliação de desempenho."
+    )
+    mercado = construir_registros_mercado(jogadores)
+    df_mercado = pd.DataFrame(mercado)
     if df_mercado.empty:
         st.info(MERCADO_SEM_DADOS)
         return
@@ -760,10 +1026,6 @@ def render_tela_analise(
     mercado_ordenado = df_mercado.sort_values(
         "Atual (M€)",
         ascending=False,
-    )
-    st.caption(
-        "Tabela textual dos valores atuais, picos e percentuais "
-        "do pico de mercado."
     )
     st.dataframe(
         mercado_ordenado,
@@ -825,6 +1087,8 @@ def render_feedback_sidebar() -> None:
 def render_tela(
     menu: str,
     jogadores: Mapping[str, Mapping[str, Any]],
+    base_avaliacoes: BaseAvaliacoes,
+    periodo: str,
 ) -> None:
     roteador = {
         MENU_CAMPO: render_tela_campo,
@@ -833,4 +1097,4 @@ def render_tela(
         MENU_ANALISE: render_tela_analise,
     }
     tela = roteador.get(menu, render_tela_campo)
-    tela(jogadores)
+    tela(jogadores, base_avaliacoes, periodo)

@@ -975,7 +975,87 @@ HIGH_CONTRAST_CSS = """
 """
 
 
+RC5_CSS = """
+<style>
+    .evaluation-context {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 0 0 1.5rem;
+        padding: .9rem 1rem;
+        border: 1px solid var(--slate-500);
+        border-left: 5px solid var(--gold);
+        border-radius: 12px;
+        background: var(--navy-800);
+    }
+    .evaluation-context-main,
+    .evaluation-context-stats {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .45rem .9rem;
+    }
+    .evaluation-context-main strong {
+        color: var(--gold);
+        font-size: 1rem;
+    }
+    .evaluation-context-main span,
+    .evaluation-context-stats span {
+        color: var(--slate-300);
+        font-size: .88rem;
+        line-height: 1.4;
+    }
+    .evaluation-context-stats span {
+        padding: .28rem .55rem;
+        border: 1px solid var(--slate-500);
+        border-radius: 999px;
+    }
+    .market-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .65rem 1rem;
+        line-height: 1.55;
+    }
+    .market-details strong {
+        color: var(--slate-300);
+    }
+    .market-card-info {
+        margin: .8rem 0 0;
+        color: var(--slate-400);
+        line-height: 1.5;
+    }
+    @media (max-width: 700px) {
+        .evaluation-context,
+        .evaluation-context-main,
+        .evaluation-context-stats {
+            align-items: flex-start;
+            flex-direction: column;
+            width: 100%;
+        }
+        .evaluation-context-stats span {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .market-details {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (forced-colors: active) {
+        .evaluation-context {
+            border: 2px solid CanvasText;
+        }
+        .evaluation-context-stats span {
+            border: 1px solid CanvasText;
+        }
+    }
+</style>
+"""
+
+
 def aplicar_estilos(*, alto_contraste: bool = False) -> None:
     st.markdown(CSS, unsafe_allow_html=True)
+    st.markdown(RC5_CSS, unsafe_allow_html=True)
     if alto_contraste:
         st.markdown(HIGH_CONTRAST_CSS, unsafe_allow_html=True)
