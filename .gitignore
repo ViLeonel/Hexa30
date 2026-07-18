@@ -15,3 +15,5 @@ venv/
 *.lock
 *.meta.json
 *.corrompido-*.json
+.streamlit/secrets.toml
+auditoria_jogadores.jsonl
