@@ -11,6 +11,19 @@ from typing import Any, Mapping, TypedDict
 from hexa_config import IDADE_MAXIMA_CADASTRO, IDADE_MINIMA_CADASTRO
 from hexa_taticas import POSICOES_OFICIAIS, normalizar_posicao
 
+__all__ = [
+    "DadosExternos",
+    "Jogador",
+    "JogadorObrigatorio",
+    "ProblemaIntegridade",
+    "RelatorioIntegridade",
+    "SeveridadeIntegridade",
+    "chave_canonica_nome",
+    "validar_estrutura_bruta",
+    "validar_jogadores_normalizados",
+]
+
+
 
 class DadosExternos(TypedDict, total=False):
     tm_nascimento: str

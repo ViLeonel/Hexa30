@@ -4,6 +4,28 @@ from __future__ import annotations
 
 from hexa_taticas import LIMITE_RESERVAS, LIMITE_TITULARES
 
+__all__ = [
+    "ANALISE_SEM_AVALIACOES",
+    "AVISO_PERSISTENCIA",
+    "CONFLITO_PERSISTENCIA",
+    "DADOS_EXTERNOS_AUSENTES",
+    "DOSSIE_CAMPO_AUSENTE",
+    "FEEDBACK_MENSAGEM_OBRIGATORIA",
+    "FEEDBACK_PREPARADO",
+    "MERCADO_ATLETA_AUSENTE",
+    "MERCADO_SEM_DADOS",
+    "NAO_INFORMADO_FONTE",
+    "PERFIL_VAZIO",
+    "REPOSITORIO_OCUPADO",
+    "ROSTER_SEM_RESULTADOS",
+    "SEM_BASE_CALCULO",
+    "SEM_REGISTRO_EDITORIAL",
+    "SUCESSO_CADASTRO",
+    "convocacao_completa",
+    "resumo_convocacao",
+]
+
+
 SEM_DADO = "Sem dado"
 NAO_INFORMADO_FONTE = "Não informado pela fonte"
 NAO_PESQUISADO = "Ainda não pesquisado"

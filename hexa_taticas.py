@@ -6,6 +6,26 @@ from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+__all__ = [
+    "ABREVIACOES",
+    "ALIASES_POSICAO",
+    "FABRICAS_TATICAS",
+    "LIMITE_CONVOCADOS",
+    "LIMITE_RESERVAS",
+    "LIMITE_TITULARES",
+    "POSICOES_OFICIAIS",
+    "SlotTatico",
+    "TATICAS",
+    "construir_taticas",
+    "formatar_jogador_com_posicao",
+    "indice_adaptabilidade",
+    "normalizar_lista_posicoes",
+    "normalizar_posicao",
+    "obter_atletas_compativeis",
+    "validar_taticas",
+]
+
+
 POSICOES_OFICIAIS: tuple[str, ...] = (
     "Goleiro",
     "Lateral-direito",

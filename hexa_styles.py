@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import streamlit as st
 
-from hexa_config import PAGE_CONFIG
+__all__ = [
+    "CSS",
+    "HIGH_CONTRAST_CSS",
+    "aplicar_estilos",
+]
+
 
 CSS = """
 <style>

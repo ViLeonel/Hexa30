@@ -4,6 +4,14 @@ from __future__ import annotations
 
 import re
 
+__all__ = [
+    "atende_aa",
+    "hex_para_rgb",
+    "luminancia_relativa",
+    "razao_contraste",
+]
+
+
 _HEX = re.compile(r"^#?([0-9a-fA-F]{6})$")
 
 

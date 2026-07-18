@@ -82,6 +82,16 @@ from hexa_taticas import (
     formatar_jogador_com_posicao,
 )
 
+__all__ = [
+    "render_feedback_sidebar",
+    "render_tela",
+    "render_tela_analise",
+    "render_tela_campo",
+    "render_tela_perfis",
+    "render_tela_roster",
+]
+
+
 
 
 def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:

@@ -7,6 +7,18 @@ from typing import Any
 
 from hexa_taticas import LIMITE_RESERVAS, SlotTatico, obter_atletas_compativeis
 
+__all__ = [
+    "chave_reservas",
+    "chave_titular",
+    "ler_convocacao",
+    "limpar_convocacao",
+    "normalizar_escolha_titular",
+    "normalizar_reservas",
+    "opcoes_reservas",
+    "opcoes_titular",
+]
+
+
 
 def chave_titular(tatica: str, indice: int) -> str:
     return f"titular::{tatica}::{indice}"

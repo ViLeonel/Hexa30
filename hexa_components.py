@@ -33,6 +33,22 @@ from hexa_data import (
 )
 from hexa_taticas import ABREVIACOES, LIMITE_CONVOCADOS, LIMITE_RESERVAS, LIMITE_TITULARES, SlotTatico, indice_adaptabilidade
 
+__all__ = [
+    "calcular_resumo_elenco",
+    "render_avaliacao_leitura",
+    "render_banco_reservas",
+    "render_cabecalho",
+    "render_campo",
+    "render_cartao_perfil",
+    "render_comparativo_mercado",
+    "render_dados_transfermarkt",
+    "render_dossie",
+    "render_legenda_adaptabilidade",
+    "render_lista_tatica",
+    "render_resumo_elenco",
+]
+
+
 
 def _esc(valor: Any, padrao: str = NAO_INFORMADO_FONTE) -> str:
     texto = padrao if valor in (None, "", []) else str(valor)

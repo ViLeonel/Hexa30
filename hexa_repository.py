@@ -19,6 +19,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator, Mapping, Protocol, runtime_checkable
 
+__all__ = [
+    "ConflitoConcorrenciaError",
+    "DataIntegrityError",
+    "JogadoresRepository",
+    "JsonJogadoresRepository",
+    "RegistroVersao",
+    "RepositorioOcupadoError",
+    "ResultadoLeitura",
+    "VERSAO_AUSENTE",
+]
+
+
 
 class DataIntegrityError(RuntimeError):
     """Indica que a fonte de dados não pôde ser lida sem risco de perda."""

@@ -15,6 +15,20 @@ from hexa_data import (
     valor_mercado_maximo,
 )
 
+__all__ = [
+    "LINHAS_TATICAS",
+    "calcular_medias_titulares",
+    "construir_avaliacoes",
+    "construir_registros_mercado",
+    "construir_registros_roster",
+    "construir_visualizacao_tatica_lista",
+    "filtrar_jogadores",
+    "linha_tatica_do_slot",
+    "ordenar_consensos",
+    "ordenar_divergencias",
+]
+
+
 
 
 def _texto_apresentacao(valor: Any) -> str:

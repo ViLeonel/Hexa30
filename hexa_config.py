@@ -4,12 +4,46 @@ from __future__ import annotations
 
 from pathlib import Path
 
+__all__ = [
+    "ANO_BASE_DADOS",
+    "ANO_COPA",
+    "ASSUNTO_FEEDBACK_PREFIXO",
+    "BASE_DIR",
+    "DATA_FILE",
+    "EMAIL_FEEDBACK",
+    "ENRICHMENTS_FILE",
+    "GRUPOS_EDITORIAIS",
+    "GRUPO_OBSERVACAO",
+    "GRUPO_RESERVAS",
+    "GRUPO_TITULARES",
+    "ICONE_APLICACAO",
+    "IDADE_MAXIMA_CADASTRO",
+    "IDADE_MINIMA_CADASTRO",
+    "IDADE_PADRAO",
+    "LIMITE_DESTAQUES_ANALISE",
+    "MENUS",
+    "MENU_ANALISE",
+    "MENU_CAMPO",
+    "MENU_PERFIS",
+    "MENU_ROSTER",
+    "NOME_APLICACAO",
+    "PAGE_CONFIG",
+    "ROTULO_NAVEGACAO",
+    "SAUDACAO_FEEDBACK",
+    "TIPOS_SUGESTAO",
+    "TITULO_PROJETO",
+    "TITULO_SIDEBAR",
+    "VERSAO_APLICACAO",
+]
+
+
 BASE_DIR = Path(__file__).resolve().parent
 
 # Identidade e navegação
 NOME_APLICACAO = "O Caminho para o Hexa 2030"
 TITULO_PROJETO = "🏆 O Caminho para o Hexa"
 ICONE_APLICACAO = "🏆"
+VERSAO_APLICACAO = "1.0.0-rc1"
 TITULO_SIDEBAR = "CONSELHO TÁTICO"
 ROTULO_NAVEGACAO = "Navegação do Painel:"
 

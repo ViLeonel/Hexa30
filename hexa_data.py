@@ -44,6 +44,7 @@ __all__ = [
     "extrair_valor_milhoes",
     "formatar_valor_milhoes",
     "percentual_do_pico",
+    "repositorio_padrao",
     "salvar_jogadores",
     "validar_integridade_jogadores",
     "validar_posicoes",

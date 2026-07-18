@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.env
+.DS_Store
+
+# Runtime artifacts
+*.bak
+*.tmp
+*.lock
+*.meta.json
+*.corrompido-*.json
