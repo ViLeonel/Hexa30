@@ -41,6 +41,18 @@ from hexa_components import (
     render_resumo_elenco,
 )
 from hexa_data import adicionar_jogador, formatar_valor_milhoes
+from hexa_messages import (
+    ANALISE_SEM_AVALIACOES,
+    AVISO_PERSISTENCIA,
+    FEEDBACK_MENSAGEM_OBRIGATORIA,
+    FEEDBACK_PREPARADO,
+    MERCADO_SEM_DADOS,
+    PERFIL_VAZIO,
+    ROSTER_SEM_RESULTADOS,
+    SUCESSO_CADASTRO,
+    convocacao_completa,
+    resumo_convocacao,
+)
 from hexa_selectors import (
     calcular_medias_titulares,
     construir_avaliacoes,
@@ -127,7 +139,11 @@ def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
             format_func=lambda nome, base=jogadores: formatar_jogador_com_posicao(nome, base),
             key=chave_reservas_ativa,
         )
-        st.caption(f"{len(escalados)}/11 titulares e {len(reservas)}/{LIMITE_RESERVAS} reservas selecionados.")
+        resumo = resumo_convocacao(len(escalados), len(reservas))
+        if convocacao_completa(len(escalados)):
+            st.success(resumo)
+        else:
+            st.info(resumo)
 
     with col_campo:
         render_campo(layout_ativo, escalados, jogadores)
@@ -145,14 +161,14 @@ def render_tela_campo(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
         if titulares_dados:
             medias = calcular_medias_titulares(titulares_dados)
             c1, c2, c3 = st.columns(3)
-            c1.metric("Média Vini", f"{medias['vini']:.2f}" if medias["vini"] is not None else "N/A")
+            c1.metric("Média Vini", f"{medias['vini']:.2f}" if medias["vini"] is not None else "Sem base")
             c2.metric(
                 "Média Roberto",
-                f"{medias['roberto']:.2f}" if medias["roberto"] is not None else "N/A",
+                f"{medias['roberto']:.2f}" if medias["roberto"] is not None else "Sem base",
             )
             c3.metric(
                 "Média coletiva",
-                f"{medias['coletiva']:.2f}" if medias["coletiva"] is not None else "N/A",
+                f"{medias['coletiva']:.2f}" if medias["coletiva"] is not None else "Sem base",
             )
 
 
@@ -173,7 +189,7 @@ def render_tela_perfis(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
     )
 
     if selected_name is None:
-        st.info("Digite parte do nome e selecione um atleta para abrir a ficha individual.")
+        st.info(PERFIL_VAZIO)
         return
 
     atleta = jogadores[selected_name]
@@ -220,10 +236,13 @@ def render_tela_roster(jogadores: dict[str, dict[str, Any]]) -> None:
 
         df_roster = pd.DataFrame(registros)
         st.caption(f"{len(df_roster)} atleta(s) exibido(s) de {len(jogadores)} cadastrados.")
-        st.dataframe(df_roster, width="stretch", hide_index=True)
+        if df_roster.empty:
+            st.info(ROSTER_SEM_RESULTADOS)
+        else:
+            st.dataframe(df_roster, width="stretch", hide_index=True)
 
     with tab_novo:
-        st.info("O cadastro inclui um atleta no JSON sem alterar ou excluir registros existentes.")
+        st.warning(AVISO_PERSISTENCIA)
         with st.form("novo_jogador", clear_on_submit=True):
             col_a, col_b = st.columns(2)
             nome_curto = col_a.text_input("Nome curto*")
@@ -267,7 +286,7 @@ def render_tela_roster(jogadores: dict[str, dict[str, Any]]) -> None:
                         "historico": historico,
                     },
                 )
-                st.success(f"{nome_curto} foi incluído na base.")
+                st.success(SUCESSO_CADASTRO.format(nome=nome_curto))
                 st.rerun()
             except ValueError as erro:
                 st.error(str(erro))
@@ -286,7 +305,7 @@ def render_tela_analise(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
     df_mercado = pd.DataFrame(mercado)
 
     if df_avaliados.empty:
-        st.info("Ainda não existem atletas com as duas avaliações preenchidas.")
+        st.info(ANALISE_SEM_AVALIACOES)
     else:
         media_geral = df_avaliados["Média"].mean()
         divergencia_media = df_avaliados["Diferença"].mean()
@@ -317,7 +336,7 @@ def render_tela_analise(jogadores: Mapping[str, Mapping[str, Any]]) -> None:
     st.markdown("---")
     st.markdown("### Leitura de mercado")
     if df_mercado.empty:
-        st.info("Ainda não existem valores de mercado cadastrados.")
+        st.info(MERCADO_SEM_DADOS)
         return
 
     total_atual = df_mercado["Atual (M€)"].sum()
@@ -355,7 +374,7 @@ def render_feedback_sidebar() -> None:
     if not enviar:
         return
     if not detalhes.strip():
-        st.sidebar.warning("Digite uma mensagem antes de continuar.")
+        st.sidebar.warning(FEEDBACK_MENSAGEM_OBRIGATORIA)
         return
 
     assunto = urllib.parse.quote(f"{ASSUNTO_FEEDBACK_PREFIXO}: {tipo_sugestao}")
@@ -365,6 +384,7 @@ def render_feedback_sidebar() -> None:
         f'<a href="{mailto}" class="feedback-link">Abrir e-mail</a>',
         unsafe_allow_html=True,
     )
+    st.sidebar.caption(FEEDBACK_PREPARADO)
 
 
 def render_tela(menu: str, jogadores: dict[str, dict[str, Any]]) -> None:

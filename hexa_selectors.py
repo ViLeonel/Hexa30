@@ -6,12 +6,21 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from hexa_config import ANO_BASE_DADOS, ANO_COPA, LIMITE_DESTAQUES_ANALISE
+from hexa_messages import NAO_INFORMADO_FONTE
 from hexa_data import (
     formatar_valor_milhoes,
     percentual_do_pico,
     valor_mercado_atual,
     valor_mercado_maximo,
 )
+
+
+
+def _texto_apresentacao(valor: Any) -> str:
+    """Converte valores ausentes ou sentinelas legadas em texto claro para a interface."""
+    if valor in (None, "", [], "N/A"):
+        return NAO_INFORMADO_FONTE
+    return str(valor)
 
 
 def _numero_positivo(valor: Any) -> float | None:
@@ -79,9 +88,9 @@ def construir_registros_roster(
         registros.append(
             {
                 "Nome": nome,
-                "Posição": dados.get("posicao", "N/A"),
-                "Grupo": dados.get("grupo", "N/A"),
-                "Clube": dados.get("clube", "N/A"),
+                "Posição": _texto_apresentacao(dados.get("posicao")),
+                "Grupo": _texto_apresentacao(dados.get("grupo")),
+                "Clube": _texto_apresentacao(dados.get("clube")),
                 f"Idade {ano_base}": idade,
                 f"Idade {ano_copa}": idade + diferenca_anos if idade > 0 else 0,
                 "Vini": float(dados.get("nota_vini") or 0.0),
@@ -107,7 +116,7 @@ def construir_avaliacoes(
         avaliados.append(
             {
                 "Nome": nome,
-                "Posição": dados.get("posicao", "N/A"),
+                "Posição": _texto_apresentacao(dados.get("posicao")),
                 "Vini": nota_vini,
                 "Roberto": nota_roberto,
                 "Diferença": abs(nota_vini - nota_roberto),
@@ -130,7 +139,7 @@ def construir_registros_mercado(
         mercado.append(
             {
                 "Nome": nome,
-                "Posição": dados.get("posicao", "N/A"),
+                "Posição": _texto_apresentacao(dados.get("posicao")),
                 "Atual (M€)": atual,
                 "Pico (M€)": maximo,
                 "% do pico": percentual_do_pico(dados) or 0.0,

@@ -16,6 +16,14 @@ from hexa_config import (
     GRUPO_TITULARES,
     IDADE_PADRAO,
 )
+from hexa_messages import (
+    DADOS_EXTERNOS_AUSENTES,
+    DOSSIE_CAMPO_AUSENTE,
+    MERCADO_ATLETA_AUSENTE,
+    NAO_INFORMADO_FONTE,
+    SEM_BASE_CALCULO,
+    SEM_REGISTRO_EDITORIAL,
+)
 from hexa_data import (
     extrair_altura_metros,
     formatar_valor_milhoes,
@@ -26,7 +34,7 @@ from hexa_data import (
 from hexa_taticas import ABREVIACOES, LIMITE_CONVOCADOS, LIMITE_RESERVAS, LIMITE_TITULARES, SlotTatico, indice_adaptabilidade
 
 
-def _esc(valor: Any, padrao: str = "N/A") -> str:
+def _esc(valor: Any, padrao: str = NAO_INFORMADO_FONTE) -> str:
     texto = padrao if valor in (None, "", []) else str(valor)
     return html.escape(texto)
 
@@ -35,8 +43,8 @@ def _nota_texto(valor: Any) -> str:
     try:
         numero = float(valor)
     except (TypeError, ValueError):
-        return "Sem nota"
-    return f"{numero:.1f}".replace(".", ",") if numero > 0 else "Sem nota"
+        return SEM_REGISTRO_EDITORIAL
+    return f"{numero:.1f}".replace(".", ",") if numero > 0 else SEM_REGISTRO_EDITORIAL
 
 
 def _classe_posicao(configuracao: SlotTatico) -> str:
@@ -132,13 +140,13 @@ def render_banco_reservas(
 ) -> None:
     st.markdown(f"### Banco de reservas ({len(reservas)}/{LIMITE_RESERVAS})")
     if not reservas:
-        st.info("Nenhum reserva selecionado. É possível convocar até 15 jogadores para o banco.")
+        st.info("Banco vazio. Selecione até 15 reservas; isso não impede continuar montando os titulares.")
         return
 
     cards: list[str] = []
     for nome in reservas:
         dados = jogadores.get(nome, {})
-        posicao = str(dados.get("posicao") or "N/A")
+        posicao = str(dados.get("posicao") or NAO_INFORMADO_FONTE)
         sigla = ABREVIACOES.get(posicao, "OBS")
         cards.append(
             '<div class="bench-card">'
@@ -181,7 +189,7 @@ def render_resumo_elenco(
 ) -> None:
     elenco = [*titulares, *reservas]
     if not elenco:
-        st.info("Preencha os titulares e os reservas para gerar o raio-X da convocação.")
+        st.info("O raio-X aparecerá após a seleção de pelo menos um atleta. Titulares e reservas podem ser preenchidos gradualmente.")
         return
 
     resumo = calcular_resumo_elenco(elenco)
@@ -258,7 +266,7 @@ def render_avaliacao_leitura(dados: Mapping[str, Any]) -> None:
 
 def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
     if not any(chave.startswith("tm_") for chave in dados):
-        st.info("Ainda não há dados externos cadastrados para este atleta.")
+        st.info(DADOS_EXTERNOS_AUSENTES)
         return
 
     nacionalidades = dados.get("tm_nacionalidades") or []
@@ -273,7 +281,7 @@ def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
         f"<b>Clube atual:</b> {_esc(dados.get('clube'))}",
         f"<b>Nascimento:</b> {_esc(dados.get('tm_nascimento'))} &nbsp; | &nbsp; <b>Naturalidade:</b> {_esc(dados.get('tm_naturalidade'))}",
         f"<b>Altura:</b> {_esc(dados.get('tm_altura'))} &nbsp; | &nbsp; <b>Pé:</b> {_esc(dados.get('tm_pe'))}",
-        f"<b>Nacionalidades:</b> {_esc(', '.join(nacionalidades) if nacionalidades else 'N/A')}",
+        f"<b>Nacionalidades:</b> {_esc(', '.join(nacionalidades) if nacionalidades else NAO_INFORMADO_FONTE)}",
         f"<b>Agente:</b> {_esc(dados.get('tm_empresario'))}",
         f"<b>No clube desde:</b> {_esc(dados.get('tm_clube_desde'))} &nbsp; | &nbsp; <b>Contrato:</b> {_esc(dados.get('tm_contrato'))}",
     ]
@@ -320,7 +328,7 @@ def render_comparativo_mercado(dados: Mapping[str, Any]) -> None:
     diferenca = maximo - atual if maximo > 0 and atual > 0 else None
 
     if atual <= 0 and maximo <= 0:
-        st.info("Ainda não há valores de mercado cadastrados para este atleta.")
+        st.info(MERCADO_ATLETA_AUSENTE)
         return
 
     percentual_exibido = percentual or 0.0
@@ -330,7 +338,7 @@ def render_comparativo_mercado(dados: Mapping[str, Any]) -> None:
             <div class="market-grid">
                 <div><div class="market-label">Valor atual</div><div class="market-value green">{formatar_valor_milhoes(atual)}</div></div>
                 <div><div class="market-label">Maior valor da carreira</div><div class="market-value gold">{formatar_valor_milhoes(maximo)}</div></div>
-                <div><div class="market-label">Distância do pico</div><div class="market-value">{formatar_valor_milhoes(diferenca) if diferenca is not None else 'N/A'}</div></div>
+                <div><div class="market-label">Distância do pico</div><div class="market-value">{formatar_valor_milhoes(diferenca) if diferenca is not None else SEM_BASE_CALCULO}</div></div>
             </div>
             <div class="market-label">Valor atual equivale a {percentual_exibido:.0f}% do pico de carreira</div>
             <div class="progress-track" role="progressbar" aria-label="Percentual do pico de mercado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{max(0, min(percentual_exibido, 100)):.0f}"><div class="progress-fill {_classe_progresso(percentual_exibido)}"></div></div>
@@ -351,7 +359,7 @@ def render_dossie(dados: Mapping[str, Any]) -> None:
         ("Histórico das discussões", dados.get("historico"), "stat-info"),
     )
     for titulo, conteudo, classe in blocos:
-        texto = conteudo or "Nenhuma informação cadastrada."
+        texto = conteudo or DOSSIE_CAMPO_AUSENTE
         st.markdown(
             f'<div class="stat-box {classe}"><strong>{_esc(titulo)}:</strong><br>{_esc(texto)}</div>',
             unsafe_allow_html=True,
