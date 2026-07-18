@@ -485,3 +485,14 @@ Resultado consolidado: 75 testes aprovados.
 - Falhas na gravação canônica não geram histórico falso.
 - Repositório JSONL possui bloqueio, deduplicação por ID e substituição atômica.
 - Nenhum dado editorial existente foi modificado.
+
+## RC3 Auth — Área administrativa experimental
+
+- Criado `hexa_auth.py` com adaptador para `st.login`, `st.user` e `st.logout`.
+- Criada allowlist de administradores via Streamlit Secrets.
+- Criado `hexa_admin.py` como página privada sem formulários de edição.
+- O menu administrativo só aparece para e-mails autorizados.
+- A própria página repete a verificação de autorização.
+- Identidade do editor está disponível para auditoria.
+- Auditoria recebeu campos opcionais de ator sem quebrar eventos anteriores.
+- Adicionado template seguro de Secrets e exclusão do arquivo real no `.gitignore`.
