@@ -102,13 +102,11 @@ def render_preferencias_acessibilidade() -> None:
 
 
 def render_navegacao() -> tuple[str, IdentidadeUsuario]:
+    """Renderiza primeiro a navegação pública e depois o acesso administrativo."""
     st.sidebar.markdown(
         f"<h2 class='sidebar-title'>{TITULO_SIDEBAR}</h2>",
         unsafe_allow_html=True,
     )
-    st.sidebar.markdown("---")
-
-    identidade = render_controle_login()
     st.sidebar.markdown("---")
 
     menus_disponiveis = list(MENUS)
@@ -122,6 +120,9 @@ def render_navegacao() -> tuple[str, IdentidadeUsuario]:
         ROTULO_NAVEGACAO,
         menus_disponiveis,
     )
+
+    st.sidebar.markdown("---")
+    identidade = render_controle_login()
     return menu, identidade
 
 

@@ -304,21 +304,29 @@ def render_comparativo_mercado(dados: Mapping[str, Any]) -> None:
 
 
 def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
+    """Exibe dados externos sem alterar posições editoriais do projeto."""
+    posicoes_externas = dados.get("tm_posicoes_secundarias_site")
+    if isinstance(posicoes_externas, (list, tuple, set)):
+        posicoes_externas = ", ".join(
+            str(posicao)
+            for posicao in posicoes_externas
+            if str(posicao).strip()
+        )
+
     campos = (
         ("Nome completo", dados.get("nome_completo") or dados.get("nome")),
         ("Nascimento", dados.get("tm_nascimento")),
         ("Naturalidade", dados.get("tm_naturalidade")),
         ("Altura", dados.get("tm_altura")),
         ("Pé preferencial", dados.get("tm_pe")),
-        ("Nacionalidades", dados.get("tm_nacionalidades")),
         ("Empresário", dados.get("tm_empresario")),
         ("No clube desde", dados.get("tm_clube_desde")),
         ("Contrato até", dados.get("tm_contrato")),
         ("Opção de contrato", dados.get("tm_opcao_contrato")),
         ("Última renovação", dados.get("tm_ultima_renovacao")),
         ("Equipador", dados.get("tm_equipador")),
-        ("Posição na fonte externa", dados.get("tm_posicao")),
-        ("Posições externas", dados.get("tm_posicoes_secundarias")),
+        ("Posição na fonte externa", dados.get("tm_posicao_site")),
+        ("Posições externas", posicoes_externas),
     )
     linhas = "".join(
         f"<div><strong>{_esc(rotulo)}:</strong> {_esc(valor)}</div>"

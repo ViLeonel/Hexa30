@@ -498,7 +498,6 @@ CSS = """
         color: var(--white) !important;
     }
 
-    header[data-testid="stHeader"],
     #MainMenu,
     footer,
     .stDeployButton {
