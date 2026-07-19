@@ -23,11 +23,15 @@ from hexa_avaliacoes import (
     historico_atleta,
 )
 from hexa_components import (
+    KPI,
     render_banco_reservas,
+    render_cabecalho,
+    render_cabecalho_secao,
     render_campo,
     render_cartao_perfil,
     render_comparativo_mercado,
     render_dados_transfermarkt,
+    render_kpis,
     render_legenda_adaptabilidade,
     render_lista_tatica,
     render_resumo_elenco,
@@ -107,21 +111,6 @@ def _esc(valor: Any, padrao: str = "") -> str:
     return html.escape(texto)
 
 
-def _render_cabecalho_pagina(
-    titulo: str,
-    subtitulo: str | None = None,
-) -> None:
-    st.markdown(
-        f'<h1 class="app-title">{_esc(titulo)}</h1>',
-        unsafe_allow_html=True,
-    )
-    if subtitulo:
-        st.markdown(
-            f'<p class="project-subtitle">{_esc(subtitulo)}</p>',
-            unsafe_allow_html=True,
-        )
-
-
 def _render_cabecalho_projeto() -> None:
     descricao = (
         f"Plataforma editorial e tática de {NOME_ANALISTA_VINI} e "
@@ -166,6 +155,7 @@ def _render_contexto_periodo(
     periodo: str,
     *,
     total_atletas: int,
+    mostrar_estatisticas: bool = True,
 ) -> None:
     resumo = calcular_resumo_periodo(
         base,
@@ -173,17 +163,22 @@ def _render_contexto_periodo(
         total_atletas=total_atletas,
     )
     data_texto = formatar_data_referencia(resumo["data_referencia"])
+    estatisticas_html = ""
+    if mostrar_estatisticas:
+        estatisticas_html = (
+            '<div class="evaluation-context-stats">'
+            f'<span>{resumo["com_alguma_avaliacao"]} com alguma avaliação</span>'
+            f'<span>{resumo["avaliacoes_completas"]} completas</span>'
+            f'<span>Cobertura completa: {resumo["cobertura_completa"]:.1%}</span>'
+            "</div>"
+        )
     st.markdown(
         '<section class="evaluation-context" role="note">'
         '<div class="evaluation-context-main">'
         f'<strong>Avaliações referentes ao {_esc(formatar_periodo(periodo))}</strong>'
         f'<span>Data de referência: {_esc(data_texto)}</span>'
         "</div>"
-        '<div class="evaluation-context-stats">'
-        f'<span>{resumo["com_alguma_avaliacao"]} com alguma avaliação</span>'
-        f'<span>{resumo["avaliacoes_completas"]} completas</span>'
-        f'<span>Cobertura completa: {resumo["cobertura_completa"]:.1%}</span>'
-        "</div></section>",
+        f"{estatisticas_html}</section>",
         unsafe_allow_html=True,
     )
 
@@ -291,7 +286,7 @@ def _render_selecao_reservas(
     ocupados = set(reconciliacao["ocupados"])
 
     st.markdown("---")
-    st.markdown("## Banco de reservas")
+    st.markdown("## Definir reservas")
     st.caption(
         "As primeiras 11 vagas espelham a formação escolhida. "
         "As quatro vagas finais aceitam qualquer posição oficial."
@@ -355,26 +350,40 @@ def _render_metricas_convocacao(
         jogadores,
         avaliacoes_periodo,
     )
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric(
-        "Capacidade atual",
-        formatar_numero(resumo["capacidade_atual_media"]),
-    )
-    c2.metric(
-        "Potencial 2030",
-        formatar_numero(resumo["potencial_2030_medio"]),
-    )
-    c3.metric(
-        "Saldo projetado",
-        formatar_numero(resumo["saldo_projetado_medio"], sinal=True),
-    )
-    c4.metric(
-        "Cobertura dos titulares",
-        f'{resumo["com_avaliacao"]}/{resumo["selecionados"]}',
-        help=(
-            f'{resumo["completos"]} titular(es) possuem avaliação completa '
-            "de Vini e Beto."
+    render_kpis(
+        (
+            KPI(
+                "Capacidade atual",
+                formatar_numero(resumo["capacidade_atual_media"]),
+                "Média dos titulares avaliados",
+                "destaque",
+            ),
+            KPI(
+                "Potencial 2030",
+                formatar_numero(resumo["potencial_2030_medio"]),
+                "Média dos titulares avaliados",
+            ),
+            KPI(
+                "Saldo projetado",
+                formatar_numero(
+                    resumo["saldo_projetado_medio"],
+                    sinal=True,
+                ),
+                "Potencial menos capacidade",
+                "positivo",
+            ),
+            KPI(
+                "Cobertura",
+                f'{resumo["com_avaliacao"]}/{resumo["selecionados"]}',
+                (
+                    f'{resumo["completos"]} com avaliação completa '
+                    "de Vini e Beto"
+                ),
+                "informativo",
+            ),
         ),
+        titulo="Indicadores dos titulares",
+        rotulo_aria="Indicadores esportivos dos titulares",
     )
 
 
@@ -612,7 +621,10 @@ def _render_avaliacao_trimestral(
     *,
     periodo: str,
 ) -> None:
-    st.markdown(f"## Avaliação trimestral — {formatar_periodo(periodo)}")
+    render_cabecalho_secao(
+        formatar_periodo(periodo),
+        rotulo="Avaliação trimestral",
+    )
     if registro is None:
         st.info(
             "Não há avaliação registrada para este atleta no período "
@@ -723,7 +735,7 @@ def _render_historico_atleta(
             for item in serie
         ]
     ).set_index("Período")
-    st.markdown("## Histórico de avaliações")
+    render_cabecalho_secao("Histórico de avaliações")
     st.line_chart(df)
 
 
@@ -732,7 +744,7 @@ def render_tela_perfis(
     base_avaliacoes: BaseAvaliacoes,
     periodo: str,
 ) -> None:
-    _render_cabecalho_pagina(
+    render_cabecalho(
         "Jogadores, Scout e Avaliações",
         (
             "Pesquise um atleta para consultar avaliação trimestral, "
@@ -774,7 +786,7 @@ def render_tela_perfis(
         _render_avaliacao_trimestral(registro, periodo=periodo)
 
     with col_dados:
-        st.markdown("## Valor de mercado")
+        render_cabecalho_secao("Valor de mercado")
         render_comparativo_mercado(atleta)
 
         with st.expander("Dados externos e contratuais", expanded=True):
@@ -791,7 +803,7 @@ def render_tela_roster(
     base_avaliacoes: BaseAvaliacoes,
     periodo: str,
 ) -> None:
-    _render_cabecalho_pagina("Lista de Jogadores")
+    render_cabecalho("Lista de Jogadores")
     _render_contexto_periodo(
         base_avaliacoes,
         periodo,
@@ -940,12 +952,15 @@ def render_tela_analise(
     base_avaliacoes: BaseAvaliacoes,
     periodo: str,
 ) -> None:
-    _render_cabecalho_pagina("Análises & Mercado")
-    st.markdown("## Compilado de avaliações para o Ciclo 2030")
+    render_cabecalho(
+        "Análises & Mercado",
+        "Visão consolidada das avaliações esportivas e dos dados de mercado do ciclo 2030.",
+    )
     _render_contexto_periodo(
         base_avaliacoes,
         periodo,
         total_atletas=len(jogadores),
+        mostrar_estatisticas=False,
     )
 
     resumo = calcular_resumo_periodo(
@@ -953,31 +968,66 @@ def render_tela_analise(
         periodo,
         total_atletas=len(jogadores),
     )
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Atletas cadastrados", resumo["atletas_na_base"])
-    c2.metric("Com alguma avaliação", resumo["com_alguma_avaliacao"])
-    c3.metric("Avaliações completas", resumo["avaliacoes_completas"])
-    c4.metric("Cobertura completa", f'{resumo["cobertura_completa"]:.1%}')
-
-    c5, c6, c7 = st.columns(3)
-    c5.metric(
-        "Capacidade atual média",
-        formatar_numero(resumo["capacidade_atual_media"]),
+    render_kpis(
+        (
+            KPI("Atletas cadastrados", resumo["atletas_na_base"]),
+            KPI(
+                "Com alguma avaliação",
+                resumo["com_alguma_avaliacao"],
+                "Ao menos uma nota registrada",
+                "informativo",
+            ),
+            KPI(
+                "Avaliações completas",
+                resumo["avaliacoes_completas"],
+                "Quatro notas preenchidas",
+                "destaque",
+            ),
+            KPI(
+                "Cobertura completa",
+                f'{resumo["cobertura_completa"]:.1%}',
+                "Sobre todos os atletas cadastrados",
+                "positivo",
+            ),
+        ),
+        titulo="Cobertura das avaliações",
+        rotulo_aria="Cobertura das avaliações no período",
     )
-    c6.metric(
-        "Potencial médio 2030",
-        formatar_numero(resumo["potencial_2030_medio"]),
-    )
-    c7.metric(
-        "Saldo projetado médio",
-        formatar_numero(resumo["saldo_projetado_medio"], sinal=True),
+    render_kpis(
+        (
+            KPI(
+                "Capacidade atual média",
+                formatar_numero(resumo["capacidade_atual_media"]),
+                "Escala de 0 a 10",
+                "destaque",
+            ),
+            KPI(
+                "Potencial médio 2030",
+                formatar_numero(resumo["potencial_2030_medio"]),
+                "Escala de 0 a 10",
+            ),
+            KPI(
+                "Saldo projetado médio",
+                formatar_numero(
+                    resumo["saldo_projetado_medio"],
+                    sinal=True,
+                ),
+                "Potencial menos capacidade atual",
+                "positivo",
+            ),
+        ),
+        titulo="Indicadores esportivos",
+        rotulo_aria="Médias esportivas do período",
     )
 
     rankings = construir_rankings_periodo(
         base_avaliacoes,
         periodo,
     )
-    st.markdown("## Destaques com avaliação completa")
+    render_cabecalho_secao(
+        "Destaques com avaliação completa",
+        "Rankings calculados somente com as quatro notas do período preenchidas.",
+    )
     col_atual, col_potencial = st.columns(2, gap="large")
     with col_atual:
         st.markdown("### Maior capacidade atual")
@@ -1016,7 +1066,7 @@ def render_tela_analise(
             "Saldo projetado",
         )
 
-    st.markdown("## Consensos e divergências")
+    render_cabecalho_secao("Consensos e divergências")
     _render_comparacao_analistas(base_avaliacoes, periodo)
 
     with st.expander(
@@ -1056,7 +1106,10 @@ def render_tela_analise(
             st.caption("Todos os atletas possuem alguma avaliação.")
 
     st.markdown("---")
-    st.markdown("## Leitura de mercado")
+    render_cabecalho_secao(
+        "Leitura de mercado",
+        "Referência externa, separada da avaliação esportiva editorial.",
+    )
     st.info(
         "As avaliações esportivas usam a data de referência "
         f'{formatar_data_referencia(resumo["data_referencia"])}. '
@@ -1071,13 +1124,29 @@ def render_tela_analise(
 
     total_atual = df_mercado["Atual (M€)"].sum()
     total_pico = df_mercado["Pico de mercado (M€)"].sum()
-    col_m1, col_m2, col_m3 = st.columns(3)
-    col_m1.metric("Atletas com valor", len(df_mercado))
-    col_m2.metric(
-        "Valor atual somado",
-        formatar_valor_milhoes(total_atual),
+    render_kpis(
+        (
+            KPI(
+                "Atletas com valor",
+                len(df_mercado),
+                "Cobertura disponível na fonte externa",
+                "informativo",
+            ),
+            KPI(
+                "Valor atual somado",
+                formatar_valor_milhoes(total_atual),
+                "Não equivale à avaliação esportiva",
+                "destaque",
+            ),
+            KPI(
+                "Pico de mercado somado",
+                formatar_valor_milhoes(total_pico),
+                "Maior valor registrado na carreira",
+            ),
+        ),
+        titulo="Resumo de mercado",
+        rotulo_aria="Resumo dos dados de mercado",
     )
-    col_m3.metric("Pico de mercado somado", formatar_valor_milhoes(total_pico))
 
     mercado_ordenado = df_mercado.sort_values(
         "Atual (M€)",

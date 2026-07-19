@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import html
 from collections.abc import Mapping, Sequence
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Literal
 
 import streamlit as st
 
@@ -26,15 +27,18 @@ from hexa_taticas import (
 )
 
 __all__ = [
+    "KPI",
     "calcular_resumo_elenco",
     "render_avaliacao_leitura",
     "render_banco_reservas",
     "render_cabecalho",
+    "render_cabecalho_secao",
     "render_campo",
     "render_cartao_perfil",
     "render_comparativo_mercado",
     "render_dados_transfermarkt",
     "render_dossie",
+    "render_kpis",
     "render_legenda_adaptabilidade",
     "render_lista_tatica",
     "render_resumo_elenco",
@@ -44,6 +48,24 @@ __all__ = [
 def _esc(valor: Any, padrao: str = "Não informado") -> str:
     texto = padrao if valor in (None, "", []) else str(valor)
     return html.escape(texto)
+
+
+TomKPI = Literal["neutro", "destaque", "positivo", "informativo"]
+
+
+@dataclass(frozen=True, slots=True)
+class KPI:
+    """Indicador compacto, semântico e reutilizável."""
+
+    rotulo: str
+    valor: Any
+    contexto: str | None = None
+    tom: TomKPI = "neutro"
+
+
+_TONS_KPI: frozenset[str] = frozenset(
+    {"neutro", "destaque", "positivo", "informativo"}
+)
 
 
 def _adaptabilidade(indice: int) -> tuple[str, str]:
@@ -57,15 +79,104 @@ def _adaptabilidade(indice: int) -> tuple[str, str]:
 
 
 def render_cabecalho(titulo: str, subtitulo: str | None = None) -> None:
+    """Renderiza o cabeçalho editorial principal de uma página."""
+    subtitulo_html = (
+        f'<p class="project-subtitle">{_esc(subtitulo)}</p>'
+        if subtitulo
+        else ""
+    )
     st.markdown(
-        f'<h1 class="app-title">{_esc(titulo)}</h1>',
+        '<header class="page-header">'
+        f'<h1 class="app-title">{_esc(titulo)}</h1>'
+        f"{subtitulo_html}"
+        "</header>",
         unsafe_allow_html=True,
     )
-    if subtitulo:
-        st.markdown(
-            f'<p class="project-subtitle">{_esc(subtitulo)}</p>',
-            unsafe_allow_html=True,
+
+
+def render_cabecalho_secao(
+    titulo: str,
+    subtitulo: str | None = None,
+    *,
+    rotulo: str | None = None,
+    nivel: Literal[2, 3] = 2,
+) -> None:
+    """Cria uma hierarquia de seção consistente sem inflar títulos."""
+    tag = "h2" if nivel == 2 else "h3"
+    rotulo_html = (
+        f'<p class="section-eyebrow">{_esc(rotulo)}</p>'
+        if rotulo
+        else ""
+    )
+    subtitulo_html = (
+        f'<p class="section-subtitle">{_esc(subtitulo)}</p>'
+        if subtitulo
+        else ""
+    )
+    st.markdown(
+        '<header class="section-header">'
+        f"{rotulo_html}"
+        f'<{tag} class="section-title section-title-{nivel}">{_esc(titulo)}</{tag}>'
+        f"{subtitulo_html}"
+        "</header>",
+        unsafe_allow_html=True,
+    )
+
+
+def render_kpis(
+    itens: Sequence[KPI],
+    *,
+    titulo: str | None = None,
+    descricao: str | None = None,
+    rotulo_aria: str = "Indicadores",
+) -> None:
+    """Renderiza KPIs compactos com leitura linear e sem dependência de ``st.metric``."""
+    if not itens:
+        return
+
+    cabecalho = ""
+    if titulo or descricao:
+        titulo_html = (
+            f'<h2 class="kpi-group-title">{_esc(titulo)}</h2>'
+            if titulo
+            else ""
         )
+        descricao_html = (
+            f'<p class="kpi-group-description">{_esc(descricao)}</p>'
+            if descricao
+            else ""
+        )
+        cabecalho = (
+            '<header class="kpi-group-header">'
+            f"{titulo_html}{descricao_html}"
+            "</header>"
+        )
+
+    cards: list[str] = []
+    for item in itens:
+        tom = item.tom if item.tom in _TONS_KPI else "neutro"
+        contexto_html = (
+            f'<span class="kpi-context">{_esc(item.contexto)}</span>'
+            if item.contexto
+            else ""
+        )
+        cards.append(
+            f'<article class="kpi-card kpi-{tom}" role="listitem">'
+            f'<span class="kpi-label">{_esc(item.rotulo)}</span>'
+            f'<strong class="kpi-value">{_esc(item.valor)}</strong>'
+            f"{contexto_html}"
+            "</article>"
+        )
+
+    st.markdown(
+        '<section class="kpi-group" '
+        f'aria-label="{_esc(rotulo_aria)}">'
+        f"{cabecalho}"
+        '<div class="kpi-grid" role="list">'
+        f'{"".join(cards)}'
+        "</div></section>",
+        unsafe_allow_html=True,
+    )
 
 
 def render_campo(
@@ -139,7 +250,7 @@ def render_banco_reservas(
     reservas: Sequence[str],
     jogadores: Mapping[str, Mapping[str, Any]],
 ) -> None:
-    st.markdown(f"## Banco de reservas ({len(reservas)}/{LIMITE_RESERVAS})")
+    st.markdown(f"## Banco selecionado ({len(reservas)}/{LIMITE_RESERVAS})")
     if not reservas:
         st.info(
             "Banco vazio. As vagas podem ser preenchidas gradualmente, "
@@ -304,11 +415,11 @@ def render_comparativo_mercado(dados: Mapping[str, Any]) -> None:
 
 
 def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
-    """Exibe dados externos sem alterar posições editoriais do projeto."""
+    """Exibe dados externos como lista de definições, sem ruído ou campos vazios."""
     posicoes_externas = dados.get("tm_posicoes_secundarias_site")
     if isinstance(posicoes_externas, (list, tuple, set)):
         posicoes_externas = ", ".join(
-            str(posicao)
+            str(posicao).strip()
             for posicao in posicoes_externas
             if str(posicao).strip()
         )
@@ -328,12 +439,26 @@ def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
         ("Posição na fonte externa", dados.get("tm_posicao_site")),
         ("Posições externas", posicoes_externas),
     )
-    linhas = "".join(
-        f"<div><strong>{_esc(rotulo)}:</strong> {_esc(valor)}</div>"
+    itens = [
+        (rotulo, valor)
         for rotulo, valor in campos
+        if valor not in (None, "", [], (), set())
+    ]
+    if not itens:
+        st.info("Não há dados externos ou contratuais disponíveis para este atleta.")
+        return
+
+    definicoes = "".join(
+        '<div class="contract-item">'
+        f'<dt class="contract-term">{_esc(rotulo)}</dt>'
+        f'<dd class="contract-description">{_esc(valor)}</dd>'
+        "</div>"
+        for rotulo, valor in itens
     )
     st.markdown(
-        f'<div class="market-details">{linhas}</div>',
+        '<dl class="contract-details" '
+        'aria-label="Dados externos e contratuais">'
+        f"{definicoes}</dl>",
         unsafe_allow_html=True,
     )
 

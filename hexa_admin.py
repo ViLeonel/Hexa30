@@ -13,7 +13,7 @@ from hexa_auth import (
     identidade_atual,
     usuario_eh_admin,
 )
-from hexa_components import render_cabecalho
+from hexa_components import KPI, render_cabecalho, render_kpis
 from hexa_config import VERSAO_APLICACAO
 
 __all__ = ["render_area_administrativa"]
@@ -55,10 +55,15 @@ def render_area_administrativa(
         "a confirmação do fluxo no Streamlit Community Cloud."
     )
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Atletas carregados", len(jogadores))
-    col2.metric("Perfil", "Administrador")
-    col3.metric("Versão", VERSAO_APLICACAO)
+    render_kpis(
+        (
+            KPI("Atletas carregados", len(jogadores), "Base canônica disponível"),
+            KPI("Perfil", "Administrador", "Acesso privado autorizado", "positivo"),
+            KPI("Versão", VERSAO_APLICACAO, "Build em execução", "informativo"),
+        ),
+        titulo="Resumo da área",
+        rotulo_aria="Resumo da área administrativa",
+    )
 
     with st.expander("Identidade disponível para auditoria"):
         st.write(

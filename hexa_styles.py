@@ -38,12 +38,25 @@ CSS = """
         --space-page-top: .75rem;
         --space-sidebar-top: .65rem;
         --space-hero-bottom: 1rem;
+        --type-display: clamp(2.25rem, 4.5vw, 2.75rem);
+        --type-h1: clamp(2rem, 4vw, 2.5rem);
+        --type-h2: clamp(1.55rem, 3vw, 1.875rem);
+        --type-h3: clamp(1.2rem, 2vw, 1.4rem);
+        --type-body-lg: 1.0625rem;
+        --type-body: 1rem;
+        --type-small: .875rem;
+        --type-label: .75rem;
+        --weight-regular: 400;
+        --weight-medium: 500;
+        --weight-semibold: 600;
+        --weight-bold: 700;
     }
 
     .stApp {
         background-color: var(--navy-900);
         color: var(--white);
-        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: var(--type-body);
+        line-height: 1.55;
     }
 
     .block-container {
@@ -52,24 +65,74 @@ CSS = """
         padding-bottom: 3rem;
     }
 
+    .page-header {
+        max-width: 920px;
+        margin: .25rem 0 1.5rem;
+    }
+
     .app-title {
-        text-align: center;
-        font-size: clamp(2rem, 5vw, 3.2rem);
-        font-weight: 800;
-        line-height: 1.1;
-        background: linear-gradient(135deg, var(--gold) 0%, var(--white) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0 0 .35rem;
+        margin: 0;
+        color: var(--white);
+        font-size: var(--type-h1);
+        font-weight: var(--weight-bold);
+        line-height: 1.12;
+        letter-spacing: -.025em;
+        text-align: left;
+        text-wrap: balance;
+    }
+
+    .app-title::after {
+        content: "";
+        display: block;
+        width: 3.5rem;
+        height: 3px;
+        margin-top: .7rem;
+        border-radius: 999px;
+        background: var(--gold);
     }
 
     .project-subtitle {
-        color: var(--slate-400);
-        font-size: clamp(.95rem, 2vw, 1.15rem);
-        text-align: center;
-        margin: 0 auto 1.75rem;
-        max-width: 880px;
+        max-width: 760px;
+        margin: .8rem 0 0;
+        color: var(--slate-300);
+        font-size: var(--type-body-lg);
         line-height: 1.6;
+        text-align: left;
+    }
+
+    .section-header {
+        max-width: 920px;
+        margin: 2rem 0 1rem;
+    }
+
+    .section-eyebrow {
+        margin: 0 0 .35rem;
+        color: var(--gold);
+        font-size: var(--type-label);
+        font-weight: var(--weight-semibold);
+        line-height: 1.3;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .section-title {
+        margin: 0;
+        color: var(--white);
+        font-weight: var(--weight-semibold);
+        line-height: 1.2;
+        letter-spacing: -.018em;
+        text-wrap: balance;
+    }
+
+    .section-title-2 { font-size: var(--type-h2); }
+    .section-title-3 { font-size: var(--type-h3); }
+
+    .section-subtitle {
+        max-width: 760px;
+        margin: .45rem 0 0;
+        color: var(--slate-400);
+        font-size: var(--type-small);
+        line-height: 1.55;
     }
 
     .project-hero {
@@ -110,20 +173,21 @@ CSS = """
     }
 
     .project-hero-title {
-        margin: 0 0 .6rem;
-        color: var(--gold);
-        font-size: clamp(2.15rem, 5vw, 3.5rem);
-        font-weight: 800;
-        line-height: 1.05;
-        letter-spacing: -.035em;
+        margin: 0 0 .55rem;
+        color: var(--white);
+        font-size: var(--type-display);
+        font-weight: var(--weight-bold);
+        line-height: 1.08;
+        letter-spacing: -.03em;
+        text-wrap: balance;
     }
 
     .project-hero-subtitle {
-        max-width: 900px;
+        max-width: 860px;
         margin: 0;
         color: var(--slate-300);
-        font-size: clamp(.98rem, 2vw, 1.16rem);
-        line-height: 1.65;
+        font-size: var(--type-body-lg);
+        line-height: 1.6;
     }
 
     .pitch-container {
@@ -204,7 +268,7 @@ CSS = """
     .player-pos-tag {
         color: var(--gold);
         font-size: .66rem;
-        font-weight: 800;
+        font-weight: var(--weight-semibold);
         text-transform: uppercase;
     }
 
@@ -221,7 +285,7 @@ CSS = """
     .player-empty-tag {
         display: inline-block;
         font-size: .64rem;
-        font-weight: 800;
+        font-weight: 700;
         border-radius: 4px;
         padding: 2px 5px;
         margin-top: 3px;
@@ -296,13 +360,13 @@ CSS = """
     .bench-number {
         color: var(--gold);
         font-size: .68rem;
-        font-weight: 800;
+        font-weight: 700;
     }
 
     .bench-name {
         color: var(--white);
         font-size: .82rem;
-        font-weight: 800;
+        font-weight: 700;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -331,16 +395,16 @@ CSS = """
 
     .summary-label {
         color: var(--slate-400);
-        font-size: .66rem;
+        font-size: var(--type-label);
         text-transform: uppercase;
-        font-weight: 800;
-        letter-spacing: .03em;
+        font-weight: var(--weight-semibold);
+        letter-spacing: .04em;
     }
 
     .summary-value {
         color: var(--white);
         font-size: 1.05rem;
-        font-weight: 800;
+        font-weight: var(--weight-semibold);
         margin-top: 3px;
     }
 
@@ -393,14 +457,14 @@ CSS = """
     .rating-label {
         color: var(--slate-400);
         font-size: .72rem;
-        font-weight: 800;
+        font-weight: 700;
         text-transform: uppercase;
     }
 
     .rating-value {
         color: var(--white);
         font-size: 1.25rem;
-        font-weight: 800;
+        font-weight: 700;
         margin-top: 3px;
     }
 
@@ -428,15 +492,16 @@ CSS = """
 
     .market-label {
         color: var(--slate-400);
-        font-size: .7rem;
+        font-size: var(--type-label);
         text-transform: uppercase;
-        font-weight: 800;
+        font-weight: var(--weight-semibold);
+        letter-spacing: .04em;
     }
 
     .market-value {
         color: var(--white);
-        font-size: 1.15rem;
-        font-weight: 800;
+        font-size: 1.125rem;
+        font-weight: var(--weight-semibold);
         margin-top: 4px;
     }
 
@@ -477,9 +542,134 @@ CSS = """
 
     .stat-box strong { color: var(--white); }
 
+    .kpi-group {
+        margin: 1.25rem 0 1.6rem;
+    }
+
+    .kpi-group + .kpi-group {
+        margin-top: .5rem;
+    }
+
+    .kpi-group-header {
+        margin-bottom: .7rem;
+    }
+
+    .kpi-group-title {
+        margin: 0;
+        color: var(--slate-300);
+        font-size: 1rem;
+        font-weight: var(--weight-semibold);
+        line-height: 1.35;
+    }
+
+    .kpi-group-description {
+        margin: .25rem 0 0;
+        color: var(--slate-400);
+        font-size: var(--type-small);
+        line-height: 1.5;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: .75rem;
+    }
+
+    .kpi-card {
+        position: relative;
+        min-width: 0;
+        min-height: 86px;
+        padding: .8rem .9rem .75rem;
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, .28);
+        border-radius: 12px;
+        background: rgba(2, 6, 23, .64);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, .16);
+    }
+
+    .kpi-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 3px;
+        background: var(--slate-500);
+    }
+
+    .kpi-destaque::before { background: var(--gold); }
+    .kpi-positivo::before { background: var(--green); }
+    .kpi-informativo::before { background: var(--blue); }
+
+    .kpi-label,
+    .kpi-value,
+    .kpi-context {
+        display: block;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .kpi-label {
+        color: var(--slate-400);
+        font-size: var(--type-label);
+        font-weight: var(--weight-semibold);
+        line-height: 1.3;
+        letter-spacing: .035em;
+        text-transform: uppercase;
+    }
+
+    .kpi-value {
+        margin-top: .3rem;
+        color: var(--white);
+        font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+        font-weight: var(--weight-semibold);
+        line-height: 1.12;
+        letter-spacing: -.018em;
+    }
+
+    .kpi-context {
+        margin-top: .35rem;
+        color: var(--slate-400);
+        font-size: .75rem;
+        line-height: 1.35;
+    }
+
+    .contract-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 1.5rem;
+        margin: 0;
+    }
+
+    .contract-item {
+        min-width: 0;
+        padding: .8rem 0;
+        border-bottom: 1px solid rgba(148, 163, 184, .2);
+    }
+
+    .contract-term {
+        margin: 0;
+        color: var(--slate-400);
+        font-size: var(--type-label);
+        font-weight: var(--weight-semibold);
+        line-height: 1.3;
+        letter-spacing: .035em;
+        text-transform: uppercase;
+    }
+
+    .contract-description {
+        margin: .3rem 0 0;
+        color: var(--white);
+        font-size: .9375rem;
+        font-weight: var(--weight-regular);
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
     .sidebar-title {
-        color: var(--gold);
+        color: var(--white);
         margin-top: 0;
+        font-size: 1rem;
+        font-weight: var(--weight-semibold);
+        letter-spacing: .04em;
         text-align: center;
     }
 
@@ -530,12 +720,24 @@ CSS = """
             padding: 0 .25rem 1rem;
             text-align: center;
         }
-        .project-trophy { width: 64px; }
-        .project-hero-title { font-size: clamp(2rem, 11vw, 2.75rem); }
+        .page-header {
+            margin-top: 0;
+            margin-bottom: 1.25rem;
+        }
+        .app-title { font-size: clamp(1.85rem, 8vw, 2.15rem); }
+        .project-subtitle { font-size: 1rem; }
+        .project-trophy { width: 60px; }
+        .project-hero-title { font-size: clamp(2rem, 10vw, 2.4rem); }
         .project-hero-subtitle {
-            font-size: .96rem;
+            font-size: 1rem;
             line-height: 1.55;
         }
+        .section-header { margin-top: 1.6rem; }
+        .kpi-grid,
+        .contract-details {
+            grid-template-columns: 1fr;
+        }
+        .kpi-card { min-height: 80px; }
         .pitch-container {
             height: 540px;
             border-width: 3px;
@@ -588,15 +790,10 @@ CSS = """
     .legend-empty { background: var(--slate-500); }
 
     .summary-highlight,
-    .profile-highlight { color: var(--gold); font-weight: 800; }
+    .profile-highlight { color: var(--gold); font-weight: 700; }
     .summary-positive { color: var(--green); }
 
     .market-card-info { border-left-color: var(--blue); }
-    .market-details {
-        color: var(--slate-300);
-        line-height: 1.85;
-        font-size: .88rem;
-    }
 
     .stat-positive { border-left-color: var(--green); }
     .stat-negative { border-left-color: var(--red); }
@@ -678,7 +875,7 @@ CSS = """
         background: var(--navy-800);
         color: var(--gold);
         font-size: .74rem;
-        font-weight: 800;
+        font-weight: 700;
     }
 
     .tactical-list-slot,
@@ -714,7 +911,7 @@ CSS = """
         border-radius: 8px;
         background: var(--gold);
         color: var(--navy-950) !important;
-        font-weight: 800;
+        font-weight: 700;
         line-height: 1.35;
         text-align: center;
         text-decoration: none !important;
@@ -892,7 +1089,7 @@ CSS = """
         border: 3px solid var(--color-focus);
         border-radius: .5rem;
         padding: .75rem 1rem;
-        font-weight: 800;
+        font-weight: 700;
     }
     .skip-link:focus { transform: translateY(0); }
 
@@ -939,7 +1136,7 @@ CSS = """
     @media (forced-colors: active) {
         * { forced-color-adjust: auto; }
         .player-card-pitch, .bench-card, .tactical-list-item,
-        .evaluation-meta-card {
+        .evaluation-meta-card, .kpi-card, .contract-item {
             border: 2px solid CanvasText !important;
         }
         .world-cup-trophy {
@@ -972,15 +1169,16 @@ HIGH_CONTRAST_CSS = """
     .stApp { background: #000000 !important; color: #FFFFFF !important; }
     .player-card-pitch, .bench-card, .tactical-list-item,
     .summary-card, .profile-card, .market-card, .legend-box,
-    .evaluation-meta-card {
+    .evaluation-meta-card, .kpi-card, .contract-item {
         background: #000000 !important;
         border-width: 3px !important;
     }
     .project-subtitle, .project-hero-subtitle, .profile-secondary,
-    .market-label, .bench-club, .tactical-list-slot {
+    .market-label, .bench-club, .tactical-list-slot, .kpi-context,
+    .contract-term, .section-subtitle {
         color: #FFFFFF !important;
     }
-    .project-hero-title, .project-trophy { color: #FFF200 !important; }
+    .project-trophy, .section-eyebrow { color: #FFF200 !important; }
     .world-cup-trophy .trophy-detail { stroke: #000000 !important; }
     a { text-decoration: underline !important; text-decoration-thickness: 2px !important; }
 </style>
@@ -1024,14 +1222,8 @@ RC5_CSS = """
         border: 1px solid var(--slate-500);
         border-radius: 999px;
     }
-    .market-details {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: .65rem 1rem;
+    .contract-details {
         line-height: 1.55;
-    }
-    .market-details strong {
-        color: var(--slate-300);
     }
     .market-card-info {
         margin: .8rem 0 0;
@@ -1053,17 +1245,17 @@ RC5_CSS = """
     }
     .evaluation-meta-label {
         color: var(--slate-400);
-        font-size: .72rem;
-        font-weight: 800;
+        font-size: var(--type-label);
+        font-weight: var(--weight-semibold);
         line-height: 1.3;
         text-transform: uppercase;
-        letter-spacing: .02em;
+        letter-spacing: .04em;
     }
     .evaluation-meta-value {
         margin-top: .35rem;
         color: var(--white);
         font-size: clamp(1rem, 1.7vw, 1.2rem);
-        font-weight: 800;
+        font-weight: var(--weight-semibold);
         line-height: 1.25;
         white-space: normal;
         overflow-wrap: anywhere;
@@ -1084,7 +1276,7 @@ RC5_CSS = """
             width: 100%;
             border-radius: 8px;
         }
-        .market-details,
+        .contract-details,
         .evaluation-meta-grid {
             grid-template-columns: 1fr;
         }
