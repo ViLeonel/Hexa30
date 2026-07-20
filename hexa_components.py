@@ -393,7 +393,7 @@ def render_cartao_perfil(
         else {
             "capacidade_atual_media": None,
             "potencial_2030_medio": None,
-            "status": "Não avaliada",
+            "status": "Sem avaliação",
         }
     )
     capacidade = (
@@ -406,21 +406,21 @@ def render_cartao_perfil(
         if metricas["potencial_2030_medio"] is None
         else formatar_numero(metricas["potencial_2030_medio"])
     )
-    idade_2030 = _idade_projetada_2030(dados)
-    status = formatar_status_avaliacao(metricas["status"])
+    status = str(metricas.get("status") or "Sem avaliação")
     clube = dados.get("clube") or "Não informado"
-    posicao_principal = dados.get("posicao") or "Posição não informada"
+    idade_2030 = _idade_em_2030(dados)
+    posicoes_curtas = " - ".join(siglas) if siglas else "OBS"
 
     st.markdown(
         '<article class="profile-card" '
         f'aria-label="Card do jogador {_esc(nome)}">'
         '<div class="profile-card-topline">'
-        f'<span class="profile-position-badge">{_esc(" · ".join(siglas))}</span>'
+        '<span class="profile-card-kicker">Ciclo 2030</span>'
         f'<span class="profile-evaluation-status">{_esc(status)}</span>'
         "</div>"
         '<div class="profile-card-identity">'
-        '<span class="profile-card-kicker">Seleção Brasileira · Ciclo 2030</span>'
         f'<h2>{_esc(nome)}</h2>'
+        f'<p class="profile-position-inline">{_esc(posicoes_curtas)}</p>'
         '<p class="profile-club">'
         '<span>Clube atual</span>'
         f'<strong>{_esc(clube)}</strong>'
@@ -440,7 +440,6 @@ def render_cartao_perfil(
         f'<dd>{_esc(idade_2030)}</dd>'
         "</div>"
         "</dl>"
-        f'<p class="profile-position-full">{_esc(posicao_principal)}</p>'
         "</article>",
         unsafe_allow_html=True,
     )

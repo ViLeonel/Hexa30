@@ -766,11 +766,11 @@ def render_tela_perfis(
         _render_avaliacao_trimestral(registro, periodo=periodo)
 
     with col_dados:
-        render_cabecalho_secao("Valor de mercado")
-        render_comparativo_mercado(atleta)
-
         with st.expander("Dados externos e contratuais", expanded=True):
             render_dados_transfermarkt(atleta)
+
+        render_cabecalho_secao("Valor de mercado")
+        render_comparativo_mercado(atleta)
 
         _render_historico_atleta(
             base_avaliacoes,

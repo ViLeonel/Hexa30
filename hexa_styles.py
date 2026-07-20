@@ -498,7 +498,7 @@ CSS = """
     }
 
     .profile-card-identity {
-        margin-top: 2.4rem;
+        margin-top: 1.35rem;
     }
 
     .profile-card-kicker {
@@ -517,6 +517,16 @@ CSS = """
         line-height: 1.02;
         letter-spacing: -.035em;
         overflow-wrap: anywhere;
+    }
+
+    .profile-position-inline {
+        margin: .15rem 0 1rem;
+        color: var(--gold);
+        font-size: .78rem;
+        font-weight: var(--weight-bold);
+        letter-spacing: .08em;
+        line-height: 1.35;
+        text-transform: uppercase;
     }
 
     .profile-club {
