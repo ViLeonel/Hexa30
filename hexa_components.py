@@ -393,7 +393,7 @@ def render_cartao_perfil(
         else {
             "capacidade_atual_media": None,
             "potencial_2030_medio": None,
-            "status": "Sem avaliação",
+            "status": "Não avaliada",
         }
     )
     capacidade = (
@@ -406,9 +406,9 @@ def render_cartao_perfil(
         if metricas["potencial_2030_medio"] is None
         else formatar_numero(metricas["potencial_2030_medio"])
     )
-    status = str(metricas.get("status") or "Sem avaliação")
+    status = formatar_status_avaliacao(metricas.get("status"))
     clube = dados.get("clube") or "Não informado"
-    idade_2030 = _idade_em_2030(dados)
+    idade_2030 = _idade_projetada_2030(dados)
     posicoes_curtas = " - ".join(siglas) if siglas else "OBS"
 
     st.markdown(
