@@ -2,10 +2,10 @@
   "schema_version": "1.0",
   "projeto": "O Caminho para o Hexa 2030",
   "fonte": {
-    "arquivo": "avaliacoes_trimestrais_atletas_hexa_2030.xlsm",
-    "sha256": "a3b474dba6c667f0a2114006c1098be0c013ad100340a3730b1d8d082067f700",
+    "arquivo": "avaliacoes_trimestrais_atletas_hexa_2030.xlsx",
+    "sha256": "e5565da0f3cb5fa1b091f4c2b597caebbb16ac9b13fb0a4bb4b296b9fbaa7442",
     "aba": "Avaliações Trimestrais",
-    "importado_em_utc": "2026-07-18T21:57:06Z",
+    "importado_em_utc": "2026-07-20T21:43:30Z",
     "politica": "Somente dados brutos; indicadores são recalculados pelo aplicativo."
   },
   "historico_importacoes": [
@@ -15,29 +15,16 @@
       "aba": "Avaliações Trimestrais",
       "importado_em_utc": "2026-07-18T21:57:06Z",
       "politica": "Somente dados brutos; indicadores são recalculados pelo aplicativo."
+    },
+    {
+      "arquivo": "avaliacoes_trimestrais_atletas_hexa_2030.xlsx",
+      "sha256": "e5565da0f3cb5fa1b091f4c2b597caebbb16ac9b13fb0a4bb4b296b9fbaa7442",
+      "aba": "Avaliações Trimestrais",
+      "importado_em_utc": "2026-07-20T21:43:30Z",
+      "politica": "Somente dados brutos; indicadores são recalculados pelo aplicativo."
     }
   ],
   "avaliacoes": [
-    {
-      "id_atleta": "ATH-0037",
-      "nome": "Alexsandro",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Zagueiro",
-      "clube_snapshot": "LOSC Lille",
-      "vini": {
-        "capacidade_atual": 7.0,
-        "potencial_2030": 7.0,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 7.0,
-        "potencial_2030": 7.5,
-        "observacao": ""
-      }
-    },
     {
       "id_atleta": "ATH-0001",
       "nome": "Alisson",
@@ -139,26 +126,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0038",
-      "nome": "Arthur",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Lateral-direito",
-      "clube_snapshot": "Bayer Leverkusen",
-      "vini": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 6.5,
-        "potencial_2030": 7.0,
-        "observacao": ""
-      }
-    },
-    {
       "id_atleta": "ATH-0006",
       "nome": "Brazão",
       "periodo": "2026-T2",
@@ -176,26 +143,6 @@
         "capacidade_atual": 6.0,
         "potencial_2030": 7.0,
         "observacao": "Falta amadurecimento para tomar decisões melhores"
-      }
-    },
-    {
-      "id_atleta": "ATH-0039",
-      "nome": "Bremer",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Zagueiro",
-      "clube_snapshot": "Juventus FC",
-      "vini": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 7.0,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 6.5,
-        "observacao": ""
       }
     },
     {
@@ -359,26 +306,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0040",
-      "nome": "Gabriel Bontempo",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Mezzala direito",
-      "clube_snapshot": "Santos FC",
-      "vini": {
-        "capacidade_atual": 6.0,
-        "potencial_2030": 8.5,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 6.5,
-        "potencial_2030": 8.5,
-        "observacao": "Muito potencial em um contexto muito difícil. Precisa sair do Santos para evoluir mais."
-      }
-    },
-    {
       "id_atleta": "ATH-0015",
       "nome": "Gabriel Magalhães",
       "periodo": "2026-T2",
@@ -436,26 +363,6 @@
         "capacidade_atual": 6.5,
         "potencial_2030": 9.0,
         "observacao": "Potencial enorme. A ver evolução da carreira."
-      }
-    },
-    {
-      "id_atleta": "ATH-0041",
-      "nome": "Gabriel Moscardo",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Volante",
-      "clube_snapshot": "RCD Espanyol",
-      "vini": {
-        "capacidade_atual": 6.0,
-        "potencial_2030": 8.5,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 6.5,
-        "potencial_2030": 8.0,
-        "observacao": "Bom potencial porém foi muito cedo para a Europa. Precisa evoluir em coisas básicas."
       }
     },
     {
@@ -519,46 +426,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0042",
-      "nome": "Igor Paixão",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Ponta-esquerda",
-      "clube_snapshot": "Olympique Marseille",
-      "vini": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 7.5,
-        "observacao": ""
-      }
-    },
-    {
-      "id_atleta": "ATH-0043",
-      "nome": "Jair",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Zagueiro",
-      "clube_snapshot": "Nottingham Forest",
-      "vini": {
-        "capacidade_atual": 6.0,
-        "potencial_2030": 8.0,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 7.0,
-        "potencial_2030": 8.0,
-        "observacao": ""
-      }
-    },
-    {
       "id_atleta": "ATH-0021",
       "nome": "Jhuan",
       "periodo": "2026-T2",
@@ -599,46 +466,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0044",
-      "nome": "João Pedro",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Centroavante",
-      "clube_snapshot": "Chelsea FC",
-      "vini": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 8.5,
-        "observacao": "Tem grande potencial, mas sentiu o peso da camisa da seleção (ou a pressão) quando teve oportunidade. Tem o que provar."
-      },
-      "beto": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 9.0,
-        "observacao": "Pode ser um dos melhores atacantes do mundo"
-      }
-    },
-    {
-      "id_atleta": "ATH-0045",
-      "nome": "João Victor",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Lateral-esquerdo",
-      "clube_snapshot": "Tottenham Hotspur",
-      "vini": {
-        "capacidade_atual": 6.5,
-        "potencial_2030": 8.0,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 6.5,
-        "potencial_2030": 8.0,
-        "observacao": ""
-      }
-    },
-    {
       "id_atleta": "ATH-0023",
       "nome": "Kaiki Bruno",
       "periodo": "2026-T2",
@@ -667,46 +494,6 @@
       "data_referencia": "2026-06-30",
       "posicao_snapshot": "Centroavante",
       "clube_snapshot": "Shakhtar Donetsk",
-      "vini": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      }
-    },
-    {
-      "id_atleta": "ATH-0046",
-      "nome": "Kauã Prates",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Lateral-esquerdo",
-      "clube_snapshot": "Cruzeiro EC",
-      "vini": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      }
-    },
-    {
-      "id_atleta": "ATH-0047",
-      "nome": "Kevin",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Ponta-esquerda",
-      "clube_snapshot": "FC Fulham",
       "vini": {
         "capacidade_atual": null,
         "potencial_2030": null,
@@ -779,26 +566,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0048",
-      "nome": "Lucca Meirelles",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Centroavante",
-      "clube_snapshot": "Shakhtar Donetsk",
-      "vini": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": null,
-        "potencial_2030": null,
-        "observacao": ""
-      }
-    },
-    {
       "id_atleta": "ATH-0028",
       "nome": "Luciano Juba",
       "periodo": "2026-T2",
@@ -859,6 +626,366 @@
       }
     },
     {
+      "id_atleta": "ATH-0031",
+      "nome": "Matheus Cunha",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Centroavante",
+      "clube_snapshot": "Wolverhampton Wanderers",
+      "vini": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 7.5,
+        "observacao": "Um coringa importante."
+      },
+      "beto": {
+        "capacidade_atual": 8.0,
+        "potencial_2030": 7.5,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0032",
+      "nome": "Murillo",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Zagueiro",
+      "clube_snapshot": "Nottingham Forest",
+      "vini": {
+        "capacidade_atual": 7.0,
+        "potencial_2030": 9.0,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 8.0,
+        "potencial_2030": 9.0,
+        "observacao": "Pode ser um dos melhores zagueiros do mundo."
+      }
+    },
+    {
+      "id_atleta": "ATH-0033",
+      "nome": "Rodrygo",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Meia-armador",
+      "clube_snapshot": "Real Madrid CF",
+      "vini": {
+        "capacidade_atual": 8.0,
+        "potencial_2030": 8.0,
+        "observacao": "A ver como voltará após a lesão e se continuará com chances no recheado elenco do Madrid."
+      },
+      "beto": {
+        "capacidade_atual": 8.5,
+        "potencial_2030": 9.0,
+        "observacao": "Um dos melhores meias do mundo. Precisa entender evolução no clube."
+      }
+    },
+    {
+      "id_atleta": "ATH-0034",
+      "nome": "Vinicius Junior",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Ponta-esquerda",
+      "clube_snapshot": "Real Madrid CF",
+      "vini": {
+        "capacidade_atual": 9.0,
+        "potencial_2030": 8.5,
+        "observacao": "Melhor jogador brasileiro hoje, mas depende muito do físico, o que sempre é um risco com o passar dos anos. Para ser um ponta completo, seria bom trabalhar mais a perna esquerda, mas não sei o quanto isso é complicado para ele."
+      },
+      "beto": {
+        "capacidade_atual": 10.0,
+        "potencial_2030": 9.0,
+        "observacao": "Depende muito do físico. A ver evolução dessa parte no ciclo."
+      }
+    },
+    {
+      "id_atleta": "ATH-0035",
+      "nome": "Wesley França",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-direito",
+      "clube_snapshot": "AS Roma",
+      "vini": {
+        "capacidade_atual": 7.0,
+        "potencial_2030": 8.0,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 8.5,
+        "observacao": "Potencial de ser uma dos melhores laterais do mundo ofensivamente."
+      }
+    },
+    {
+      "id_atleta": "ATH-0036",
+      "nome": "Yan Couto",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-direito",
+      "clube_snapshot": "Borussia Dortmund",
+      "vini": {
+        "capacidade_atual": 7.0,
+        "potencial_2030": 8.0,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 8.0,
+        "observacao": "Lateral equilibrado."
+      }
+    },
+    {
+      "id_atleta": "ATH-0037",
+      "nome": "Alexsandro",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Zagueiro",
+      "clube_snapshot": "LOSC Lille",
+      "vini": {
+        "capacidade_atual": 7.0,
+        "potencial_2030": 7.0,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 7.0,
+        "potencial_2030": 7.5,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0038",
+      "nome": "Arthur",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-direito",
+      "clube_snapshot": "Bayer Leverkusen",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 6.5,
+        "potencial_2030": 7.0,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0039",
+      "nome": "Bremer",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Zagueiro",
+      "clube_snapshot": "Juventus FC",
+      "vini": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 7.0,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 6.5,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0040",
+      "nome": "Gabriel Bontempo",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Mezzala direito",
+      "clube_snapshot": "Santos FC",
+      "vini": {
+        "capacidade_atual": 6.0,
+        "potencial_2030": 8.5,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 6.5,
+        "potencial_2030": 8.5,
+        "observacao": "Muito potencial em um contexto muito difícil. Precisa sair do Santos para evoluir mais."
+      }
+    },
+    {
+      "id_atleta": "ATH-0041",
+      "nome": "Gabriel Moscardo",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Volante",
+      "clube_snapshot": "RCD Espanyol",
+      "vini": {
+        "capacidade_atual": 6.0,
+        "potencial_2030": 8.5,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 6.5,
+        "potencial_2030": 8.0,
+        "observacao": "Bom potencial porém foi muito cedo para a Europa. Precisa evoluir em coisas básicas."
+      }
+    },
+    {
+      "id_atleta": "ATH-0042",
+      "nome": "Igor Paixão",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Ponta-esquerda",
+      "clube_snapshot": "Olympique Marseille",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 7.5,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0043",
+      "nome": "Jair",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Zagueiro",
+      "clube_snapshot": "Nottingham Forest",
+      "vini": {
+        "capacidade_atual": 6.0,
+        "potencial_2030": 8.0,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 7.0,
+        "potencial_2030": 8.0,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0044",
+      "nome": "João Pedro",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Centroavante",
+      "clube_snapshot": "Chelsea FC",
+      "vini": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 8.5,
+        "observacao": "Tem grande potencial, mas sentiu o peso da camisa da seleção (ou a pressão) quando teve oportunidade. Tem o que provar."
+      },
+      "beto": {
+        "capacidade_atual": 7.5,
+        "potencial_2030": 9.0,
+        "observacao": "Pode ser um dos melhores atacantes do mundo"
+      }
+    },
+    {
+      "id_atleta": "ATH-0045",
+      "nome": "João Victor",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-esquerdo",
+      "clube_snapshot": "Tottenham Hotspur",
+      "vini": {
+        "capacidade_atual": 6.5,
+        "potencial_2030": 8.0,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": 6.5,
+        "potencial_2030": 8.0,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0046",
+      "nome": "Kauã Prates",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-esquerdo",
+      "clube_snapshot": "Cruzeiro EC",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0047",
+      "nome": "Kevin",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Ponta-esquerda",
+      "clube_snapshot": "FC Fulham",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0048",
+      "nome": "Lucca Meirelles",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Centroavante",
+      "clube_snapshot": "Shakhtar Donetsk",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
       "id_atleta": "ATH-0049",
       "nome": "Luiz Henrique",
       "periodo": "2026-T2",
@@ -899,26 +1026,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0031",
-      "nome": "Matheus Cunha",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Centroavante",
-      "clube_snapshot": "Wolverhampton Wanderers",
-      "vini": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 7.5,
-        "observacao": "Um coringa importante."
-      },
-      "beto": {
-        "capacidade_atual": 8.0,
-        "potencial_2030": 7.5,
-        "observacao": ""
-      }
-    },
-    {
       "id_atleta": "ATH-0051",
       "nome": "Matheus Martinelli",
       "periodo": "2026-T2",
@@ -936,26 +1043,6 @@
         "capacidade_atual": null,
         "potencial_2030": null,
         "observacao": ""
-      }
-    },
-    {
-      "id_atleta": "ATH-0032",
-      "nome": "Murillo",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Zagueiro",
-      "clube_snapshot": "Nottingham Forest",
-      "vini": {
-        "capacidade_atual": 7.0,
-        "potencial_2030": 9.0,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 8.0,
-        "potencial_2030": 9.0,
-        "observacao": "Pode ser um dos melhores zagueiros do mundo."
       }
     },
     {
@@ -1039,26 +1126,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0033",
-      "nome": "Rodrygo",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Meia-armador",
-      "clube_snapshot": "Real Madrid CF",
-      "vini": {
-        "capacidade_atual": 8.0,
-        "potencial_2030": 8.0,
-        "observacao": "A ver como voltará após a lesão e se continuará com chances no recheado elenco do Madrid."
-      },
-      "beto": {
-        "capacidade_atual": 8.5,
-        "potencial_2030": 9.0,
-        "observacao": "Um dos melhores meias do mundo. Precisa entender evolução no clube."
-      }
-    },
-    {
       "id_atleta": "ATH-0056",
       "nome": "Roger Ibañez",
       "periodo": "2026-T2",
@@ -1099,26 +1166,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0034",
-      "nome": "Vinicius Junior",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Ponta-esquerda",
-      "clube_snapshot": "Real Madrid CF",
-      "vini": {
-        "capacidade_atual": 9.0,
-        "potencial_2030": 8.5,
-        "observacao": "Melhor jogador brasileiro hoje, mas depende muito do físico, o que sempre é um risco com o passar dos anos. Para ser um ponta completo, seria bom trabalhar mais a perna esquerda, mas não sei o quanto isso é complicado para ele."
-      },
-      "beto": {
-        "capacidade_atual": 10.0,
-        "potencial_2030": 9.0,
-        "observacao": "Depende muito do físico. A ver evolução dessa parte no ciclo."
-      }
-    },
-    {
       "id_atleta": "ATH-0058",
       "nome": "Vitor Roque",
       "periodo": "2026-T2",
@@ -1139,26 +1186,6 @@
       }
     },
     {
-      "id_atleta": "ATH-0035",
-      "nome": "Wesley França",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Lateral-direito",
-      "clube_snapshot": "AS Roma",
-      "vini": {
-        "capacidade_atual": 7.0,
-        "potencial_2030": 8.0,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 8.5,
-        "observacao": "Potencial de ser uma dos melhores laterais do mundo ofensivamente."
-      }
-    },
-    {
       "id_atleta": "ATH-0059",
       "nome": "William Gomes",
       "periodo": "2026-T2",
@@ -1176,26 +1203,6 @@
         "capacidade_atual": null,
         "potencial_2030": null,
         "observacao": ""
-      }
-    },
-    {
-      "id_atleta": "ATH-0036",
-      "nome": "Yan Couto",
-      "periodo": "2026-T2",
-      "ano": 2026,
-      "trimestre": "T2",
-      "data_referencia": "2026-06-30",
-      "posicao_snapshot": "Lateral-direito",
-      "clube_snapshot": "Borussia Dortmund",
-      "vini": {
-        "capacidade_atual": 7.0,
-        "potencial_2030": 8.0,
-        "observacao": ""
-      },
-      "beto": {
-        "capacidade_atual": 7.5,
-        "potencial_2030": 8.0,
-        "observacao": "Lateral equilibrado."
       }
     },
     {
@@ -1235,6 +1242,366 @@
       "beto": {
         "capacidade_atual": 7.0,
         "potencial_2030": 7.5,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0062",
+      "nome": "Léo Jardim",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Goleiro",
+      "clube_snapshot": "CR Vasco da Gama",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0063",
+      "nome": "Carlos Augusto",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-esquerdo",
+      "clube_snapshot": "Inter de Milão",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0064",
+      "nome": "Cuiabano",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-esquerdo",
+      "clube_snapshot": "CR Vasco da Gama",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0065",
+      "nome": "Léo Pereira",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Zagueiro",
+      "clube_snapshot": "CR Flamengo",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0066",
+      "nome": "Dodô",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-direito",
+      "clube_snapshot": "ACF Fiorentina",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0067",
+      "nome": "Gerson",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Mezzala direito",
+      "clube_snapshot": "Cruzeiro EC",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0068",
+      "nome": "Gabriel Sara",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Mezzala direito",
+      "clube_snapshot": "Galatasaray",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0069",
+      "nome": "Lucas Paquetá",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Meia-armador",
+      "clube_snapshot": "CR Flamengo",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0070",
+      "nome": "Marcos Leonardo",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Centroavante",
+      "clube_snapshot": "AFC Ajax",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0071",
+      "nome": "Kaio Jorge",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Centroavante",
+      "clube_snapshot": "Cruzeiro EC",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0072",
+      "nome": "Sávio",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Ponta-esquerda",
+      "clube_snapshot": "Manchester City FC",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0073",
+      "nome": "Henrique Menke",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Goleiro",
+      "clube_snapshot": "SC Internacional",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0074",
+      "nome": "Vitor Reis",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Zagueiro",
+      "clube_snapshot": "Manchester City FC",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0075",
+      "nome": "Igor Felisberto",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Lateral-direito",
+      "clube_snapshot": "São Paulo FC Sub-20",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0076",
+      "nome": "Zé Lucas",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Volante",
+      "clube_snapshot": "SC Recife",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0077",
+      "nome": "Lucca",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Ponta-esquerda",
+      "clube_snapshot": "São Paulo FC",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0078",
+      "nome": "Riquelme Fillipi",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Ponta-esquerda",
+      "clube_snapshot": "SE Palmeiras Sub-20",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      }
+    },
+    {
+      "id_atleta": "ATH-0079",
+      "nome": "Pedrinho",
+      "periodo": "2026-T2",
+      "ano": 2026,
+      "trimestre": "T2",
+      "data_referencia": "2026-06-30",
+      "posicao_snapshot": "Ponta-esquerda",
+      "clube_snapshot": "Zenit São Petersburgo",
+      "vini": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
+        "observacao": ""
+      },
+      "beto": {
+        "capacidade_atual": null,
+        "potencial_2030": null,
         "observacao": ""
       }
     }

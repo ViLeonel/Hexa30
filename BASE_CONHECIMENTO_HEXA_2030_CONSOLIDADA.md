@@ -730,16 +730,17 @@ JSONs canônicos não precisam de rollback quando não foram alterados.
 
 ```text
 jogadores_hexa_2030.json
-61 jogadores
-SHA-256: ab7ee9718cd2c34dd0393b9d746359b9cf2ba70fcf1bc557b696d1a5331cdbfb
+79 jogadores
+SHA-256: 1f61c0901c77b7c576ffab02db13a68fbdbe2a7a404585e5a303bd655168f5e8
 
 avaliacoes_trimestrais_hexa_2030.json
-61 avaliações
-SHA-256: eb846b4886080beb2e1bbce119a650cc1f93c9b9d14940446c97cbfbc18a3e8d
+79 avaliações
+SHA-256: 8e43594f268ac00c2097e056891f05c168f4f73058519051b3641cc9b6b656f2
 
-enriquecimentos_tm.json
-58 registros
-SHA-256: 72dd628b1c5dcdfe83125c02b254b389f1ec3ae4d61372888d011bd064bcab58
+avaliacoes_trimestrais_atletas_hexa_2030.xlsx
+79 atletas
+1.580 linhas trimestrais
+SHA-256: e5565da0f3cb5fa1b091f4c2b597caebbb16ac9b13fb0a4bb4b296b9fbaa7442
 ```
 
 Esses hashes são referência temporal e mudam quando houver atualização autorizada.
@@ -1080,3 +1081,46 @@ Toda nova release deve:
 - manter manifesto apenas como artefato temporário;
 - preservar código, JSONs e testes em arquivos próprios;
 - registrar de forma compacta a mudança, os testes e o deploy no histórico deste documento.
+
+---
+
+## 23. Atualização cadastral por imagens — 20/07/2026
+
+### 23.1 Escopo
+
+Foram processadas 20 fichas externas fornecidas pelo usuário.
+
+- 18 atletas foram adicionados com IDs `ATH-0062` a `ATH-0079`;
+- Kauã Prates (`ATH-0046`) e João Victor (`ATH-0045`) já existiam e foram deduplicados;
+- os dois registros existentes receberam somente atualização do carimbo de auditoria externo;
+- nenhuma nota, posição editorial, grupo, tipo ou texto da conversa de atleta existente foi substituído;
+- novos atletas receberam grupo e tipo neutros `Observação`, notas editoriais `0.0` e textos editoriais vazios;
+- dados externos foram armazenados em campos `tm_`;
+- posições externas foram convertidas para o vocabulário oficial apenas nos campos táticos iniciais dos novos atletas.
+
+### 23.2 Atletas adicionados
+
+Léo Jardim, Carlos Augusto, Cuiabano, Léo Pereira, Dodô, Gerson, Gabriel Sara, Lucas Paquetá, Marcos Leonardo, Kaio Jorge, Sávio, Henrique Menke, Vitor Reis, Igor Felisberto, Zé Lucas, Lucca, Riquelme Fillipi, Pedrinho.
+
+### 23.3 Arquivos alterados
+
+- `jogadores_hexa_2030.json`;
+- `avaliacoes_trimestrais_hexa_2030.json`;
+- `avaliacoes_trimestrais_atletas_hexa_2030.xlsx`;
+- `BASE_CONHECIMENTO_HEXA_2030_CONSOLIDADA.md`.
+
+Nenhum arquivo Python e nenhuma dependência foram alterados. O site incorpora os atletas automaticamente porque carrega os JSONs canônicos.
+
+### 23.4 Estado resultante
+
+- 79 atletas no cadastro;
+- 79 registros oficiais em `2026-T2`;
+- 1.580 linhas na grade trimestral de 2026 a 2030;
+- planilha reconstruída a partir dos JSONs canônicos, com fórmulas, validações, filtros e painel.
+
+### 23.5 Testes
+
+A entrega executa validação estrutural dos JSONs, preservação dos campos protegidos, unicidade de nomes e IDs, vocabulário de posições, consistência entre cadastro e avaliações, compilação dos Python disponibilizados, imports possíveis no conjunto recebido, regras táticas e verificação estrutural da planilha.
+
+O smoke completo do Streamlit depende dos módulos do repositório que não foram disponibilizados nesta conversa.
+
