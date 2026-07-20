@@ -1549,105 +1549,202 @@ RC5_CSS = """
         font-style: italic;
         line-height: 1.6;
     }
-    .evaluation-scorecard {
+    .executive-table-card {
+        display: block;
         margin: 1rem 0 1.15rem;
+        padding: 0;
         overflow: hidden;
         border: 1px solid rgba(148, 163, 184, .24);
         border-radius: 14px;
         background:
             linear-gradient(180deg, rgba(30, 41, 59, .58), rgba(2, 6, 23, .78));
         box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+        line-height: normal;
     }
 
-    .evaluation-score-table {
+    .executive-table-scroll {
+        display: block;
         width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
+        margin: 0;
+        padding: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-inline: contain;
+        scrollbar-gutter: stable;
     }
 
-    .evaluation-score-table thead {
-        background: rgba(15, 23, 42, .84);
+    .executive-table-card--tall .executive-table-scroll {
+        max-height: 42rem;
+        overflow-y: auto;
     }
 
-    .evaluation-score-table th,
-    .evaluation-score-table td {
+    .executive-table-card--wide .executive-table {
+        min-width: 1120px;
+    }
+
+    .executive-table {
+        width: 100%;
+        margin: 0 !important;
+        border: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: auto;
+        background: transparent;
+    }
+
+    .executive-table col {
+        min-width: 0;
+    }
+
+    .executive-table th,
+    .executive-table td {
+        min-width: 0;
         padding: .9rem .75rem;
         border-right: 1px solid rgba(148, 163, 184, .16);
         border-bottom: 1px solid rgba(148, 163, 184, .16);
         vertical-align: middle;
     }
 
-    .evaluation-score-table th:last-child,
-    .evaluation-score-table td:last-child {
+    .executive-table tr > *:last-child {
         border-right: 0;
     }
 
-    .evaluation-score-table tbody tr:last-child th,
-    .evaluation-score-table tbody tr:last-child td {
+    .executive-table tbody tr:last-child > * {
         border-bottom: 0;
     }
 
-    .evaluation-score-table thead th {
+    .executive-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: rgba(15, 23, 42, .98);
         color: var(--slate-400);
         font-size: .68rem;
         font-weight: var(--weight-semibold);
         line-height: 1.3;
         letter-spacing: .045em;
-        text-align: center;
         text-transform: uppercase;
     }
 
-    .evaluation-score-table thead th:first-child {
-        width: 43%;
-        text-align: left;
-    }
-
-    .evaluation-score-table tbody th {
+    .executive-table tbody th {
+        background: rgba(15, 23, 42, .42);
         color: var(--white);
-        text-align: left;
+        font-weight: var(--weight-semibold);
     }
 
-    .evaluation-score-table tbody td {
+    .executive-table tbody td {
         color: var(--slate-300);
-        text-align: center;
         font-variant-numeric: tabular-nums;
     }
 
-    .evaluation-score-label {
-        display: block;
-        font-size: .88rem;
-        font-weight: var(--weight-semibold);
-        line-height: 1.3;
+    .executive-table tbody tr:nth-child(even) > *:not(.executive-table-column--accent) {
+        background-color: rgba(15, 23, 42, .28);
     }
 
-    .evaluation-score-caption {
+    .executive-table tbody tr:hover > *:not(.executive-table-column--accent) {
+        background-color: rgba(30, 41, 59, .56);
+    }
+
+    .executive-table-column--accent {
+        background: rgba(234, 179, 8, .08);
+    }
+
+    .executive-table thead .executive-table-column--accent {
+        background: rgba(58, 53, 35, .98);
+    }
+
+    .executive-table tbody .executive-table-column--accent {
+        color: var(--gold);
+    }
+
+    .executive-table-card--wide .executive-table thead th:first-child,
+    .executive-table-card--wide .executive-table tbody th:first-child {
+        position: sticky;
+        left: 0;
+        box-shadow: 1px 0 0 rgba(148, 163, 184, .16);
+    }
+
+    .executive-table-card--wide .executive-table thead th:first-child {
+        z-index: 4;
+        background: rgba(15, 23, 42, .995);
+    }
+
+    .executive-table-card--wide .executive-table tbody th:first-child {
+        z-index: 1;
+        background: rgba(11, 18, 32, .98);
+    }
+
+    .executive-table-card--wide .executive-table tbody tr:nth-child(even) th:first-child {
+        background: rgba(18, 28, 48, .99);
+    }
+
+    .executive-table-align--esquerda {
+        text-align: left;
+    }
+
+    .executive-table-align--centro {
+        text-align: center;
+    }
+
+    .executive-table-align--direita {
+        text-align: right;
+    }
+
+    .executive-table-value {
+        display: inline-block;
+        color: inherit;
+        font-size: .9rem;
+        font-weight: var(--weight-semibold);
+        line-height: 1.3;
+        white-space: nowrap;
+    }
+
+    .executive-table-column--accent .executive-table-value {
+        font-size: 1rem;
+        font-weight: var(--weight-bold);
+    }
+
+    .executive-table-caption {
         display: block;
-        margin-top: .2rem;
+        margin-top: .22rem;
         color: var(--slate-400);
         font-size: .66rem;
         font-weight: var(--weight-regular);
         line-height: 1.35;
     }
 
-    .evaluation-score-value {
-        display: inline-block;
-        font-size: .94rem;
-        font-weight: var(--weight-semibold);
-        line-height: 1.2;
-        white-space: nowrap;
+    .executive-table-value--positive {
+        color: var(--green);
     }
 
-    .evaluation-score-average {
-        background: rgba(234, 179, 8, .08);
+    .executive-table-value--negative {
+        color: #FCA5A5;
     }
 
-    .evaluation-score-table tbody .evaluation-score-average {
-        color: var(--gold);
+    .executive-table-cell--progress {
+        min-width: 8.5rem;
     }
 
-    .evaluation-score-table tbody .evaluation-score-average .evaluation-score-value {
-        font-size: 1.05rem;
-        font-weight: var(--weight-bold);
+    .executive-table-progress {
+        display: block;
+        width: 100%;
+        height: 4px;
+        margin-top: .45rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(100, 116, 139, .28);
+    }
+
+    .executive-table-progress > span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--orange), var(--gold), var(--green));
+    }
+
+    .executive-table-scroll:focus-visible {
+        outline: 3px solid var(--color-focus);
+        outline-offset: -3px;
     }
 
     .evaluation-meta-grid {
@@ -1711,24 +1808,24 @@ RC5_CSS = """
         .evaluation-meta-grid {
             grid-template-columns: 1fr;
         }
-        .evaluation-score-table th,
-        .evaluation-score-table td {
-            padding: .72rem .42rem;
+        .executive-table-card {
+            border-radius: 12px;
         }
-        .evaluation-score-table thead th {
+        .executive-table-card:not(.executive-table-card--wide) .executive-table th,
+        .executive-table-card:not(.executive-table-card--wide) .executive-table td {
+            padding: .72rem .48rem;
+        }
+        .executive-table thead th {
             font-size: .6rem;
         }
-        .evaluation-score-label {
-            font-size: .78rem;
+        .executive-table-value {
+            font-size: .82rem;
         }
-        .evaluation-score-caption {
+        .executive-table-column--accent .executive-table-value {
+            font-size: .92rem;
+        }
+        .executive-table-caption {
             font-size: .6rem;
-        }
-        .evaluation-score-value {
-            font-size: .84rem;
-        }
-        .evaluation-score-table tbody .evaluation-score-average .evaluation-score-value {
-            font-size: .94rem;
         }
         .evaluation-meta-card--status {
             grid-column: auto;

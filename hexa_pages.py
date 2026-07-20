@@ -23,6 +23,7 @@ from hexa_avaliacoes import (
     historico_atleta,
 )
 from hexa_components import (
+    ColunaTabelaExecutiva,
     KPI,
     render_banco_reservas,
     render_cabecalho,
@@ -35,8 +36,11 @@ from hexa_components import (
     render_legenda_adaptabilidade,
     render_quadro_avaliacao_executivo,
     render_resumo_elenco,
+    render_tabela_executiva,
 )
 from hexa_config import (
+    ANO_BASE_DADOS,
+    ANO_COPA,
     ASSUNTO_FEEDBACK_PREFIXO,
     EMAIL_FEEDBACK,
     GRUPO_OBSERVACAO,
@@ -784,29 +788,76 @@ def render_tela_roster(
         grupo=None if grupo_filtro == "Todos" else grupo_filtro,
     )
 
-    df_roster = pd.DataFrame(registros)
     st.caption(
-        f"{len(df_roster)} atleta(s) exibido(s) de "
+        f"{len(registros)} atleta(s) exibido(s) de "
         f"{len(jogadores)} cadastrados."
     )
-    if df_roster.empty:
+    if not registros:
         st.info(ROSTER_SEM_RESULTADOS)
         return
 
-    st.dataframe(
-        df_roster,
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Capacidade atual": st.column_config.NumberColumn(format="%.2f"),
-            "Potencial 2030": st.column_config.NumberColumn(format="%.2f"),
-            "Saldo projetado": st.column_config.NumberColumn(format="%+.2f"),
-            "% do pico de mercado": st.column_config.ProgressColumn(
-                min_value=0,
-                max_value=100,
-                format="%.1f%%",
+    render_tabela_executiva(
+        registros,
+        (
+            ColunaTabelaExecutiva("Nome", "Nome", largura="15%"),
+            ColunaTabelaExecutiva("Posição", "Posição"),
+            ColunaTabelaExecutiva("Clube atual", "Clube atual"),
+            ColunaTabelaExecutiva(
+                f"Idade {ANO_BASE_DADOS}",
+                f"Idade {ANO_BASE_DADOS}",
+                formato="inteiro",
+                alinhamento="centro",
             ),
-        },
+            ColunaTabelaExecutiva(
+                f"Idade {ANO_COPA}",
+                f"Idade {ANO_COPA}",
+                formato="inteiro",
+                alinhamento="centro",
+            ),
+            ColunaTabelaExecutiva(
+                "Capacidade atual",
+                "Capacidade atual",
+                formato="decimal_2",
+                alinhamento="centro",
+            ),
+            ColunaTabelaExecutiva(
+                "Potencial 2030",
+                "Potencial 2030",
+                formato="decimal_2",
+                alinhamento="centro",
+                destaque=True,
+            ),
+            ColunaTabelaExecutiva(
+                "Saldo projetado",
+                "Saldo projetado",
+                formato="sinal_2",
+                alinhamento="centro",
+            ),
+            ColunaTabelaExecutiva(
+                "Situação",
+                "Situação",
+                alinhamento="centro",
+            ),
+            ColunaTabelaExecutiva(
+                "Valor atual",
+                "Valor atual",
+                alinhamento="direita",
+            ),
+            ColunaTabelaExecutiva(
+                "Pico de mercado",
+                "Pico de mercado",
+                alinhamento="direita",
+            ),
+            ColunaTabelaExecutiva(
+                "% do pico de mercado",
+                "% do pico",
+                formato="percentual_1",
+                alinhamento="direita",
+                progresso=True,
+            ),
+        ),
+        rotulo_aria="Tabela de jogadores monitorados",
+        legenda="Jogadores, posições, avaliações e dados de mercado",
     )
 
 
@@ -818,25 +869,34 @@ def _tabela_ranking(
     if not itens:
         st.info("Sem avaliações completas para este recorte.")
         return
-    df = pd.DataFrame(
-        [
-            {
-                "Nome": item["nome"],
-                "Posição": item["posicao_snapshot"],
-                rotulo: item[campo],
-            }
-            for item in itens
-        ]
-    )
-    st.dataframe(
-        df,
-        width="stretch",
-        hide_index=True,
-        column_config={
-            rotulo: st.column_config.NumberColumn(
-                format="%+.2f" if campo == "saldo_projetado" else "%.2f"
-            )
-        },
+
+    registros = [
+        {
+            "Nome": item["nome"],
+            "Posição": item["posicao_snapshot"],
+            rotulo: item[campo],
+        }
+        for item in itens
+    ]
+    render_tabela_executiva(
+        registros,
+        (
+            ColunaTabelaExecutiva("Nome", "Nome", largura="46%"),
+            ColunaTabelaExecutiva("Posição", "Posição"),
+            ColunaTabelaExecutiva(
+                rotulo,
+                rotulo,
+                formato=(
+                    "sinal_2"
+                    if campo == "saldo_projetado"
+                    else "decimal_2"
+                ),
+                alinhamento="centro",
+                destaque=True,
+            ),
+        ),
+        rotulo_aria=f"Ranking: {rotulo}",
+        legenda=f"Ranking de atletas por {rotulo.casefold()}",
     )
 
 
@@ -964,21 +1024,29 @@ def render_tela_analise(
         expanded=False,
     ):
         if rankings["parciais"]:
-            st.dataframe(
-                pd.DataFrame(
-                    [
-                        {
-                            "Nome": item["nome"],
-                            "Posição": item["posicao_snapshot"],
-                            "Situação": formatar_status_avaliacao(
-                                item["status"]
-                            ),
-                        }
-                        for item in rankings["parciais"]
-                    ]
+            render_tabela_executiva(
+                [
+                    {
+                        "Nome": item["nome"],
+                        "Posição": item["posicao_snapshot"],
+                        "Situação": formatar_status_avaliacao(
+                            item["status"]
+                        ),
+                    }
+                    for item in rankings["parciais"]
+                ],
+                (
+                    ColunaTabelaExecutiva("Nome", "Nome", largura="46%"),
+                    ColunaTabelaExecutiva("Posição", "Posição"),
+                    ColunaTabelaExecutiva(
+                        "Situação",
+                        "Situação",
+                        alinhamento="centro",
+                        destaque=True,
+                    ),
                 ),
-                width="stretch",
-                hide_index=True,
+                rotulo_aria="Avaliações parciais do período",
+                legenda="Atletas com avaliação trimestral parcial",
             )
         else:
             st.caption("Nenhuma avaliação parcial neste período.")
@@ -1009,13 +1077,15 @@ def render_tela_analise(
         "não equivalem a avaliação de desempenho."
     )
     mercado = construir_registros_mercado(jogadores)
-    df_mercado = pd.DataFrame(mercado)
-    if df_mercado.empty:
+    if not mercado:
         st.info(MERCADO_SEM_DADOS)
         return
 
-    total_atual = df_mercado["Atual (M€)"].sum()
-    total_pico = df_mercado["Pico de mercado (M€)"].sum()
+    total_atual = sum(float(item["Atual (M€)"]) for item in mercado)
+    total_pico = sum(
+        float(item["Pico de mercado (M€)"])
+        for item in mercado
+    )
     render_kpis(
         (
             KPI(
@@ -1040,26 +1110,53 @@ def render_tela_analise(
         rotulo_aria="Resumo dos dados de mercado",
     )
 
-    mercado_ordenado = df_mercado.sort_values(
-        "Atual (M€)",
-        ascending=False,
+    mercado_ordenado = sorted(
+        mercado,
+        key=lambda item: float(item["Atual (M€)"]),
+        reverse=True,
     )
-    st.dataframe(
+    render_tabela_executiva(
         mercado_ordenado,
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Atual (M€)": st.column_config.NumberColumn(format="€ %.2f mi"),
-            "Pico de mercado (M€)": st.column_config.NumberColumn(format="€ %.2f mi"),
-            "% do pico de mercado": st.column_config.ProgressColumn(
-                min_value=0,
-                max_value=100,
-                format="%.1f%%",
+        (
+            ColunaTabelaExecutiva("Nome", "Nome", largura="18%"),
+            ColunaTabelaExecutiva("Posição", "Posição"),
+            ColunaTabelaExecutiva(
+                "Atual (M€)",
+                "Valor atual",
+                formato="moeda_milhoes",
+                alinhamento="direita",
+                destaque=True,
             ),
-            "Diferença para o pico de mercado (M€)": (
-                st.column_config.NumberColumn(format="€ %.2f mi")
+            ColunaTabelaExecutiva(
+                "Pico de mercado (M€)",
+                "Pico de mercado",
+                formato="moeda_milhoes",
+                alinhamento="direita",
             ),
-        },
+            ColunaTabelaExecutiva(
+                "% do pico de mercado",
+                "% do pico",
+                formato="percentual_1",
+                alinhamento="direita",
+                progresso=True,
+            ),
+            ColunaTabelaExecutiva(
+                "Diferença para o pico de mercado (M€)",
+                "Diferença para o pico",
+                formato="moeda_milhoes",
+                alinhamento="direita",
+            ),
+            ColunaTabelaExecutiva(
+                "Atualização do mercado",
+                "Atualização",
+                alinhamento="centro",
+            ),
+        ),
+        rotulo_aria="Tabela consolidada de valor de mercado",
+        legenda=(
+            "Valores atuais, picos de carreira e datas de atualização "
+            "dos atletas monitorados"
+        ),
     )
 
 

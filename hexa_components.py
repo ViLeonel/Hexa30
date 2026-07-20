@@ -32,6 +32,7 @@ from hexa_taticas import (
 )
 
 __all__ = [
+    "ColunaTabelaExecutiva",
     "KPI",
     "calcular_resumo_elenco",
     "render_avaliacao_leitura",
@@ -48,6 +49,7 @@ __all__ = [
     "render_quadro_avaliacao_executivo",
     "render_lista_tatica",
     "render_resumo_elenco",
+    "render_tabela_executiva",
 ]
 
 
@@ -67,6 +69,193 @@ class KPI:
     valor: Any
     contexto: str | None = None
     tom: TomKPI = "neutro"
+
+
+FormatoTabelaExecutiva = Literal[
+    "texto",
+    "decimal_1",
+    "decimal_2",
+    "sinal_2",
+    "inteiro",
+    "percentual_1",
+    "moeda_milhoes",
+]
+AlinhamentoTabelaExecutiva = Literal["esquerda", "centro", "direita"]
+
+
+@dataclass(frozen=True, slots=True)
+class ColunaTabelaExecutiva:
+    """Contrato visual de uma coluna da tabela executiva."""
+
+    chave: str
+    rotulo: str
+    formato: FormatoTabelaExecutiva = "texto"
+    alinhamento: AlinhamentoTabelaExecutiva = "esquerda"
+    destaque: bool = False
+    progresso: bool = False
+    largura: str | None = None
+
+
+def _numero_tabela(valor: Any) -> float | None:
+    if valor in (None, "") or isinstance(valor, bool):
+        return None
+    try:
+        return float(valor)
+    except (TypeError, ValueError):
+        return None
+
+
+def _formatar_valor_tabela(
+    valor: Any,
+    formato: FormatoTabelaExecutiva,
+) -> str:
+    if valor in (None, ""):
+        return "—"
+    if formato == "texto":
+        return str(valor)
+
+    numero = _numero_tabela(valor)
+    if numero is None:
+        return "—"
+    if formato == "decimal_1":
+        return f"{numero:.1f}".replace(".", ",")
+    if formato == "decimal_2":
+        return f"{numero:.2f}".replace(".", ",")
+    if formato == "sinal_2":
+        return f"{numero:+.2f}".replace(".", ",")
+    if formato == "inteiro":
+        return str(int(round(numero)))
+    if formato == "percentual_1":
+        return f"{numero:.1f}%".replace(".", ",")
+    if formato == "moeda_milhoes":
+        return formatar_valor_milhoes(numero)
+    return str(valor)
+
+
+def _conteudo_celula_tabela(
+    valor: Any,
+    coluna: ColunaTabelaExecutiva,
+) -> tuple[str, str, float | None]:
+    subtexto: str | None = None
+    valor_principal = valor
+
+    if (
+        isinstance(valor, Sequence)
+        and not isinstance(valor, (str, bytes, bytearray))
+        and len(valor) == 2
+    ):
+        valor_principal, subtexto = valor[0], str(valor[1] or "")
+
+    texto = _formatar_valor_tabela(valor_principal, coluna.formato)
+    classes_tom: list[str] = []
+    numero = _numero_tabela(valor_principal)
+    if coluna.formato == "sinal_2" and numero is not None:
+        if numero > 0:
+            classes_tom.append("executive-table-value--positive")
+        elif numero < 0:
+            classes_tom.append("executive-table-value--negative")
+
+    subtexto_html = (
+        f'<span class="executive-table-caption">{_esc(subtexto, "")}</span>'
+        if subtexto
+        else ""
+    )
+    valor_html = (
+        f'<span class="executive-table-value {" ".join(classes_tom)}">'
+        f'{_esc(texto, "—")}</span>{subtexto_html}'
+    )
+    progresso = (
+        min(max(numero, 0.0), 100.0)
+        if coluna.progresso and numero is not None
+        else None
+    )
+    return valor_html, texto, progresso
+
+
+def render_tabela_executiva(
+    registros: Sequence[Mapping[str, Any]],
+    colunas: Sequence[ColunaTabelaExecutiva],
+    *,
+    rotulo_aria: str,
+    legenda: str | None = None,
+) -> None:
+    """Renderiza uma tabela semântica, responsiva e visualmente consistente."""
+    if not registros or not colunas:
+        return
+
+    classes_card = ["executive-table-card"]
+    if len(colunas) > 5:
+        classes_card.append("executive-table-card--wide")
+    if len(registros) > 12:
+        classes_card.append("executive-table-card--tall")
+
+    colgroup = "".join(
+        (
+            f'<col style="width:{_esc(coluna.largura, "")}">'
+            if coluna.largura
+            else "<col>"
+        )
+        for coluna in colunas
+    )
+    cabecalho = "".join(
+        (
+            '<th scope="col" '
+            f'class="executive-table-align--{coluna.alinhamento}'
+            f'{" executive-table-column--accent" if coluna.destaque else ""}">'
+            f'{_esc(coluna.rotulo)}</th>'
+        )
+        for coluna in colunas
+    )
+
+    linhas_html: list[str] = []
+    for registro in registros:
+        celulas: list[str] = []
+        for indice, coluna in enumerate(colunas):
+            valor_html, _, progresso = _conteudo_celula_tabela(
+                registro.get(coluna.chave),
+                coluna,
+            )
+            classes = [
+                f"executive-table-align--{coluna.alinhamento}",
+            ]
+            if coluna.destaque:
+                classes.append("executive-table-column--accent")
+            if progresso is not None:
+                classes.append("executive-table-cell--progress")
+
+            conteudo = valor_html
+            if progresso is not None:
+                conteudo += (
+                    '<span class="executive-table-progress" aria-hidden="true">'
+                    f'<span style="width:{progresso:.1f}%"></span>'
+                    "</span>"
+                )
+
+            tag = "th" if indice == 0 else "td"
+            escopo = ' scope="row"' if indice == 0 else ""
+            celulas.append(
+                f'<{tag}{escopo} class="{" ".join(classes)}">'
+                f"{conteudo}</{tag}>"
+            )
+        linhas_html.append(f'<tr>{"".join(celulas)}</tr>')
+
+    legenda_html = (
+        f'<caption class="sr-only">{_esc(legenda)}</caption>'
+        if legenda
+        else ""
+    )
+    st.markdown(
+        f'<section class="{" ".join(classes_card)}" '
+        f'aria-label="{_esc(rotulo_aria)}">'
+        '<div class="executive-table-scroll" tabindex="0">'
+        '<table class="executive-table">'
+        f"{legenda_html}"
+        f"<colgroup>{colgroup}</colgroup>"
+        f"<thead><tr>{cabecalho}</tr></thead>"
+        f'<tbody>{"".join(linhas_html)}</tbody>'
+        "</table></div></section>",
+        unsafe_allow_html=True,
+    )
 
 
 _TONS_KPI: frozenset[str] = frozenset(
@@ -479,55 +668,52 @@ def render_quadro_avaliacao_executivo(
     rotulo_vini: str = "Vini",
     rotulo_beto: str = "Beto",
 ) -> None:
-    """Exibe as notas trimestrais em um quadro semântico e responsivo."""
+    """Exibe as notas trimestrais no padrão executivo compartilhado."""
     metricas = calcular_metricas_avaliacao(registro)
     linhas = (
-        (
-            "Capacidade atual",
-            "Desempenho no período",
-            _nota_avaliacao(registro, "vini", "capacidade_atual"),
-            _nota_avaliacao(registro, "beto", "capacidade_atual"),
-            metricas.get("capacidade_atual_media"),
-        ),
-        (
-            "Potencial 2030",
-            "Projeção para o ciclo",
-            _nota_avaliacao(registro, "vini", "potencial_2030"),
-            _nota_avaliacao(registro, "beto", "potencial_2030"),
-            metricas.get("potencial_2030_medio"),
-        ),
+        {
+            "indicador": ("Capacidade atual", "Desempenho no período"),
+            "vini": _nota_avaliacao(registro, "vini", "capacidade_atual"),
+            "beto": _nota_avaliacao(registro, "beto", "capacidade_atual"),
+            "media": metricas.get("capacidade_atual_media"),
+        },
+        {
+            "indicador": ("Potencial 2030", "Projeção para o ciclo"),
+            "vini": _nota_avaliacao(registro, "vini", "potencial_2030"),
+            "beto": _nota_avaliacao(registro, "beto", "potencial_2030"),
+            "media": metricas.get("potencial_2030_medio"),
+        },
     )
-
-    corpo = "".join(
-        '<tr>'
-        '<th scope="row">'
-        f'<span class="evaluation-score-label">{_esc(indicador)}</span>'
-        f'<span class="evaluation-score-caption">{_esc(descricao)}</span>'
-        '</th>'
-        f'<td><span class="evaluation-score-value">{_esc(_formatar_nota_executiva(vini, 1))}</span></td>'
-        f'<td><span class="evaluation-score-value">{_esc(_formatar_nota_executiva(beto, 1))}</span></td>'
-        '<td class="evaluation-score-average">'
-        f'<span class="evaluation-score-value">{_esc(_formatar_nota_executiva(media, 2))}</span>'
-        '</td>'
-        '</tr>'
-        for indicador, descricao, vini, beto, media in linhas
-    )
-
-    st.markdown(
-        '<section class="evaluation-scorecard" '
-        'aria-label="Quadro executivo das avaliações trimestrais">'
-        '<table class="evaluation-score-table">'
-        '<caption class="sr-only">Notas de Vini e Beto e média do período</caption>'
-        '<thead><tr>'
-        '<th scope="col">Indicador</th>'
-        f'<th scope="col">{_esc(rotulo_vini)}</th>'
-        f'<th scope="col">{_esc(rotulo_beto)}</th>'
-        '<th scope="col" class="evaluation-score-average">Média</th>'
-        '</tr></thead>'
-        f'<tbody>{corpo}</tbody>'
-        '</table>'
-        '</section>',
-        unsafe_allow_html=True,
+    render_tabela_executiva(
+        linhas,
+        (
+            ColunaTabelaExecutiva(
+                "indicador",
+                "Indicador",
+                largura="43%",
+            ),
+            ColunaTabelaExecutiva(
+                "vini",
+                rotulo_vini,
+                formato="decimal_1",
+                alinhamento="centro",
+            ),
+            ColunaTabelaExecutiva(
+                "beto",
+                rotulo_beto,
+                formato="decimal_1",
+                alinhamento="centro",
+            ),
+            ColunaTabelaExecutiva(
+                "media",
+                "Média",
+                formato="decimal_2",
+                alinhamento="centro",
+                destaque=True,
+            ),
+        ),
+        rotulo_aria="Quadro executivo das avaliações trimestrais",
+        legenda="Notas de Vini e Beto e média do período",
     )
 
 
