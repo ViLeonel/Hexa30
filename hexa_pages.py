@@ -56,7 +56,11 @@ from hexa_config import (
     TIPOS_SUGESTAO,
     TITULO_PROJETO,
 )
-from hexa_data import formatar_valor_milhoes
+from hexa_data import (
+    formatar_valor_milhoes,
+    valor_mercado_atual,
+    valor_mercado_maximo,
+)
 from hexa_persistencia_local import (
     CHAVE_AVISO_RESTAURACAO,
     apagar_convocacoes_locais,
@@ -766,6 +770,31 @@ def render_tela_perfis(
         )
 
 
+
+def _tipar_valores_mercado_roster(
+    registros: Sequence[Mapping[str, Any]],
+    jogadores: Mapping[str, Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Substitui rótulos monetários por números para ordenar e filtrar corretamente."""
+    tipados: list[dict[str, Any]] = []
+    for registro in registros:
+        item = dict(registro)
+        nome = str(item.get("Nome") or "").strip()
+        atleta = jogadores.get(nome)
+
+        if isinstance(atleta, Mapping):
+            valor_atual = valor_mercado_atual(atleta)
+            valor_pico = valor_mercado_maximo(atleta)
+            item["Valor atual"] = valor_atual if valor_atual > 0 else None
+            item["Pico de mercado"] = valor_pico if valor_pico > 0 else None
+        else:
+            item["Valor atual"] = None
+            item["Pico de mercado"] = None
+
+        tipados.append(item)
+    return tipados
+
+
 def render_tela_roster(
     jogadores: Mapping[str, Mapping[str, Any]],
     base_avaliacoes: BaseAvaliacoes,
@@ -803,6 +832,7 @@ def render_tela_roster(
         posicao=None if posicao_filtro == "Todas" else posicao_filtro,
         grupo=None if grupo_filtro == "Todos" else grupo_filtro,
     )
+    registros = _tipar_valores_mercado_roster(registros, jogadores)
 
     st.caption(
         f"{len(registros)} atleta(s) exibido(s) de "
@@ -862,11 +892,13 @@ def render_tela_roster(
             ColunaTabelaExecutiva(
                 "Valor atual",
                 "Valor atual",
+                formato="moeda_milhoes",
                 alinhamento="direita",
             ),
             ColunaTabelaExecutiva(
                 "Pico de mercado",
                 "Pico de mercado",
+                formato="moeda_milhoes",
                 alinhamento="direita",
             ),
             ColunaTabelaExecutiva(

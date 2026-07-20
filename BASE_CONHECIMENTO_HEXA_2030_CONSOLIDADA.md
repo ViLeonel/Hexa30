@@ -1,7 +1,7 @@
 # BASE DE CONHECIMENTO CONSOLIDADA — O CAMINHO PARA O HEXA 2030
 
 > Documento canônico atualizado em 20/07/2026.  
-> Versão atual do aplicativo: `1.1.11-grid-interativa`.  
+> Versão atual do aplicativo: `1.1.11-hotfix1-ordenacao-mercado`.  
 > Este arquivo substitui os antigos README, DEPLOY, relatórios de testes, fontes técnicas e manifestos de releases anteriores para fins de conhecimento do projeto.
 
 ---
@@ -1277,3 +1277,53 @@ instalada no primeiro build, usar `Manage app` → `Reboot app`.
   executada;
 - deploy e smoke no Streamlit Community Cloud não foram executados.
 
+
+
+---
+
+## 32. Hotfix de ordenação monetária em Jogadores — 20/07/2026
+
+### 32.1 Problema corrigido
+
+Na seção **Jogadores**, as colunas `Valor atual` e `Pico de mercado` chegavam à
+grade como textos já formatados, por exemplo `€ 900 mil`, `€ 9,00 mi` e
+`€ 80,00 mi`. Por isso, a AG Grid aplicava ordenação lexicográfica, colocando
+`€ 900 mil` antes de valores como `€ 80,00 mi`.
+
+As demais seções já enviavam valores monetários numéricos e não apresentavam
+o defeito.
+
+### 32.2 Solução
+
+- `hexa_pages.py` passou a reconstruir somente os dois campos monetários da
+  tabela de Jogadores a partir dos valores canônicos do atleta;
+- os campos são enviados à grade como números em milhões de euros;
+- a apresentação continua usando o formato brasileiro por meio de
+  `moeda_milhoes`;
+- filtros e ordenação passam a ser numéricos;
+- registros sem valor válido permanecem nulos;
+- nenhum JSON foi alterado;
+- nenhuma outra tabela ou regra funcional foi modificada.
+
+### 32.3 Arquivos alterados
+
+- `hexa_pages.py`;
+- `hexa_config.py`;
+- `BASE_CONHECIMENTO_HEXA_2030_CONSOLIDADA.md`.
+
+### 32.4 Testes executados
+
+- compilação de todos os arquivos Python disponibilizados;
+- teste unitário da conversão dos valores de `0,9`, `7`, `8`, `9`, `70`,
+  `75`, `80` e `140` milhões;
+- confirmação de ordenação numérica crescente e decrescente;
+- confirmação de que `€ 900 mil` é tratado como `0.9`;
+- confirmação de que valores ausentes permanecem `None`;
+- confirmação de que os registros de entrada e os JSONs não são mutados;
+- inspeção estática das colunas para garantir `formato="moeda_milhoes"`.
+
+### 32.5 Pontos não validados
+
+O smoke visual do aplicativo completo e a validação em navegadores permanecem
+dependentes do repositório completo, incluindo os módulos locais não presentes
+no conjunto recebido.
