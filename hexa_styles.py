@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import streamlit as st
 
+from hexa_style_phase5 import PHASE5_CSS
+
 __all__ = [
     "CSS",
     "HIGH_CONTRAST_CSS",
@@ -1851,5 +1853,6 @@ RC5_CSS = """
 def aplicar_estilos(*, alto_contraste: bool = False) -> None:
     st.markdown(CSS, unsafe_allow_html=True)
     st.markdown(RC5_CSS, unsafe_allow_html=True)
+    st.markdown(PHASE5_CSS, unsafe_allow_html=True)
     if alto_contraste:
         st.markdown(HIGH_CONTRAST_CSS, unsafe_allow_html=True)
