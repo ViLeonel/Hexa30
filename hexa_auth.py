@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 import math
 import time
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping, Protocol, Sequence, runtime_checkable
+
+LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     "AuthConfigError",
@@ -20,6 +23,7 @@ __all__ = [
     "lista_administradores",
     "politica_auth",
     "render_controle_login",
+    "registrar_erro_configuracao_auth",
     "usuario_autenticado",
     "usuario_eh_admin",
     "usuario_tem_permissao",
@@ -348,13 +352,22 @@ def usuario_eh_admin(
     identidade: IdentidadeUsuario | None = None,
     secrets: Mapping[str, Any] | None = None,
 ) -> bool:
-    politica = politica_auth(secrets)
     identidade_ativa = identidade or identidade_atual(
         provedor,
         secrets=secrets,
+        validar_politica=False,
     )
     if not identidade_ativa.autenticado:
         return False
+
+    politica = politica_auth(secrets)
+    if identidade is None:
+        identidade_ativa = identidade_atual(
+            provedor,
+            secrets=secrets,
+        )
+        if not identidade_ativa.autenticado:
+            return False
 
     por_subject = bool(
         identidade_ativa.subject
@@ -387,25 +400,38 @@ def usuario_tem_permissao(
     )
 
 
-def render_controle_login() -> IdentidadeUsuario:
-    """Renderiza login/logout sem liberar funções administrativas."""
+def registrar_erro_configuracao_auth(erro: AuthConfigError) -> None:
+    """Registra configuração inválida sem expor detalhes na interface pública."""
+    mensagem = str(erro)
+    if "[administradores]" in mensagem:
+        LOGGER.warning("Secrets sem seção [administradores].")
+        return
+    LOGGER.warning("Configuração administrativa inválida: %s", mensagem)
+
+
+def render_controle_login(
+    identidade: IdentidadeUsuario | None = None,
+) -> IdentidadeUsuario:
+    """Renderiza o acesso administrativo sem expor configuração interna."""
     st = _streamlit()
     provedor = StAuthProvider()
 
-    try:
-        identidade = identidade_atual(provedor)
-    except AuthConfigError as erro:
-        st.sidebar.warning(str(erro))
-        identidade = identidade_atual(
-            provedor,
-            validar_politica=False,
-        )
+    identidade_ativa = identidade
+    if identidade_ativa is None:
+        try:
+            identidade_ativa = identidade_atual(provedor)
+        except AuthConfigError as erro:
+            registrar_erro_configuracao_auth(erro)
+            identidade_ativa = identidade_atual(
+                provedor,
+                validar_politica=False,
+            )
 
-    st.sidebar.markdown("### Acesso administrativo")
+    st.sidebar.markdown("### Área administrativa em construção")
 
-    if identidade.motivo_invalidez:
+    if identidade_ativa.motivo_invalidez:
         st.sidebar.warning(
-            f"{identidade.motivo_invalidez} Entre novamente para continuar."
+            f"{identidade_ativa.motivo_invalidez} Entre novamente para continuar."
         )
         if st.sidebar.button(
             "Encerrar sessão inválida",
@@ -413,10 +439,14 @@ def render_controle_login() -> IdentidadeUsuario:
             width="stretch",
         ):
             provedor.logout()
-        return identidade
+        return identidade_ativa
 
-    if identidade.autenticado:
-        rotulo = identidade.nome or identidade.email or "Usuário autenticado"
+    if identidade_ativa.autenticado:
+        rotulo = (
+            identidade_ativa.nome
+            or identidade_ativa.email
+            or "Usuário autenticado"
+        )
         st.sidebar.caption(f"Conectado como {rotulo}")
         if st.sidebar.button(
             "Sair",
@@ -424,7 +454,7 @@ def render_controle_login() -> IdentidadeUsuario:
             width="stretch",
         ):
             provedor.logout()
-        return identidade
+        return identidade_ativa
 
     st.sidebar.caption(
         "O conteúdo público permanece disponível. "
@@ -436,4 +466,5 @@ def render_controle_login() -> IdentidadeUsuario:
         width="stretch",
     ):
         provedor.login()
-    return identidade
+    return identidade_ativa
+

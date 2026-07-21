@@ -13,6 +13,7 @@ from hexa_auth import (
     Permissao,
     identidade_atual,
     politica_auth,
+    registrar_erro_configuracao_auth,
     usuario_eh_admin,
     usuario_tem_permissao,
 )
@@ -124,6 +125,20 @@ class AuthSecurityTests(unittest.TestCase):
             )
         )
 
+
+    def test_erro_de_secrets_vai_somente_para_log(self):
+        from hexa_auth import AuthConfigError
+
+        with self.assertLogs("hexa_auth", level="WARNING") as logs:
+            registrar_erro_configuracao_auth(
+                AuthConfigError(
+                    "Configure a seção [administradores] nos Secrets do Streamlit."
+                )
+            )
+        self.assertIn(
+            "Secrets sem seção [administradores].",
+            "\n".join(logs.output),
+        )
 
 class AuditSecurityTests(unittest.TestCase):
     def test_ator_e_preservado_em_alteracao_e_releitura(self):

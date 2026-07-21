@@ -51,7 +51,7 @@ BASE_DIR = Path(__file__).resolve().parent
 NOME_APLICACAO = "O Caminho para o Hexa 2030"
 TITULO_PROJETO = "O Caminho para o Hexa"
 ICONE_APLICACAO = "🏆"
-VERSAO_APLICACAO = "1.2.0-security-phase1"
+VERSAO_APLICACAO = "1.3.0-regression-phase2"
 TITULO_SIDEBAR = "CONSELHO TÁTICO"
 ROTULO_NAVEGACAO = "Navegação do Painel:"
 
@@ -64,7 +64,7 @@ MENU_CAMPO = "🏟️ Escalação"
 MENU_PERFIS = "🔎 Scout"
 MENU_ROSTER = "📋 Jogadores"
 MENU_ANALISE = "📊 Indicadores"
-MENU_ADMIN = "🔐 Administração"
+MENU_ADMIN = "🔐 Área administrativa em construção"
 MENUS: tuple[str, ...] = (
     MENU_CAMPO,
     MENU_PERFIS,

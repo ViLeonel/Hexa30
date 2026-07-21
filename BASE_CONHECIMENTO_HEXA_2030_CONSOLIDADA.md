@@ -1,7 +1,7 @@
 # BASE DE CONHECIMENTO CONSOLIDADA — O CAMINHO PARA O HEXA 2030
 
 > Documento canônico atualizado em 20/07/2026.  
-> Versão atual do aplicativo: `1.1.11-hotfix1-ordenacao-mercado`.  
+> Versão atual do aplicativo: `1.3.0-regression-phase2`.  
 > Este arquivo substitui os antigos README, DEPLOY, relatórios de testes, fontes técnicas e manifestos de releases anteriores para fins de conhecimento do projeto.
 
 ---
@@ -1435,4 +1435,72 @@ O `pip-audit` foi instalado e chamado, mas a consulta ao serviço de vulnerabili
 ### Configuração de Secrets
 
 Além da allowlist por e-mail, recomenda-se preencher `administradores.subjects` com o claim `sub` estável de cada administrador. Produção e homologação devem usar credenciais e callbacks separados.
+
+---
+
+## Fase 2 — suíte de regressão e ajuste da área administrativa
+
+### Estado
+
+Versão: `1.3.0-regression-phase2`.
+
+A área de login administrativo foi reposicionada abaixo de **Radar do projeto**
+na barra lateral e renomeada para **Área administrativa em construção**.
+
+Falhas de configuração da seção `[administradores]` não são mais exibidas ao
+visitante. O servidor registra apenas a mensagem operacional:
+
+```text
+Secrets sem seção [administradores].
+```
+
+A administração permanece sem formulários de edição e a permissão
+`EDITAR_DADOS` continua negada.
+
+### Regressões automatizadas
+
+A suíte `tests/test_regression_phase2.py` protege:
+
+- projeção de idade entre o ano-base e 2030;
+- diferença entre ausência de nota e nota zero;
+- normalização de valores de mercado e altura;
+- preservação dos campos editoriais frente a enriquecimentos externos;
+- não sobrescrita de JSON irrecuperável;
+- remoção de duplicidades entre titulares e reservas;
+- cobertura de centroavantes nas formações que exigem a função;
+- inicialização das quatro páginas públicas;
+- posição da área administrativa abaixo do Radar;
+- ausência de detalhes de Secrets na interface pública.
+
+### Arquivos alterados
+
+- `caminho_hexa_2030.py`;
+- `hexa_auth.py`;
+- `hexa_config.py`;
+- `tests/test_regression_phase2.py`;
+- `tests/test_security_phase1.py`;
+- `BASE_CONHECIMENTO_HEXA_2030_CONSOLIDADA.md`.
+
+### Testes realizados
+
+- compilação de todos os arquivos Python;
+- 24 testes unitários e de regressão;
+- smoke de imports e contratos;
+- verificação de segurança do repositório;
+- Bandit;
+- AppTest nas quatro páginas públicas;
+- inicialização real do Streamlit;
+- health check HTTP.
+
+Todos os testes acima foram aprovados.
+
+### Testes não realizados nesta execução
+
+- inspeção visual manual em navegadores reais;
+- teste manual em dispositivo móvel;
+- `pip-audit` online, pois não houve mudança de dependências e o ambiente de
+  execução não possui conectividade confiável com o índice externo.
+
+A validação manual multibrowser e mobile da versão anterior foi informada pelos
+responsáveis do projeto, mas não foi repetida tecnicamente nesta execução.
 
