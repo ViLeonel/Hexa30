@@ -1,7 +1,7 @@
 # BASE DE CONHECIMENTO CONSOLIDADA — O CAMINHO PARA O HEXA 2030
 
 > Documento canônico atualizado em 20/07/2026.  
-> Versão atual do aplicativo: `1.1.11-hotfix1-ordenacao-mercado`.  
+> Versão atual do aplicativo: `1.3.0-regression-phase2`.  
 > Este arquivo substitui os antigos README, DEPLOY, relatórios de testes, fontes técnicas e manifestos de releases anteriores para fins de conhecimento do projeto.
 
 ---
@@ -1377,97 +1377,237 @@ A validação visual manual em Chrome, Firefox, Edge, Brave e Safari permanece
 como etapa separada, pois o CI cobre inicialização e contratos, não renderização
 pixel a pixel em todos os navegadores.
 
-
-
 ---
 
-## Fase 4 — pipeline de qualidade
+## Fase 1 — endurecimento de segurança (21/07/2026)
 
-Versão: `1.5.0-quality-phase4`.
+### Escopo executado
 
-Foram adicionados `pyproject.toml`, `requirements-dev.txt`, Ruff, Mypy, Coverage,
-Hypothesis, Bandit e pip-audit. O CI passou a ter um gate de qualidade em Python
-3.13 e uma matriz de compatibilidade de compilação e smoke em Python 3.10–3.13.
+- validação programática de claims OIDC, incluindo `sub`, `iat`, `exp` e `email_verified`;
+- tolerância configurável de relógio para tokens;
+- autorização centralizada por permissões;
+- allowlist administrativa por e-mail normalizado e `sub` estável;
+- edição administrativa mantida explicitamente desabilitada;
+- preservação do ator nos eventos de auditoria de alteração e em sua releitura;
+- redução dos detalhes de erros exibidos ao público;
+- CORS e XSRF explicitamente habilitados;
+- limite de upload e mensagens reduzido;
+- toolbar pública em modo de visualização;
+- verificação local contra arquivos sensíveis e padrões comuns de segredos;
+- `.gitignore` ampliado;
+- `SECURITY.md` criado;
+- Dependabot configurado para pip e GitHub Actions;
+- workflow com permissões mínimas, concorrência controlada, timeout e actions fixadas por SHA;
+- Bandit e `pip-audit` adicionados ao CI.
 
-A suíte ativa da Fase 4 cobre os módulos de dados, modelos, repositório,
-auditoria, autenticação, sessão e propriedades dos normalizadores numéricos.
-Testes históricos de releases anteriores permanecem no repositório como acervo,
-mas não integram o gate obrigatório porque contêm contratos conflitantes de
-versões antigas.
+### Arquivos alterados ou criados
 
-Testes locais concluídos nesta entrega:
-- compilação Python;
-- Ruff lint e formatação;
-- Mypy em sete módulos centrais;
-- 63 testes ativos;
-- cobertura total de 67% no núcleo monitorado;
-- Bandit;
-- smoke de imports;
-- inicialização e health check do Streamlit.
-
-O `pip-audit` permanece obrigatório no GitHub Actions. Sua validação depende de
-conectividade com a base externa de vulnerabilidades.
-
----
-
-## Fase 5 — design system e experiência visual
-
-Versão: `1.6.0-design-phase5`.
-
-### Objetivo
-
-Evoluir a apresentação visual sem alterar dados, regras táticas, cálculos,
-autenticação, auditoria ou fluxo das quatro páginas públicas.
-
-### Mudanças
-
-- novo módulo `hexa_style_phase5.py` com overrides isolados;
-- paleta noturna suavizada e alinhada ao tema nativo do Streamlit;
-- tipografia em pilha local, sem download de fontes remotas;
-- contraste mínimo automatizado para texto principal, secundário e destaque;
-- superfícies, cartões, KPIs e cabeçalhos com hierarquia mais consistente;
-- campo tático com bordas mais leves e rolagem horizontal acessível no mobile;
-- tabelas com números tabulares, hover discreto e melhor contraste;
-- alvos de toque ampliados em telas pequenas;
-- foco visível;
-- suporte a `prefers-reduced-motion` e `forced-colors`;
-- CI ampliado para incluir `tests/test_design_phase5.py`.
-
-### Arquivos alterados
-
-- `.streamlit/config.toml`;
-- `.github/workflows/ci.yml`;
-- `hexa_components.py`;
+- `caminho_hexa_2030.py`;
+- `hexa_admin.py`;
+- `hexa_audit.py`;
+- `hexa_auth.py`;
 - `hexa_config.py`;
-- `hexa_styles.py`;
-- `hexa_style_phase5.py`;
-- `tests/test_design_phase5.py`.
+- `.gitignore`;
+- `.streamlit/config.toml`;
+- `.streamlit/secrets.example.toml`;
+- `.github/workflows/ci.yml`;
+- `.github/dependabot.yml`;
+- `scripts/security_check.py`;
+- `tests/test_security_phase1.py`;
+- `SECURITY.md`;
+- este documento.
 
 ### Testes realizados
 
-- compilação integral dos arquivos Python;
-- Ruff lint e formatação no escopo ativo do CI;
-- 71 testes ativos aprovados;
-- cobertura total de 67%, acima do mínimo de 60%;
-- testes automatizados de contraste WCAG AA;
-- Bandit sem achados;
-- smoke de imports aprovado;
-- AppTest nas quatro páginas sem exceções;
-- servidor Streamlit iniciado com health check HTTP 200.
+- compilação de todos os arquivos Python;
+- 13 testes unitários e de regressão;
+- smoke de imports e contratos;
+- verificação local do repositório;
+- Bandit;
+- AppTest nas quatro páginas públicas;
+- inicialização real do Streamlit e health check;
+- validação dos três JSONs preservados.
 
-### Testes não realizados
+### Testes não concluídos neste ambiente
 
-- inspeção visual manual em navegadores físicos;
-- Safari e Firefox;
-- leitor de tela real;
-- `pip-audit` online;
-- Mypy local da Fase 5, pois o processo excedeu o limite operacional deste
-  ambiente. O gate permanece configurado no GitHub Actions e a Fase 5 não
-  alterou os sete módulos tipados validados na Fase 4.
+O `pip-audit` foi instalado e chamado, mas a consulta ao serviço de vulnerabilidades não pôde ser concluída porque o ambiente desta execução não resolveu `pypi.org`. O job permanece obrigatório no GitHub Actions, onde deve ser confirmado no Pull Request.
 
-### Riscos remanescentes
+### Configuração de Secrets
 
-- CSS do Streamlit pode exigir revisão após atualizações maiores do framework;
-- o campo mobile depende de rolagem horizontal para preservar a leitura;
-- validação visual manual continua necessária após o deploy de homologação.
+Além da allowlist por e-mail, recomenda-se preencher `administradores.subjects` com o claim `sub` estável de cada administrador. Produção e homologação devem usar credenciais e callbacks separados.
 
+---
+
+## Fase 2 — suíte de regressão e ajuste da área administrativa
+
+### Estado
+
+Versão: `1.3.0-regression-phase2`.
+
+A área de login administrativo foi reposicionada abaixo de **Radar do projeto**
+na barra lateral e renomeada para **Área administrativa em construção**.
+
+Falhas de configuração da seção `[administradores]` não são mais exibidas ao
+visitante. O servidor registra apenas a mensagem operacional:
+
+```text
+Secrets sem seção [administradores].
+```
+
+A administração permanece sem formulários de edição e a permissão
+`EDITAR_DADOS` continua negada.
+
+### Regressões automatizadas
+
+A suíte `tests/test_regression_phase2.py` protege:
+
+- projeção de idade entre o ano-base e 2030;
+- diferença entre ausência de nota e nota zero;
+- normalização de valores de mercado e altura;
+- preservação dos campos editoriais frente a enriquecimentos externos;
+- não sobrescrita de JSON irrecuperável;
+- remoção de duplicidades entre titulares e reservas;
+- cobertura de centroavantes nas formações que exigem a função;
+- inicialização das quatro páginas públicas;
+- posição da área administrativa abaixo do Radar;
+- ausência de detalhes de Secrets na interface pública.
+
+### Arquivos alterados
+
+- `caminho_hexa_2030.py`;
+- `hexa_auth.py`;
+- `hexa_config.py`;
+- `tests/test_regression_phase2.py`;
+- `tests/test_security_phase1.py`;
+- `BASE_CONHECIMENTO_HEXA_2030_CONSOLIDADA.md`.
+
+### Testes realizados
+
+- compilação de todos os arquivos Python;
+- 24 testes unitários e de regressão;
+- smoke de imports e contratos;
+- verificação de segurança do repositório;
+- Bandit;
+- AppTest nas quatro páginas públicas;
+- inicialização real do Streamlit;
+- health check HTTP.
+
+Todos os testes acima foram aprovados.
+
+### Testes não realizados nesta execução
+
+- inspeção visual manual em navegadores reais;
+- teste manual em dispositivo móvel;
+- `pip-audit` online, pois não houve mudança de dependências e o ambiente de
+  execução não possui conectividade confiável com o índice externo.
+
+A validação manual multibrowser e mobile da versão anterior foi informada pelos
+responsáveis do projeto, mas não foi repetida tecnicamente nesta execução.
+
+---
+
+## Fase 3 — refatoração arquitetural
+
+Versão: `1.4.0-architecture-phase3`.
+
+### Mudanças
+
+- criado `hexa_context.py` com `AppContext` imutável;
+- `caminho_hexa_2030.py` passou a enviar um único contexto para o roteador;
+- `hexa_pages.py` virou fachada e roteador estável;
+- telas separadas em:
+  - `hexa_page_campo.py`;
+  - `hexa_page_scout.py`;
+  - `hexa_page_roster.py`;
+  - `hexa_page_indicadores.py`;
+- feedback lateral separado em `hexa_feedback.py`;
+- design system separado em:
+  - `hexa_style_base.py`;
+  - `hexa_style_accessibility.py`;
+  - `hexa_style_extensions.py`;
+- `hexa_styles.py` preservado como fachada compatível;
+- assinatura legada de `render_tela` preservada durante a migração;
+- adicionados testes arquiteturais em `tests/test_architecture_phase3.py`;
+- smoke atualizado para validar novos módulos e contratos.
+
+### Preservação
+
+Nenhum JSON canônico foi modificado. Regras táticas, autenticação, auditoria,
+mensagens, seletores, componentes e comportamento público foram preservados.
+
+### Testes executados
+
+- compilação de todos os arquivos Python: aprovada;
+- 30 testes unitários e de regressão: aprovados;
+- smoke de imports e contratos: aprovado;
+- verificação de segurança do repositório: aprovada;
+- Bandit: aprovado sem achados;
+- AppTest das quatro páginas públicas: aprovado pela suíte;
+- inicialização real do Streamlit e health check HTTP 200: aprovados.
+
+### Testes não executados
+
+- inspeção manual em Brave, Chrome, Edge, Firefox e Safari;
+- repetição manual em dispositivos móveis;
+- `pip-audit` online, porque nenhuma dependência foi alterada e a consulta
+  externa não é confiável neste ambiente.
+
+
+
+---
+
+## Fase 6 — compatibilidade, responsividade e acessibilidade
+
+Versão: `1.7.0-compatibility-phase6`.
+
+### Objetivo
+
+Consolidar comportamento previsível em navegadores modernos, telas pequenas,
+preferências de movimento reduzido, alto contraste forçado, impressão e
+navegação por teclado, sem alterar dados, regras táticas ou fluxos editoriais.
+
+### Alterações
+
+- novo módulo `hexa_style_phase6.py`;
+- breakpoints em 1024 px, 768 px e 480 px;
+- ajuste de texto do Safari/iOS com `-webkit-text-size-adjust`;
+- suporte a `100dvh`;
+- foco visível consistente;
+- alvos de toque mínimos em dispositivos de ponteiro grosseiro;
+- redução de movimento;
+- suporte a cores forçadas;
+- estilo de impressão;
+- prevenção de overflow global e rolagem controlada em campo e tabelas;
+- smoke real com Playwright para Chromium, Firefox e WebKit no GitHub Actions;
+- screenshots e relatório JSON gerados como artefatos locais do teste;
+- testes automatizados das quatro páginas com Streamlit AppTest.
+
+### Testes executados nesta entrega
+
+- compilação de todos os arquivos Python;
+- 35 testes unitários e de regressão;
+- quatro páginas públicas abertas via AppTest;
+- smoke de imports;
+- verificação de segurança;
+- Bandit;
+- inicialização real do Streamlit e health check HTTP.
+
+### Limitação do ambiente de execução
+
+O Chromium instalado no ambiente de geração foi iniciado, mas a navegação para
+o servidor local foi bloqueada pela política administrativa do sandbox
+(`ERR_BLOCKED_BY_ADMINISTRATOR`). Por isso, o smoke Playwright multibrowser
+permanece configurado como gate obrigatório no GitHub Actions, onde Chromium,
+Firefox e WebKit serão instalados e executados em runners próprios.
+
+### Validação manual recomendada após deploy
+
+- Chrome, Edge e Brave;
+- Firefox;
+- Safari macOS e iOS;
+- Android Chrome;
+- zoom de 200%;
+- teclado sem mouse;
+- leitor de tela;
+- modo de alto contraste;
+- orientação retrato e paisagem.
