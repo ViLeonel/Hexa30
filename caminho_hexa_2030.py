@@ -41,6 +41,7 @@ from hexa_config import (
     ROTULO_NAVEGACAO,
     TITULO_SIDEBAR,
 )
+from hexa_context import AppContext
 from hexa_data import (
     DataIntegrityError,
     carregar_jogadores,
@@ -218,10 +219,12 @@ def main() -> None:
         )
     else:
         render_tela(
-            menu=menu,
-            jogadores=jogadores,
-            base_avaliacoes=base_avaliacoes,
-            periodo=periodo,
+            AppContext(
+                menu=menu,
+                jogadores=jogadores,
+                base_avaliacoes=base_avaliacoes,
+                periodo=periodo,
+            )
         )
 
 

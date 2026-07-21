@@ -1504,3 +1504,51 @@ Todos os testes acima foram aprovados.
 A validação manual multibrowser e mobile da versão anterior foi informada pelos
 responsáveis do projeto, mas não foi repetida tecnicamente nesta execução.
 
+---
+
+## Fase 3 — refatoração arquitetural
+
+Versão: `1.4.0-architecture-phase3`.
+
+### Mudanças
+
+- criado `hexa_context.py` com `AppContext` imutável;
+- `caminho_hexa_2030.py` passou a enviar um único contexto para o roteador;
+- `hexa_pages.py` virou fachada e roteador estável;
+- telas separadas em:
+  - `hexa_page_campo.py`;
+  - `hexa_page_scout.py`;
+  - `hexa_page_roster.py`;
+  - `hexa_page_indicadores.py`;
+- feedback lateral separado em `hexa_feedback.py`;
+- design system separado em:
+  - `hexa_style_base.py`;
+  - `hexa_style_accessibility.py`;
+  - `hexa_style_extensions.py`;
+- `hexa_styles.py` preservado como fachada compatível;
+- assinatura legada de `render_tela` preservada durante a migração;
+- adicionados testes arquiteturais em `tests/test_architecture_phase3.py`;
+- smoke atualizado para validar novos módulos e contratos.
+
+### Preservação
+
+Nenhum JSON canônico foi modificado. Regras táticas, autenticação, auditoria,
+mensagens, seletores, componentes e comportamento público foram preservados.
+
+### Testes executados
+
+- compilação de todos os arquivos Python: aprovada;
+- 30 testes unitários e de regressão: aprovados;
+- smoke de imports e contratos: aprovado;
+- verificação de segurança do repositório: aprovada;
+- Bandit: aprovado sem achados;
+- AppTest das quatro páginas públicas: aprovado pela suíte;
+- inicialização real do Streamlit e health check HTTP 200: aprovados.
+
+### Testes não executados
+
+- inspeção manual em Brave, Chrome, Edge, Firefox e Safari;
+- repetição manual em dispositivos móveis;
+- `pip-audit` online, porque nenhuma dependência foi alterada e a consulta
+  externa não é confiável neste ambiente.
+
