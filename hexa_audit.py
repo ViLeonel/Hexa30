@@ -170,7 +170,10 @@ def gerar_eventos_alteracao(
                 )
             continue
 
-        assert anterior is not None and novo is not None
+        if anterior is None or novo is None:
+            raise AuditoriaError(
+                "Estado inconsistente ao calcular alteração de auditoria."
+            )
         campos = sorted(set(anterior) | set(novo))
         for campo in campos:
             valor_anterior = anterior.get(campo)
@@ -188,6 +191,9 @@ def gerar_eventos_alteracao(
                     versao_anterior=versao_anterior,
                     versao_nova=versao_nova,
                     ocorrido_em=timestamp,
+                    ator_email=ator_email,
+                    ator_nome=ator_nome,
+                    ator_id=ator_id,
                 )
             )
 
@@ -266,6 +272,9 @@ class JsonlAuditoriaRepository:
                 origem=str(dados["origem"]),
                 versao_anterior=str(dados["versao_anterior"]),
                 versao_nova=str(dados["versao_nova"]),
+                ator_email=str(dados.get("ator_email") or ""),
+                ator_nome=str(dados.get("ator_nome") or ""),
+                ator_id=str(dados.get("ator_id") or ""),
             )
         except (KeyError, TypeError, ValueError) as erro:
             raise AuditoriaError("Evento de auditoria inválido.") from erro

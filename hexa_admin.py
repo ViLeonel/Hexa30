@@ -11,7 +11,8 @@ from hexa_auth import (
     AuthConfigError,
     IdentidadeUsuario,
     identidade_atual,
-    usuario_eh_admin,
+    Permissao,
+    usuario_tem_permissao,
 )
 from hexa_components import KPI, render_cabecalho, render_kpis
 from hexa_config import VERSAO_APLICACAO
@@ -37,7 +38,10 @@ def render_area_administrativa(
         return
 
     try:
-        autorizado = usuario_eh_admin()
+        autorizado = usuario_tem_permissao(
+            Permissao.VISUALIZAR_ADMIN,
+            identidade=identidade_ativa,
+        )
     except AuthConfigError as erro:
         st.error(str(erro))
         return

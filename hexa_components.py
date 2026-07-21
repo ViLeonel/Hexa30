@@ -228,7 +228,7 @@ def _conteudo_celula_tabela(
     )
     valor_html = (
         f'<span class="executive-table-value {" ".join(classes_tom)}">'
-        f"{_esc(texto, '—')}</span>{subtexto_html}"
+        f'{_esc(texto, "—")}</span>{subtexto_html}'
     )
     progresso = (
         min(max(numero, 0.0), 100.0)
@@ -268,7 +268,7 @@ def _render_tabela_executiva_html(
             '<th scope="col" '
             f'class="executive-table-align--{coluna.alinhamento}'
             f'{" executive-table-column--accent" if coluna.destaque else ""}">'
-            f"{_esc(coluna.rotulo)}</th>"
+            f'{_esc(coluna.rotulo)}</th>'
         )
         for coluna in colunas
     )
@@ -300,12 +300,15 @@ def _render_tabela_executiva_html(
             tag = "th" if indice == 0 else "td"
             escopo = ' scope="row"' if indice == 0 else ""
             celulas.append(
-                f'<{tag}{escopo} class="{" ".join(classes)}">{conteudo}</{tag}>'
+                f'<{tag}{escopo} class="{" ".join(classes)}">'
+                f"{conteudo}</{tag}>"
             )
-        linhas_html.append(f"<tr>{''.join(celulas)}</tr>")
+        linhas_html.append(f'<tr>{"".join(celulas)}</tr>')
 
     legenda_html = (
-        f'<caption class="sr-only">{_esc(legenda)}</caption>' if legenda else ""
+        f'<caption class="sr-only">{_esc(legenda)}</caption>'
+        if legenda
+        else ""
     )
     st.markdown(
         f'<section class="{" ".join(classes_card)}" '
@@ -315,7 +318,7 @@ def _render_tabela_executiva_html(
         f"{legenda_html}"
         f"<colgroup>{colgroup}</colgroup>"
         f"<thead><tr>{cabecalho}</tr></thead>"
-        f"<tbody>{''.join(linhas_html)}</tbody>"
+        f'<tbody>{"".join(linhas_html)}</tbody>'
         "</table></div></section>",
         unsafe_allow_html=True,
     )
@@ -330,7 +333,11 @@ def _valor_grade(valor: Any, coluna: ColunaTabelaExecutiva) -> Any:
     ):
         principal, subtexto = valor[0], str(valor[1] or "").strip()
         texto_principal = _formatar_valor_tabela(principal, coluna.formato)
-        return f"{texto_principal} — {subtexto}" if subtexto else texto_principal
+        return (
+            f"{texto_principal} — {subtexto}"
+            if subtexto
+            else texto_principal
+        )
 
     if coluna.formato in _FORMATOS_NUMERICOS:
         return _numero_tabela(valor)
@@ -515,14 +522,14 @@ def _css_grade(*, alto_contraste: bool) -> dict[str, dict[str, str]]:
             "border": f"1px solid {borda}",
             "border-radius": "14px",
             "overflow": "hidden",
-            "background-color": "#0A1222",
+            "background-color": "#0F172A",
         },
         ".ag-header": {
-            "background-color": "#0A1222",
+            "background-color": "#0F172A",
             "border-bottom": f"1px solid {borda}",
         },
         ".ag-header-cell": {
-            "color": "#C7DBFF",
+            "color": "#93C5FD",
             "font-size": "12px",
             "font-weight": "700",
             "letter-spacing": ".045em",
@@ -535,7 +542,7 @@ def _css_grade(*, alto_contraste: bool) -> dict[str, dict[str, str]]:
         ".ag-cell": {
             "display": "flex",
             "align-items": "center",
-            "color": "#F5F7F2",
+            "color": "#F8FAFC",
             "font-size": "14px",
             "font-weight": "600",
             "border-right": f"1px solid {borda}",
@@ -545,13 +552,13 @@ def _css_grade(*, alto_contraste: bool) -> dict[str, dict[str, str]]:
             "border-bottom": f"1px solid {borda}",
         },
         ".ag-row-even": {
-            "background-color": "#0D1728",
+            "background-color": "#0B1324",
         },
         ".ag-row-odd": {
-            "background-color": "#121D31",
+            "background-color": "#111C31",
         },
         ".ag-row-hover": {
-            "background-color": "#20304A !important",
+            "background-color": "#1E293B !important",
         },
         ".ag-cell-focus": {
             "outline": f"2px solid {foco} !important",
@@ -590,16 +597,16 @@ def _css_grade(*, alto_contraste: bool) -> dict[str, dict[str, str]]:
         },
         ".ag-input-field-input": {
             "min-height": "32px",
-            "color": "#F5F7F2",
-            "background-color": "#0A1222",
+            "color": "#F8FAFC",
+            "background-color": "#0F172A",
         },
         ".ag-menu": {
-            "color": "#F5F7F2",
+            "color": "#F8FAFC",
             "background-color": "#111827",
             "border": f"1px solid {borda}",
         },
         ".ag-tool-panel-wrapper": {
-            "color": "#F5F7F2",
+            "color": "#F8FAFC",
             "background-color": "#111827",
         },
     }
@@ -640,7 +647,9 @@ def render_grade_dados(
     except ModuleNotFoundError:
         return False
 
-    densidade = str(st.session_state.get("densidade_tabelas", "Compacta")).casefold()
+    densidade = str(
+        st.session_state.get("densidade_tabelas", "Compacta")
+    ).casefold()
     confortavel = densidade == "confortável"
     altura_linha = 50 if confortavel else 42
     altura_cabecalho = 50 if confortavel else 44
@@ -772,7 +781,9 @@ def render_grade_dados(
         mostrar_barra=mostrar_barra,
         altura_maxima=altura_maxima,
     )
-    alto_contraste = bool(st.session_state.get("modo_alto_contraste", False))
+    alto_contraste = bool(
+        st.session_state.get("modo_alto_contraste", False)
+    )
     st.markdown(
         f'<span class="sr-only">{_esc(rotulo_aria)}</span>',
         unsafe_allow_html=True,
@@ -839,7 +850,9 @@ def render_tabela_executiva(
     )
 
 
-_TONS_KPI: frozenset[str] = frozenset({"neutro", "destaque", "positivo", "informativo"})
+_TONS_KPI: frozenset[str] = frozenset(
+    {"neutro", "destaque", "positivo", "informativo"}
+)
 
 
 def _adaptabilidade(indice: int) -> tuple[str, str]:
@@ -855,7 +868,9 @@ def _adaptabilidade(indice: int) -> tuple[str, str]:
 def render_cabecalho(titulo: str, subtitulo: str | None = None) -> None:
     """Renderiza o cabeçalho editorial principal de uma página."""
     subtitulo_html = (
-        f'<p class="project-subtitle">{_esc(subtitulo)}</p>' if subtitulo else ""
+        f'<p class="project-subtitle">{_esc(subtitulo)}</p>'
+        if subtitulo
+        else ""
     )
     st.markdown(
         '<header class="page-header">'
@@ -875,9 +890,15 @@ def render_cabecalho_secao(
 ) -> None:
     """Cria uma hierarquia de seção consistente sem inflar títulos."""
     tag = "h2" if nivel == 2 else "h3"
-    rotulo_html = f'<p class="section-eyebrow">{_esc(rotulo)}</p>' if rotulo else ""
+    rotulo_html = (
+        f'<p class="section-eyebrow">{_esc(rotulo)}</p>'
+        if rotulo
+        else ""
+    )
     subtitulo_html = (
-        f'<p class="section-subtitle">{_esc(subtitulo)}</p>' if subtitulo else ""
+        f'<p class="section-subtitle">{_esc(subtitulo)}</p>'
+        if subtitulo
+        else ""
     )
     st.markdown(
         '<header class="section-header">'
@@ -903,7 +924,9 @@ def render_kpis(
     cabecalho = ""
     if titulo or descricao:
         titulo_html = (
-            f'<h2 class="kpi-group-title">{_esc(titulo)}</h2>' if titulo else ""
+            f'<h2 class="kpi-group-title">{_esc(titulo)}</h2>'
+            if titulo
+            else ""
         )
         descricao_html = (
             f'<p class="kpi-group-description">{_esc(descricao)}</p>'
@@ -911,7 +934,9 @@ def render_kpis(
             else ""
         )
         cabecalho = (
-            f'<header class="kpi-group-header">{titulo_html}{descricao_html}</header>'
+            '<header class="kpi-group-header">'
+            f"{titulo_html}{descricao_html}"
+            "</header>"
         )
 
     cards: list[str] = []
@@ -935,7 +960,7 @@ def render_kpis(
         f'aria-label="{_esc(rotulo_aria)}">'
         f"{cabecalho}"
         '<div class="kpi-grid" role="list">'
-        f"{''.join(cards)}"
+        f'{"".join(cards)}'
         "</div></section>",
         unsafe_allow_html=True,
     )
@@ -954,7 +979,8 @@ def render_campo(
     for slot, configuracao in layout.items():
         nome = escalados.get(slot)
         posicao_css = (
-            f"left:{_esc(configuracao.left)};bottom:{_esc(configuracao.bottom)};"
+            f"left:{_esc(configuracao.left)};"
+            f"bottom:{_esc(configuracao.bottom)};"
         )
         if not nome or nome not in jogadores:
             cards.append(
@@ -991,19 +1017,18 @@ def render_campo(
             f'<div class="player-name-tag" title="{_esc(nome)}">{_esc(nome)}</div>'
             f'<div class="player-rating-tag">Atual {atual} · Pot. {potencial}</div>'
             f'<span class="player-adaptability-tag">{_esc(descricao)} · '
-            f"{_esc(situacao)}</span>"
+            f'{_esc(situacao)}</span>'
             "</div></div>"
         )
 
     campo = (
-        '<div class="pitch-scroll" role="region" tabindex="0" '
-        'aria-label="Campo tático com titulares; em telas pequenas, deslize horizontalmente">'
-        '<div class="pitch-container">'
+        '<div class="pitch-container" role="region" tabindex="0" '
+        'aria-label="Campo tático com titulares">'
         '<div class="pitch-line-center"></div>'
         '<div class="pitch-circle"></div>'
         '<div class="pitch-penalty-top"></div>'
         '<div class="pitch-penalty-bottom"></div>'
-        f"{''.join(cards)}</div></div>"
+        f'{"".join(cards)}</div>'
     )
     st.markdown(campo, unsafe_allow_html=True)
 
@@ -1046,21 +1071,32 @@ def calcular_resumo_elenco(
     elenco: Sequence[Mapping[str, Any]],
 ) -> dict[str, float | int]:
     idades = [
-        int(jogador.get("idade", 0)) for jogador in elenco if jogador.get("idade")
+        int(jogador.get("idade", 0))
+        for jogador in elenco
+        if jogador.get("idade")
     ]
     alturas = [
-        extrair_altura_metros(jogador.get("tm_altura"), 0.0) for jogador in elenco
+        extrair_altura_metros(jogador.get("tm_altura"), 0.0)
+        for jogador in elenco
     ]
     alturas_validas = [valor for valor in alturas if valor > 0]
     valores_atuais = [valor_mercado_atual(jogador) for jogador in elenco]
-    valores_atuais_validos = [valor for valor in valores_atuais if valor > 0]
+    valores_atuais_validos = [
+        valor for valor in valores_atuais if valor > 0
+    ]
     valores_maximos = [valor_mercado_maximo(jogador) for jogador in elenco]
-    valores_maximos_validos = [valor for valor in valores_maximos if valor > 0]
+    valores_maximos_validos = [
+        valor for valor in valores_maximos if valor > 0
+    ]
 
     return {
-        "idade_2030": (sum(idades) / len(idades) + 4 if idades else 0.0),
+        "idade_2030": (
+            sum(idades) / len(idades) + 4 if idades else 0.0
+        ),
         "altura_media": (
-            sum(alturas_validas) / len(alturas_validas) if alturas_validas else 0.0
+            sum(alturas_validas) / len(alturas_validas)
+            if alturas_validas
+            else 0.0
         ),
         "valor_atual": sum(valores_atuais_validos),
         "valor_maximo": sum(valores_maximos_validos),
@@ -1102,9 +1138,9 @@ def render_resumo_elenco(
         f'<div class="summary-value">{percentual:.0f}%</div></div>'
         "</div>"
         '<div class="summary-footnote">'
-        f"Cobertura dos {len(elenco)} selecionados: mercado de "
-        f"{int(resumo['cobertura_mercado'])}; altura de "
-        f"{int(resumo['cobertura_altura'])}."
+        f'Cobertura dos {len(elenco)} selecionados: mercado de '
+        f'{int(resumo["cobertura_mercado"])}; altura de '
+        f'{int(resumo["cobertura_altura"])}.'
         "</div></div>",
         unsafe_allow_html=True,
     )
@@ -1165,25 +1201,25 @@ def render_cartao_perfil(
         f'<span class="profile-evaluation-status">{_esc(status)}</span>'
         "</div>"
         '<div class="profile-card-identity">'
-        f"<h2>{_esc(nome)}</h2>"
+        f'<h2>{_esc(nome)}</h2>'
         f'<p class="profile-position-inline">{_esc(posicoes_curtas)}</p>'
         '<p class="profile-club">'
-        "<span>Clube atual</span>"
-        f"<strong>{_esc(clube)}</strong>"
+        '<span>Clube atual</span>'
+        f'<strong>{_esc(clube)}</strong>'
         "</p>"
         "</div>"
         '<dl class="profile-game-stats">'
         '<div class="profile-game-stat">'
-        "<dt>Capacidade atual</dt>"
-        f"<dd>{_esc(capacidade)}</dd>"
+        '<dt>Capacidade atual</dt>'
+        f'<dd>{_esc(capacidade)}</dd>'
         "</div>"
         '<div class="profile-game-stat">'
-        "<dt>Potencial em 2030</dt>"
-        f"<dd>{_esc(potencial)}</dd>"
+        '<dt>Potencial em 2030</dt>'
+        f'<dd>{_esc(potencial)}</dd>'
         "</div>"
         '<div class="profile-game-stat">'
-        "<dt>Idade em 2030</dt>"
-        f"<dd>{_esc(idade_2030)}</dd>"
+        '<dt>Idade em 2030</dt>'
+        f'<dd>{_esc(idade_2030)}</dd>'
         "</div>"
         "</dl>"
         "</article>",
@@ -1285,7 +1321,9 @@ def render_comparativo_mercado(dados: Mapping[str, Any]) -> None:
         st.info("Não há dados de mercado suficientes para este atleta.")
         return
 
-    percentual_texto = f"{percentual:.1f}%" if percentual is not None else "Sem base"
+    percentual_texto = (
+        f"{percentual:.1f}%" if percentual is not None else "Sem base"
+    )
     st.markdown(
         '<section class="market-card" '
         'aria-label="Resumo do valor de mercado">'
@@ -1309,12 +1347,12 @@ def render_comparativo_mercado(dados: Mapping[str, Any]) -> None:
         "</dl>"
         '<dl class="market-dates">'
         '<div class="market-date-item">'
-        "<dt>Data do pico de mercado</dt>"
-        f"<dd>{_esc(dados.get('tm_data_valor_maximo'))}</dd>"
+        '<dt>Data do pico de mercado</dt>'
+        f'<dd>{_esc(dados.get("tm_data_valor_maximo"))}</dd>'
         "</div>"
         '<div class="market-date-item">'
-        "<dt>Última atualização</dt>"
-        f"<dd>{_esc(dados.get('tm_ultima_atualizacao'))}</dd>"
+        '<dt>Última atualização</dt>'
+        f'<dd>{_esc(dados.get("tm_ultima_atualizacao"))}</dd>'
         "</div>"
         "</dl>"
         '<p class="market-card-info"><em>'
@@ -1388,7 +1426,7 @@ def render_dados_transfermarkt(dados: Mapping[str, Any]) -> None:
         '<section class="player-data-panel" '
         'aria-label="Dados do jogador">'
         '<div class="player-data-groups">'
-        f"{''.join(grupos_html)}"
+        f'{"".join(grupos_html)}'
         "</div></section>",
         unsafe_allow_html=True,
     )
@@ -1442,7 +1480,7 @@ def render_lista_tatica(
                 '<span class="tactical-list-meta">'
                 f'<span class="tactical-list-status">{_esc(status)}</span>'
                 f'<span class="tactical-list-ratings">Atual {atual} · '
-                f"Pot. {potencial} · {_esc(situacao)}</span>"
+                f'Pot. {potencial} · {_esc(situacao)}</span>'
                 "</span></li>"
             )
         secoes.append(
@@ -1455,7 +1493,7 @@ def render_lista_tatica(
     st.markdown(
         '<div class="tactical-list" role="region" tabindex="0" '
         'aria-label="Escalação em lista">'
-        f"{''.join(secoes)}</div>",
+        f'{"".join(secoes)}</div>',
         unsafe_allow_html=True,
     )
 
