@@ -1,7 +1,7 @@
 # BASE DE CONHECIMENTO CONSOLIDADA — O CAMINHO PARA O HEXA 2030
 
 > Documento canônico atualizado em 20/07/2026.  
-> Versão atual do aplicativo: `1.3.0-regression-phase2`.  
+> Versão atual do aplicativo: `1.8.0-persistence-phase7`.  
 > Este arquivo substitui os antigos README, DEPLOY, relatórios de testes, fontes técnicas e manifestos de releases anteriores para fins de conhecimento do projeto.
 
 ---
@@ -1611,3 +1611,39 @@ Firefox e WebKit serão instalados e executados em runners próprios.
 - leitor de tela;
 - modo de alto contraste;
 - orientação retrato e paisagem.
+
+
+---
+
+## Fase 7 — persistência administrativa versionada
+
+Versão: `1.8.0-persistence-phase7`.
+
+A aplicação mantém JSON como backend padrão e seguro. Foi adicionada uma opção
+SQLite explícita para ambientes com disco realmente durável. A ativação nunca é
+automática no Streamlit Community Cloud.
+
+### Componentes
+
+- `hexa_repository_sqlite.py`: snapshots imutáveis, concorrência otimista,
+  histórico, auditoria SQLite e rollback por nova revisão;
+- `hexa_persistencia_servidor.py`: seleção do backend e migração;
+- `scripts/migrar_persistencia_phase7.py`: migração inicial sem modificar o JSON;
+- `tests/test_persistence_phase7.py`: regressões de persistência.
+
+### Política
+
+- JSON continua como fonte padrão;
+- edição administrativa permanece desabilitada;
+- rollback nunca apaga versões anteriores;
+- banco SQLite exige volume persistente;
+- o filesystem efêmero do Community Cloud não deve ser tratado como banco;
+- dados editoriais e posições continuam protegidos pelos validadores existentes.
+
+### Ativação
+
+1. disponibilizar um volume persistente;
+2. executar `python scripts/migrar_persistencia_phase7.py --destino <caminho>`;
+3. configurar `[persistencia] backend = "sqlite"` e `sqlite_path`;
+4. reiniciar e validar a área administrativa;
+5. manter backup externo do arquivo SQLite.

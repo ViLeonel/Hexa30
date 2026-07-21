@@ -16,6 +16,8 @@ from hexa_auth import (
 )
 from hexa_components import KPI, render_cabecalho, render_kpis
 from hexa_config import VERSAO_APLICACAO
+from hexa_persistencia_servidor import configuracao_persistencia, criar_repositorio
+from hexa_repository_sqlite import SqliteJogadoresRepository
 
 __all__ = ["render_area_administrativa"]
 
@@ -30,7 +32,7 @@ def render_area_administrativa(
 
     render_cabecalho(
         "🔐 Administração",
-        "Área privada em preparação. Nenhuma edição está habilitada nesta versão.",
+        "Persistência administrativa preparada; edição continua desabilitada.",
     )
 
     if not identidade_ativa.autenticado:
@@ -53,16 +55,34 @@ def render_area_administrativa(
         return
 
     st.success("Acesso administrativo autorizado.")
+    config_persistencia = configuracao_persistencia()
+    repositorio = criar_repositorio(config_persistencia)
+    revisoes = (
+        len(repositorio.listar_revisoes(limite=500))
+        if isinstance(repositorio, SqliteJogadoresRepository)
+        else 0
+    )
+
     st.info(
-        "Esta primeira entrega valida autenticação, autorização e identidade "
-        "do editor. Formulários de edição serão adicionados somente após "
-        "a confirmação do fluxo no Streamlit Community Cloud."
+        "A Fase 7 prepara persistência versionada, auditoria e rollback. "
+        "A edição de atletas continua desabilitada até a ativação explícita "
+        "de um armazenamento durável fora do filesystem efêmero."
     )
 
     render_kpis(
         (
             KPI("Atletas carregados", len(jogadores), "Base canônica disponível"),
-            KPI("Perfil", "Administrador", "Acesso privado autorizado", "positivo"),
+            KPI(
+                "Persistência",
+                config_persistencia.backend.upper(),
+                config_persistencia.descricao,
+                "informativo",
+            ),
+            KPI(
+                "Revisões",
+                revisoes if config_persistencia.duravel else "—",
+                "Histórico imutável" if config_persistencia.duravel else "JSON sem banco ativo",
+            ),
             KPI("Versão", VERSAO_APLICACAO, "Build em execução", "informativo"),
         ),
         titulo="Resumo da área",
@@ -79,13 +99,34 @@ def render_area_administrativa(
             }
         )
 
-    with st.expander("Próximos módulos administrativos"):
-        st.markdown(
-            """
-            - edição editorial controlada;
-            - atualização cadastral;
-            - consulta do histórico de auditoria;
-            - relatório de integridade;
-            - exportação para versionamento no GitHub.
-            """
+    with st.expander("Persistência e recuperação"):
+        st.write(
+            {
+                "backend": config_persistencia.backend,
+                "durável": config_persistencia.duravel,
+                "descrição": config_persistencia.descricao,
+                "edição_habilitada": False,
+            }
         )
+        if isinstance(repositorio, SqliteJogadoresRepository):
+            st.caption(
+                "Rollbacks criam uma nova revisão; o histórico anterior nunca é apagado."
+            )
+            st.dataframe(
+                [
+                    {
+                        "versão": item.versao[:12],
+                        "data": item.criada_em,
+                        "origem": item.origem,
+                        "anterior": item.versao_anterior[:12],
+                    }
+                    for item in repositorio.listar_revisoes(limite=20)
+                ],
+                width="stretch",
+                hide_index=True,
+            )
+        else:
+            st.warning(
+                "O backend JSON permanece ativo. No Streamlit Community Cloud, "
+                "gravações no filesystem não são persistência durável."
+            )

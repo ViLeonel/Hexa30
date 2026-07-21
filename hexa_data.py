@@ -30,6 +30,7 @@ from hexa_models import (
     validar_estrutura_bruta,
     validar_jogadores_normalizados,
 )
+from hexa_persistencia_servidor import criar_auditoria, criar_repositorio
 from hexa_repository import (
     DataIntegrityError,
     JogadoresRepository,
@@ -390,18 +391,20 @@ def validar_integridade_jogadores(
 def auditoria_padrao(
     repositorio: JogadoresRepository | None = None,
 ) -> AuditoriaRepository | None:
-    """Retorna auditoria JSONL apenas para a implementação JSON do projeto."""
-    if repositorio is None:
-        return JsonlAuditoriaRepository(AUDIT_FILE)
-    if isinstance(repositorio, JsonJogadoresRepository):
-        caminho = repositorio.caminho.with_name(AUDIT_FILE.name)
+    """Seleciona auditoria compatível com o backend ativo."""
+    repositorio_ativo = repositorio or repositorio_padrao()
+    auditoria_configurada = criar_auditoria(repositorio_ativo)
+    if auditoria_configurada is not None:
+        return auditoria_configurada
+    if isinstance(repositorio_ativo, JsonJogadoresRepository):
+        caminho = repositorio_ativo.caminho.with_name(AUDIT_FILE.name)
         return JsonlAuditoriaRepository(caminho)
     return None
 
 
 def repositorio_padrao() -> JogadoresRepository:
-    """Cria a implementação padrão sem manter estado global mutável."""
-    return JsonJogadoresRepository(DATA_FILE)
+    """Cria o backend configurado; JSON permanece como padrão seguro."""
+    return criar_repositorio()
 
 
 def salvar_jogadores(

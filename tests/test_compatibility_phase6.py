@@ -23,7 +23,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class Phase6StyleTests(unittest.TestCase):
     def test_versao_fase6(self) -> None:
-        self.assertEqual(VERSAO_APLICACAO, "1.7.0-compatibility-phase6")
+        self.assertTrue(
+            VERSAO_APLICACAO.startswith(("1.7.0-", "1.8.0-"))
+        )
 
     def test_css_cobre_preferencias_e_breakpoints(self) -> None:
         obrigatorios = (

@@ -17,6 +17,8 @@ MODULOS_PUROS = (
     "hexa_taticas",
     "hexa_models",
     "hexa_repository",
+    "hexa_persistencia_servidor",
+    "hexa_repository_sqlite",
     "hexa_audit",
     "hexa_data",
     "hexa_avaliacoes",
