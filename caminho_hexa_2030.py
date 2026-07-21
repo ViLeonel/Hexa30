@@ -9,15 +9,18 @@ from typing import Any
 import streamlit as st
 
 BASE_DIR = Path(__file__).resolve().parent
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
+base_dir_texto = str(BASE_DIR)
+if base_dir_texto in sys.path:
+    sys.path.remove(base_dir_texto)
+sys.path.insert(0, base_dir_texto)
 
 from hexa_admin import render_area_administrativa
 from hexa_auth import (
     AuthConfigError,
     IdentidadeUsuario,
     render_controle_login,
-    usuario_eh_admin,
+    Permissao,
+    usuario_tem_permissao,
 )
 from hexa_avaliacoes import (
     AvaliacoesIntegrityError,
@@ -118,9 +121,15 @@ def render_navegacao() -> tuple[str, IdentidadeUsuario]:
     )
     st.sidebar.markdown("---")
 
+    st.sidebar.markdown("---")
+    identidade = render_controle_login()
+
     menus_disponiveis = list(MENUS)
     try:
-        if usuario_eh_admin():
+        if usuario_tem_permissao(
+            Permissao.VISUALIZAR_ADMIN,
+            identidade=identidade,
+        ):
             menus_disponiveis.append(MENU_ADMIN)
     except AuthConfigError as erro:
         st.sidebar.warning(str(erro))
@@ -129,9 +138,6 @@ def render_navegacao() -> tuple[str, IdentidadeUsuario]:
         ROTULO_NAVEGACAO,
         menus_disponiveis,
     )
-
-    st.sidebar.markdown("---")
-    identidade = render_controle_login()
     return menu, identidade
 
 

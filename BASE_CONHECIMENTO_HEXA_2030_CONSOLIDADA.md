@@ -1377,3 +1377,62 @@ A validação visual manual em Chrome, Firefox, Edge, Brave e Safari permanece
 como etapa separada, pois o CI cobre inicialização e contratos, não renderização
 pixel a pixel em todos os navegadores.
 
+---
+
+## Fase 1 — endurecimento de segurança (21/07/2026)
+
+### Escopo executado
+
+- validação programática de claims OIDC, incluindo `sub`, `iat`, `exp` e `email_verified`;
+- tolerância configurável de relógio para tokens;
+- autorização centralizada por permissões;
+- allowlist administrativa por e-mail normalizado e `sub` estável;
+- edição administrativa mantida explicitamente desabilitada;
+- preservação do ator nos eventos de auditoria de alteração e em sua releitura;
+- redução dos detalhes de erros exibidos ao público;
+- CORS e XSRF explicitamente habilitados;
+- limite de upload e mensagens reduzido;
+- toolbar pública em modo de visualização;
+- verificação local contra arquivos sensíveis e padrões comuns de segredos;
+- `.gitignore` ampliado;
+- `SECURITY.md` criado;
+- Dependabot configurado para pip e GitHub Actions;
+- workflow com permissões mínimas, concorrência controlada, timeout e actions fixadas por SHA;
+- Bandit e `pip-audit` adicionados ao CI.
+
+### Arquivos alterados ou criados
+
+- `caminho_hexa_2030.py`;
+- `hexa_admin.py`;
+- `hexa_audit.py`;
+- `hexa_auth.py`;
+- `hexa_config.py`;
+- `.gitignore`;
+- `.streamlit/config.toml`;
+- `.streamlit/secrets.example.toml`;
+- `.github/workflows/ci.yml`;
+- `.github/dependabot.yml`;
+- `scripts/security_check.py`;
+- `tests/test_security_phase1.py`;
+- `SECURITY.md`;
+- este documento.
+
+### Testes realizados
+
+- compilação de todos os arquivos Python;
+- 13 testes unitários e de regressão;
+- smoke de imports e contratos;
+- verificação local do repositório;
+- Bandit;
+- AppTest nas quatro páginas públicas;
+- inicialização real do Streamlit e health check;
+- validação dos três JSONs preservados.
+
+### Testes não concluídos neste ambiente
+
+O `pip-audit` foi instalado e chamado, mas a consulta ao serviço de vulnerabilidades não pôde ser concluída porque o ambiente desta execução não resolveu `pypi.org`. O job permanece obrigatório no GitHub Actions, onde deve ser confirmado no Pull Request.
+
+### Configuração de Secrets
+
+Além da allowlist por e-mail, recomenda-se preencher `administradores.subjects` com o claim `sub` estável de cada administrador. Produção e homologação devem usar credenciais e callbacks separados.
+
