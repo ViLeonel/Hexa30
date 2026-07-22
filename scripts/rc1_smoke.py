@@ -26,6 +26,9 @@ MODULOS_PUROS = (
     "hexa_selectors",
     "hexa_session",
     "hexa_context",
+    "hexa_estatisticas",
+    "hexa_calendarios",
+    "hexa_atualizacao",
 )
 
 IMPORTS_CRITICOS_PUROS = {
@@ -55,6 +58,7 @@ IMPORTS_CRITICOS_UI = {
     "hexa_styles": ("CSS", "HIGH_CONTRAST_CSS", "RC5_CSS", "aplicar_estilos"),
     "hexa_components": ("render_campo", "render_lista_tatica"),
     "hexa_persistencia_local": ("sincronizar_persistencia_local",),
+    "hexa_admin_atualizacao": ("render_central_atualizacao",),
 }
 
 ARQUIVOS_JSON = (
