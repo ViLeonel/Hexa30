@@ -388,6 +388,12 @@ def atualizar_temporada(
         "totais": totais,
         "rankings": construir_rankings(totais),
     }
+
+    # Import local evita acoplamento circular: o motor de rankings consome os
+    # totais deste módulo, mas a atualização sazonal continua sendo a origem.
+    from hexa_indices_rankings import recalcular_indices_rankings
+
+    documento = recalcular_indices_rankings(documento)
     validar_documento_temporada(documento)
     return ResultadoTemporada(
         documento=documento,

@@ -19,6 +19,7 @@ from hexa_atualizacao import (
 from hexa_auth import IdentidadeUsuario, Permissao, usuario_tem_permissao
 from hexa_calendarios import CATEGORIAS_COMPETICAO
 from hexa_config import CALENDARIOS_DIR, TEMPORADAS_DIR
+from hexa_indices_rankings import recalcular_indices_rankings
 
 __all__ = ["render_central_atualizacao"]
 
@@ -74,6 +75,16 @@ def _render_resultado(
             "atualizados": previa.atualizados,
             "avisos": len(previa.avisos),
             "atualizado_em_utc": previa.documento["atualizado_em_utc"],
+            "indices_recalculados": len(previa.documento.get("totais") or []),
+            "rankings_recalculados": sum(
+                len(bloco)
+                for bloco in (
+                    previa.documento.get("indices_rankings", {})
+                    .get("rankings", {})
+                    .values()
+                )
+                if isinstance(bloco, Mapping)
+            ),
         },
         expanded=False,
     )
@@ -108,6 +119,63 @@ def _render_resultado(
             "tornar a atualização permanente."
         )
 
+
+
+def _render_recalculo_rankings(
+    *,
+    ano: int,
+    identidade: IdentidadeUsuario,
+    permitir_gravacao: bool,
+) -> None:
+    repositorio = DocumentoRepository(TEMPORADAS_DIR, "temporada")
+    documento = repositorio.carregar(ano)
+    if documento is None:
+        st.caption(
+            f"A temporada {ano} ainda não existe; envie estatísticas para criá-la."
+        )
+        return
+
+    with st.expander("Recalcular índices e rankings", expanded=False):
+        st.caption(
+            "Reconstrói somente dados derivados. Registros brutos, temporadas "
+            "anteriores e dados editoriais não são alterados."
+        )
+        st.checkbox(
+            "Confirmo o recálculo dos dados derivados",
+            key=f"confirmacao_recalculo::{ano}",
+        )
+        confirmado = bool(
+            st.session_state.get(f"confirmacao_recalculo::{ano}", False)
+        )
+        if st.button(
+            f"Recalcular temporada {ano}",
+            disabled=not (permitir_gravacao and confirmado),
+            key=f"recalcular_rankings::{ano}",
+            width="stretch",
+        ):
+            try:
+                recalculado = recalcular_indices_rankings(documento)
+                historico = list(recalculado.get("historico_recalculos") or [])
+                historico.append(
+                    {
+                        "recalculado_em_utc": datetime.now()
+                        .astimezone()
+                        .isoformat(),
+                        "recalculado_por": _ator(identidade),
+                    }
+                )
+                recalculado["historico_recalculos"] = historico
+                destino = repositorio.salvar(ano, recalculado)
+            except ValueError as erro:
+                st.error(str(erro))
+                return
+            st.success(
+                f"Índices e rankings recalculados em {destino.name}."
+            )
+            st.info(
+                "No Streamlit Community Cloud, versione o JSON no GitHub para "
+                "tornar o recálculo permanente."
+            )
 
 def render_central_atualizacao(
     jogadores: Mapping[str, Mapping[str, Any]],
@@ -149,6 +217,14 @@ def render_central_atualizacao(
         "Fonte dos dados",
         placeholder="Ex.: arquivo oficial da competição ou fornecedor licenciado",
     )
+
+    if tipo == "Estatísticas da temporada":
+        _render_recalculo_rankings(
+            ano=ano,
+            identidade=identidade,
+            permitir_gravacao=permitir,
+        )
+
     arquivo = st.file_uploader(
         "Arquivo estruturado",
         type=("json", "csv", "xlsx"),

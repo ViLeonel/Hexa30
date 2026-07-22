@@ -55,12 +55,14 @@ from hexa_config import (
     SAUDACAO_FEEDBACK,
     TIPOS_SUGESTAO,
     TITULO_PROJETO,
+    TEMPORADAS_DIR,
 )
 from hexa_data import (
     formatar_valor_milhoes,
     valor_mercado_atual,
     valor_mercado_maximo,
 )
+from hexa_rankings_temporada import render_indices_rankings_temporada
 from hexa_persistencia_local import (
     CHAVE_AVISO_RESTAURACAO,
     apagar_convocacoes_locais,
@@ -382,6 +384,12 @@ def render_tela_analise(
             )
         else:
             st.caption("Todos os atletas possuem alguma avaliação.")
+
+    st.markdown("---")
+    render_indices_rankings_temporada(
+        jogadores=jogadores,
+        temporadas_dir=TEMPORADAS_DIR,
+    )
 
     st.markdown("---")
     render_cabecalho_secao(
