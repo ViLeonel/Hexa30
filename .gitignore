@@ -44,3 +44,9 @@ auditoria_jogadores.jsonl
 artifacts/
 playwright-report/
 test-results/
+
+dados/*.sqlite3
+dados/*.sqlite3-wal
+dados/*.sqlite3-shm
+*.db-wal
+*.db-shm

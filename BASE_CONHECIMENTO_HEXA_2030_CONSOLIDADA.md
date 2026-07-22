@@ -1,7 +1,7 @@
 # BASE DE CONHECIMENTO CONSOLIDADA — O CAMINHO PARA O HEXA 2030
 
-> Documento canônico atualizado em 20/07/2026.  
-> Versão atual do aplicativo: `1.8.0-persistence-phase7`.  
+> Documento canônico atualizado em 22/07/2026.  
+> Versão atual do aplicativo: `1.9.0-update-center-phase8`.  
 > Este arquivo substitui os antigos README, DEPLOY, relatórios de testes, fontes técnicas e manifestos de releases anteriores para fins de conhecimento do projeto.
 
 ---
@@ -1647,3 +1647,83 @@ automática no Streamlit Community Cloud.
 3. configurar `[persistencia] backend = "sqlite"` e `sqlite_path`;
 4. reiniciar e validar a área administrativa;
 5. manter backup externo do arquivo SQLite.
+
+---
+
+## Fase 8 — Central de Atualização
+
+### Objetivo
+
+A Central de Atualização cria e mantém arquivos anuais independentes para
+estatísticas de temporada e calendários oficiais. O cadastro
+`jogadores_hexa_2030.json` continua intocado.
+
+### Arquitetura
+
+- `hexa_estatisticas.py`: contrato dos indicadores, totais de clube, Seleção e
+  combinado, índices transparentes e rankings objetivos;
+- `hexa_calendarios.py`: contrato anual de jogos e categorias oficiais;
+- `hexa_atualizacao.py`: leitura segura de JSON, CSV e XLSX, prévia e escrita
+  atômica com backup;
+- `hexa_admin_atualizacao.py`: interface protegida da Central de Atualização;
+- `temporadas/temporada_AAAA.json`: histórico estatístico por temporada;
+- `calendarios/calendario_AAAA.json`: calendários oficiais por ano;
+- `modelos_atualizacao/`: cabeçalhos canônicos para importação.
+
+### Indicadores estatísticos oficiais
+
+Participação: jogos, minutos e titular. Ataque: gols, assistências, chutes e
+chutes no alvo. Passe: passes, passes certos em percentual e passes-chave.
+Drible: dribles. Defesa: desarmes, interceptações, cabeceios ganhos, erros e
+erros que geraram gol. Disciplina: cartões amarelos e vermelhos.
+
+Os totais de clube e Seleção são armazenados separadamente. O total combinado
+é derivado. O sistema não cria nota esportiva automática; índices e rankings
+são transparentes e baseados nos indicadores informados.
+
+### Calendários
+
+O vocabulário contempla campeonatos estaduais e regionais, ligas e copas
+nacionais, Libertadores, Sul-Americana, outros torneios continentais,
+competições internacionais de clubes, Seleção e demais torneios oficiais.
+
+A futura exibição pública de próximos jogos deverá apresentar somente data,
+competição e confronto. Não incluir previsão de utilização, contagem de dias,
+sequência de partidas ou cartões específicos de mando.
+
+### Fluxo operacional
+
+1. selecionar estatísticas ou calendário;
+2. informar ano e fonte;
+3. enviar JSON, CSV ou XLSX sem macros;
+4. validar e gerar prévia;
+5. revisar registros não encontrados e duplicados;
+6. baixar o JSON produzido;
+7. confirmar a aplicação;
+8. salvar com escrita atômica e backup;
+9. versionar o JSON no GitHub quando executado no Community Cloud.
+
+Atualizações de uma temporada preservam linhas anteriores da mesma temporada
+que não estejam no arquivo recebido e nunca modificam arquivos de outros anos.
+
+### Segurança
+
+- limite de arquivo: 5 MB;
+- formatos aceitos: JSON, CSV e XLSX;
+- XLSM e macros não são aceitos;
+- fórmulas não são executadas;
+- nenhuma chave de caminho vem do arquivo enviado;
+- gravação exige administrador autorizado e confirmação;
+- o JSON canônico dos jogadores não é alterado.
+
+### Testes da Fase 8
+
+Foram executados testes puros para contratos estatísticos, totais combinados,
+histórico de atualizações, preservação de linhas anteriores, calendários
+estaduais e Sul-Americana, três próximos jogos simplificados, escrita atômica,
+backup, CSV e XLSX. A compilação e o smoke dos módulos puros foram aprovados.
+
+A camada visual Streamlit não foi executada neste ambiente porque a dependência
+fixada não estava disponível no índice de pacotes acessível. Ela permanece
+coberta pelo GitHub Actions e deve ser validada no Pull Request.
+
