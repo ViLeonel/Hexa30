@@ -84,6 +84,8 @@ def normalizar_jogo(registro: Mapping[str, Any], *, ano: int) -> dict[str, Any]:
         "rodada": str(registro.get("rodada") or "").strip(),
         "mandante": mandante,
         "visitante": visitante,
+        "mandante_id": str(registro.get("mandante_id") or "").strip(),
+        "visitante_id": str(registro.get("visitante_id") or "").strip(),
         "estadio": str(registro.get("estadio") or "").strip(),
         "status": str(registro.get("status") or "agendado").strip().casefold(),
         "fonte_url": str(registro.get("fonte_url") or "").strip(),

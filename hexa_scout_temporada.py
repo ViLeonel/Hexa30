@@ -16,6 +16,7 @@ from hexa_components import (
 )
 from hexa_dados_esportivos import (
     DocumentoEsportivoError,
+    carregar_competicoes_agenda,
     carregar_documento_anual,
     carregar_proximos_jogos,
     carregar_totais_atleta,
@@ -110,18 +111,60 @@ def _render_proximos_jogos(
     hoje: date | None = None,
 ) -> None:
     render_cabecalho_secao(
-        "Próximos jogos",
+        "Agenda inteligente",
         (
             "Três próximas partidas oficiais em que o atleta pode atuar, "
-            "conforme os calendários cadastrados."
+            "consolidadas pelos calendários cadastrados."
         ),
     )
+
+    rotulos_escopo = {
+        "todos": "Clube e Seleção",
+        "clube": "Somente clube",
+        "selecao": "Somente Seleção",
+    }
+    coluna_escopo, coluna_competicao = st.columns(2, gap="medium")
+    with coluna_escopo:
+        escopo = st.selectbox(
+            "Agenda",
+            tuple(rotulos_escopo),
+            format_func=rotulos_escopo.__getitem__,
+            key="scout_agenda_escopo",
+        )
+
+    try:
+        competicoes = carregar_competicoes_agenda(
+            jogador=jogador,
+            diretorio=calendarios_dir,
+            hoje=hoje,
+            escopo=escopo,
+        )
+    except DocumentoEsportivoError as erro:
+        st.warning(str(erro))
+        return
+
+    with coluna_competicao:
+        opcoes_competicao = ("Todas as competições", *competicoes)
+        competicao_selecionada = st.selectbox(
+            "Competição",
+            opcoes_competicao,
+            key="scout_agenda_competicao",
+            disabled=not competicoes,
+        )
+    competicao = (
+        ""
+        if competicao_selecionada == "Todas as competições"
+        else competicao_selecionada
+    )
+
     try:
         jogos = carregar_proximos_jogos(
             jogador=jogador,
             diretorio=calendarios_dir,
             hoje=hoje,
             limite=3,
+            escopo=escopo,
+            competicao=competicao,
         )
     except DocumentoEsportivoError as erro:
         st.warning(str(erro))
@@ -129,8 +172,7 @@ def _render_proximos_jogos(
 
     if not jogos:
         st.info(
-            "Ainda não há jogos futuros cadastrados para o clube atual ou "
-            "para a Seleção Brasileira."
+            "Ainda não há jogos futuros cadastrados para os filtros atuais."
         )
         return
 

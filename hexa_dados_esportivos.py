@@ -4,15 +4,22 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from datetime import date
 from pathlib import Path
 from typing import Any
 
-from hexa_calendarios import proximos_jogos_do_atleta
+from hexa_agenda import (
+    EscopoAgenda,
+    FiltroAgenda,
+    carregar_aliases_equipes,
+    listar_competicoes_agenda,
+    proximos_jogos_inteligentes,
+)
 
 __all__ = [
     "DocumentoEsportivoError",
+    "carregar_competicoes_agenda",
     "carregar_documento_anual",
     "carregar_proximos_jogos",
     "carregar_totais_atleta",
@@ -69,11 +76,7 @@ def carregar_totais_atleta(
     id_atleta: str,
 ) -> dict[str, Mapping[str, Any]]:
     """Retorna totais de clube, Seleção e combinado indexados por âmbito."""
-    documento = carregar_documento_anual(
-        diretorio,
-        "temporada",
-        temporada,
-    )
+    documento = carregar_documento_anual(diretorio, "temporada", temporada)
     if documento is None:
         return {}
     totais = documento.get("totais")
@@ -93,45 +96,65 @@ def carregar_totais_atleta(
     return resultado
 
 
+def _carregar_calendarios_ativos(
+    diretorio: Path,
+    *,
+    hoje: date,
+) -> list[dict[str, Any]]:
+    documentos: list[dict[str, Any]] = []
+    for ano in listar_anos_disponiveis(diretorio, "calendario"):
+        if ano < hoje.year:
+            continue
+        documento = carregar_documento_anual(diretorio, "calendario", ano)
+        if documento is not None:
+            documentos.append(documento)
+    return documentos
+
+
+def carregar_competicoes_agenda(
+    *,
+    jogador: Mapping[str, Any],
+    diretorio: Path,
+    hoje: date | None = None,
+    escopo: EscopoAgenda = "todos",
+) -> tuple[str, ...]:
+    """Lista competições futuras aplicáveis ao atleta."""
+    referencia = hoje or date.today()
+    try:
+        aliases = carregar_aliases_equipes(Path(diretorio) / "aliases_equipes.json")
+        documentos = _carregar_calendarios_ativos(Path(diretorio), hoje=referencia)
+        return listar_competicoes_agenda(
+            jogador=jogador,
+            calendarios=documentos,
+            hoje=referencia,
+            escopo=escopo,
+            aliases=aliases,
+        )
+    except ValueError as erro:
+        raise DocumentoEsportivoError(str(erro)) from erro
+
+
 def carregar_proximos_jogos(
     *,
     jogador: Mapping[str, Any],
     diretorio: Path,
     hoje: date | None = None,
     limite: int = 3,
-) -> list[dict[str, Any]]:
-    """Combina calendários anuais disponíveis e devolve os próximos jogos."""
+    escopo: EscopoAgenda = "todos",
+    competicao: str = "",
+) -> list[dict[str, str]]:
+    """Combina calendários, aliases e filtros e devolve os próximos jogos."""
     referencia = hoje or date.today()
-    candidatos: list[dict[str, Any]] = []
-    anos = listar_anos_disponiveis(diretorio, "calendario")
-    for ano in anos:
-        if ano < referencia.year:
-            continue
-        documento = carregar_documento_anual(diretorio, "calendario", ano)
-        if documento is None:
-            continue
-        candidatos.extend(
-            proximos_jogos_do_atleta(
-                jogador=jogador,
-                calendario=documento,
-                hoje=referencia,
-                limite=max(1, int(limite)),
-            )
+    try:
+        aliases = carregar_aliases_equipes(Path(diretorio) / "aliases_equipes.json")
+        documentos = _carregar_calendarios_ativos(Path(diretorio), hoje=referencia)
+        return proximos_jogos_inteligentes(
+            jogador=jogador,
+            calendarios=documentos,
+            hoje=referencia,
+            limite=limite,
+            filtro=FiltroAgenda(escopo=escopo, competicao=competicao),
+            aliases=aliases,
         )
-
-    unicos: dict[tuple[str, str, str], dict[str, Any]] = {}
-    for jogo in candidatos:
-        chave = (
-            str(jogo.get("data") or ""),
-            str(jogo.get("competicao") or ""),
-            str(jogo.get("confronto") or ""),
-        )
-        unicos[chave] = dict(jogo)
-    return sorted(
-        unicos.values(),
-        key=lambda item: (
-            str(item.get("data") or ""),
-            str(item.get("competicao") or "").casefold(),
-            str(item.get("confronto") or "").casefold(),
-        ),
-    )[: max(0, int(limite))]
+    except ValueError as erro:
+        raise DocumentoEsportivoError(str(erro)) from erro
