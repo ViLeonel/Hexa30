@@ -1824,7 +1824,7 @@ Dados editoriais e JSONs canônicos não foram alterados.
 
 ## Fase 11 — Índices e rankings sazonais
 
-Versão: `2.2.0-indices-rankings-phase11`.
+Versão: `3.0.0-admin-workflow-phase12`.
 
 ### Objetivo
 
@@ -1872,3 +1872,51 @@ A camada visual e o servidor Streamlit não foram executados neste ambiente
 porque o pacote Streamlit não estava instalado. O CI continua responsável por
 AppTest, navegadores e inicialização real.
 
+
+
+---
+
+## Fase 12 — Área administrativa completa
+
+Versão: `3.0.0-admin-workflow-phase12`.
+
+A administração agora opera por workflow editorial obrigatório:
+
+1. criação de rascunho;
+2. envio para revisão;
+3. aprovação por pessoa diferente do autor;
+4. publicação com controle otimista de concorrência;
+5. criação de revisão imutável;
+6. auditoria campo a campo;
+7. rollback por nova revisão.
+
+### Regras de segurança
+
+- edição e rollback exigem backend SQLite em volume durável;
+- backend JSON permanece somente leitura;
+- campos `tm_*` não podem ser alterados pelo editor editorial;
+- o autor não aprova a própria proposta;
+- publicação é bloqueada quando a versão-base ficou desatualizada;
+- publicação, auditoria e mudança de status são gravadas na mesma transação;
+- rollbacks nunca apagam revisões anteriores.
+
+### Perfis opcionais
+
+Os Secrets podem definir `editores`, `revisores`, `publicadores` e `auditores`.
+Administradores mantêm todas as permissões. Cada perfil aceita e-mail ou claim
+OIDC `sub`.
+
+### Campos editoriais disponíveis no workflow
+
+- clube;
+- idade;
+- grupo;
+- posição principal;
+- posições múltiplas;
+- nota de Vini;
+- nota de Beto;
+- pontos fortes;
+- pontos fracos;
+- histórico.
+
+O campo `tipo` permanece preservado no JSON, mas não é editado pela interface.
