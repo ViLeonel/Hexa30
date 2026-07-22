@@ -231,7 +231,7 @@ class UpdateCenterPhase8Tests(unittest.TestCase):
             Permissao.EXECUTAR_ATUALIZACAO.value,
             "executar_atualizacao",
         )
-        self.assertEqual(VERSAO_APLICACAO, "2.0.0-season-history-phase9")
+        self.assertEqual(VERSAO_APLICACAO, "2.1.0-smart-agenda-phase10")
 
 
 if __name__ == "__main__":

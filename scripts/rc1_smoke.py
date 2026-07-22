@@ -30,6 +30,7 @@ MODULOS_PUROS = (
     "hexa_calendarios",
     "hexa_atualizacao",
     "hexa_dados_esportivos",
+    "hexa_agenda",
 )
 
 IMPORTS_CRITICOS_PUROS = {
