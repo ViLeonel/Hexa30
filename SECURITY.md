@@ -41,3 +41,12 @@ A Central aceita apenas JSON, CSV e XLSX de até 5 MB. Arquivos XLSM, macros,
 executáveis e formatos compactados arbitrários não são aceitos. Toda importação
 deve passar por prévia, validação e confirmação administrativa. Dados recebidos
 não podem alterar automaticamente campos editoriais ou táticos dos jogadores.
+
+
+## Workflow editorial da Fase 12
+
+Alterações editoriais em produção devem usar armazenamento SQLite em volume
+durável e seguir rascunho, revisão, aprovação e publicação. O autor não deve
+aprovar a própria alteração. Publicações e rollbacks devem produzir nova revisão
+e auditoria imutável. O backend JSON não deve receber edição administrativa pelo
+site.
