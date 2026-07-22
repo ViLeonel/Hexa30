@@ -33,3 +33,11 @@ Produção e homologação devem usar segredos, URLs de callback e contas admini
 ## Dados
 
 Os campos editoriais de Vini e Beto são ativos protegidos. Dados externos devem permanecer em namespace próprio e nunca substituir posições ou avaliações editoriais.
+
+
+## Arquivos da Central de Atualização
+
+A Central aceita apenas JSON, CSV e XLSX de até 5 MB. Arquivos XLSM, macros,
+executáveis e formatos compactados arbitrários não são aceitos. Toda importação
+deve passar por prévia, validação e confirmação administrativa. Dados recebidos
+não podem alterar automaticamente campos editoriais ou táticos dos jogadores.
